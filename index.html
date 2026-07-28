@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- عنوان واسم الصفحة بتبويب المتصفح -->
-    <title>👑 صالون هارون الرشيد</title>
-
-    <!-- إضافة صورة اللوجو بجانب الاسم بالمتصفح -->
+    <title>👑 صالون هارون الرشيد - النظام السحابي</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg" />
 
     <!-- مكتبات Firebase السحابية -->
@@ -144,7 +141,6 @@
         position: relative;
       }
 
-      /* زر تسجيل الخروج الأنيق في الزاوية العلوية */
       .top-logout-btn {
         position: absolute;
         top: 0;
@@ -170,7 +166,6 @@
         background: #ff4444;
         color: #ffffff;
         box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
-        transform: translateY(-2px);
       }
 
       .logo {
@@ -184,15 +179,6 @@
         object-fit: cover;
         object-position: 45% center;
         transform: scale(1.1);
-        transition:
-          transform 0.3s ease,
-          border-color 0.3s ease;
-        cursor: pointer;
-      }
-
-      .logo:hover {
-        transform: scale(1.15);
-        border-color: #ff4444;
       }
 
       h1 {
@@ -214,10 +200,10 @@
         border-radius: 12px;
         padding: 18px 25px;
         width: 100%;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
         display: flex;
         flex-wrap: wrap;
-        gap: 30px;
+        gap: 20px;
         justify-content: center;
         align-items: center;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -236,17 +222,18 @@
         font-weight: bold;
       }
 
-      .active-barber-badge {
+      .active-barber-badge,
+      .active-customer-badge {
         background: #1f2a28;
         color: #00ffcc;
         border: 1px solid #00ffcc;
-        padding: 9px 24px;
+        padding: 8px 18px;
         border-radius: 8px;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
         text-align: center;
-        min-width: 150px;
-        box-shadow: 0 0 12px rgba(0, 255, 204, 0.15);
+        min-width: 140px;
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
       }
 
       .pay-toggle-container {
@@ -274,6 +261,22 @@
         background: #00ffcc;
         color: #000;
         box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+      }
+
+      .btn-new-customer {
+        background: rgba(0, 255, 204, 0.15);
+        color: #00ffcc;
+        border: 1px solid #00ffcc;
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-new-customer:hover {
+        background: #00ffcc;
+        color: #000;
       }
 
       .grid-container {
@@ -332,7 +335,6 @@
         font-weight: bold;
         color: #fff;
         margin-bottom: 8px;
-        padding-top: 5px;
       }
 
       .card-price {
@@ -346,7 +348,6 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        margin-top: 5px;
       }
 
       .btn-undo-small {
@@ -362,14 +363,6 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.2s ease;
-        touch-action: manipulation;
-      }
-
-      .btn-undo-small:active {
-        background: #ff4444;
-        color: #fff;
-        transform: scale(0.85);
       }
 
       .badge {
@@ -470,27 +463,68 @@
         border-top: 2px solid #00ffcc;
       }
 
-      .no-data-msg {
-        text-align: center;
-        color: #888;
-        font-size: 14px;
-        padding: 15px;
+      .btn-save-customer {
+        background: #00ffcc;
+        color: #000;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        align-self: center;
+        transition: all 0.2s ease;
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+      }
+
+      .btn-save-customer:hover {
+        background: #00cca3;
       }
 
       .btn-reset {
         background: #990000;
         color: white;
         border: none;
-        padding: 14px 28px;
+        padding: 12px 24px;
         border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
         align-self: center;
-        transition: background 0.2s ease;
       }
 
       .btn-reset:hover {
         background: #cc0000;
+      }
+
+      /* صندوق البحث عن تاريخ الزبون للمدير */
+      .search-box-container {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        max-width: 500px;
+        margin: 10px auto;
+      }
+
+      .search-box-container input {
+        flex: 1;
+        background: #2a2a2a;
+        border: 1px solid #00ffcc;
+        color: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 16px;
+        outline: none;
+      }
+
+      .search-box-container button {
+        background: #00ffcc;
+        color: #000;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
       }
 
       .modal-overlay {
@@ -499,7 +533,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.85);
         backdrop-filter: blur(6px);
         display: flex;
         align-items: center;
@@ -521,7 +555,7 @@
         border-radius: 16px;
         padding: 25px 30px;
         width: 90%;
-        max-width: 380px;
+        max-width: 400px;
         text-align: center;
         box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2);
         transform: translateY(-20px);
@@ -561,10 +595,6 @@
         font-size: 22px;
         letter-spacing: 4px;
         -webkit-text-security: disc;
-      }
-
-      .modal-card input:focus {
-        border-color: #00ffcc;
       }
 
       .modal-btns {
@@ -623,15 +653,6 @@
         border-radius: 8px;
         font-weight: bold;
         cursor: pointer;
-      }
-
-      @media (max-width: 768px) {
-        .top-logout-btn {
-          position: relative;
-          top: 0;
-          left: 0;
-          margin-bottom: 15px;
-        }
       }
     </style>
   </head>
@@ -706,6 +727,18 @@
         </div>
 
         <div class="control-group">
+          <label>الزبون الحالي:</label>
+          <div style="display: flex; gap: 8px; align-items: center">
+            <div class="active-customer-badge" id="activeCustomerDisplay">
+              لم يحدد
+            </div>
+            <button class="btn-new-customer" onclick="openCustomerModal()">
+              👤 زبون جديد
+            </button>
+          </div>
+        </div>
+
+        <div class="control-group">
           <label>طريقة الدفع:</label>
           <div class="pay-toggle-container">
             <button
@@ -733,17 +766,17 @@
       <div class="summary-box">
         <div id="barberPersonalSection">
           <div class="section-title" id="barberSummaryTitle">
-            📊 ملخص أرباح الحلاق
+            📊 ملخص أرباح الحلاق (اليومي)
           </div>
           <div class="table-responsive">
             <table class="report-table">
               <thead>
                 <tr>
                   <th>الحلاق</th>
-                  <th>إجمالي العمليات</th>
+                  <th>إجمالي العمليات اليومية</th>
                   <th>المبلغ الإجمالي</th>
-                  <th>حصة الحلاق (60%)</th>
-                  <th>حصة الصالون (40%)</th>
+                  <th>حصة الحلاق (50%)</th>
+                  <th>حصة الصالون (50%)</th>
                 </tr>
               </thead>
               <tbody id="barbersSummaryBody"></tbody>
@@ -755,7 +788,7 @@
             id="barberDetailsTitle"
             style="margin-top: 20px"
           >
-            📝 تفاصيل الخدمات المقدمة
+            📝 خدمات الزبون الحالي
           </div>
           <div class="table-responsive">
             <table class="report-table">
@@ -768,6 +801,12 @@
               </thead>
               <tbody id="barbersDetailsBody"></tbody>
             </table>
+          </div>
+
+          <div style="display: flex; justify-content: center; margin-top: 20px">
+            <button class="btn-save-customer" onclick="saveCustomerVisit()">
+              ✅ إنهاء الفاتورة وحفظ الزبون في قاعدة البيانات
+            </button>
           </div>
         </div>
       </div>
@@ -795,34 +834,33 @@
       </div>
 
       <div class="summary-box">
+        <!-- 1. أرباح اليوم -->
+        <div class="section-title">📊 التقرير المالي اليومي (50% / 50%)</div>
         <div class="totals-row">
           <div class="total-item">
-            دخل الكاش: <span id="cashTotal">0</span> د.أ
+            دخل الكاش اليومي: <span id="cashTotal">0</span> د.أ
           </div>
           <div class="total-item">
-            دخل الفيزا: <span id="visaTotal">0</span> د.أ
+            دخل الفيزا اليومي: <span id="visaTotal">0</span> د.أ
           </div>
           <div class="total-item">
-            الإجمالي الكلي: <span id="grandTotal">0</span> د.أ
+            الإجمالي الكلي اليومي: <span id="grandTotal">0</span> د.أ
           </div>
           <div class="total-item highlight-salon">
-            👑 صافي أرباح الصالون (40%):
+            👑 صافي أرباح الصالون اليومي (50%):
             <span id="totalSalonShareCard">0</span> د.أ
           </div>
         </div>
 
-        <div class="section-title">
-          📊 التقرير المالي الشامل وتوزيع الأرباح (60% / 40%)
-        </div>
         <div class="table-responsive">
           <table class="report-table">
             <thead>
               <tr>
                 <th>الحلاق</th>
-                <th>العمليات</th>
+                <th>العمليات اليومية</th>
                 <th>المبلغ الإجمالي</th>
-                <th>حصة الحلاقين (60%)</th>
-                <th>حصة الصالون (40%)</th>
+                <th>حصة الحلاقين (50%)</th>
+                <th>حصة الصالون (50%)</th>
               </tr>
             </thead>
             <tbody id="allBarbersVaultBody"></tbody>
@@ -831,8 +869,97 @@
         </div>
 
         <button class="btn-reset" onclick="promptResetDay()">
-          تصفير العداد
+          تصفير العداد اليومي
         </button>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 2. أرباح الشهر (الشهرية التراكمية) -->
+        <div class="section-title">
+          📅 إجمالي أرباح الشهر التراكمية (50% للصالون)
+        </div>
+        <div class="totals-row">
+          <div class="total-item">
+            كاش الشهر: <span id="monthlyCashTotal">0</span> د.أ
+          </div>
+          <div class="total-item">
+            فيزا الشهر: <span id="monthlyVisaTotal">0</span> د.أ
+          </div>
+          <div class="total-item">
+            دخل الشهر الكلي: <span id="monthlyGrandTotal">0</span> د.أ
+          </div>
+          <div class="total-item highlight-salon">
+            👑 صافي أرباح الصالون الشهرية (50%):
+            <span id="monthlySalonShareCard">0</span> د.أ
+          </div>
+        </div>
+        <button
+          class="btn-reset"
+          style="background: #660000"
+          onclick="promptResetMonth()"
+        >
+          🗓️ تصفير عداد الشهر
+        </button>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 3. سجل الزبائن المباشر برقم الهاتف -->
+        <div class="section-title">🔍 الاستعلام عن تاريخ وسجل الزبون</div>
+        <div class="search-box-container">
+          <input
+            type="tel"
+            id="searchPhoneInput"
+            placeholder="أدخل رقم هاتف الزبون (مثال: 079...)"
+          />
+          <button onclick="searchCustomerHistory()">بحث بالسجل</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>التاريخ والوقت</th>
+                <th>اسم الزبون</th>
+                <th>رقم الهاتف</th>
+                <th>الحلاق</th>
+                <th>طريقة الدفع</th>
+                <th>الخدمات والزيارة</th>
+                <th>المبلغ الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody id="customerHistoryBody">
+              <tr>
+                <td colspan="7" class="no-data-msg">
+                  أدخل رقم هاتف الزبون أعلاه لعرض جميع زياراته والمعاملات
+                  المكتملة.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة بوب أب إدخال اسم ورقم الزبون -->
+    <div class="modal-overlay" id="customerModal">
+      <div class="modal-card">
+        <h3>👤 تسجيل الزبون الحالي</h3>
+        <p>يرجى إدخال بيانات الزبون للبدء بتسجيل خدماته:</p>
+        <input type="text" id="custNameInput" placeholder="اسم الزبون الكامل" />
+        <input
+          type="tel"
+          inputmode="numeric"
+          id="custPhoneInput"
+          placeholder="رقم هاتف الزبون (مثال: 079...)"
+        />
+        <div class="modal-btns">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="submitCustomerData()"
+          >
+            بدء الخدمة
+          </button>
+        </div>
       </div>
     </div>
 
@@ -921,15 +1048,11 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
 
-      // قائمة جميع الخدمات والأسعار المحدثة بالكامل
       const services = [
-        // الباقات
         { id: "s1", name: "باقة الطالب", price: 8 },
         { id: "s2", name: "باقة الخريج", price: 10 },
         { id: "s3", name: "باقة هارون الرشيد", price: 15 },
         { id: "s4", name: "باقة العريس", price: 50 },
-
-        // خدمات الشعر والذقن
         { id: "s5", name: "سشوار", price: 4 },
         { id: "s6", name: "حلاقة ذقن", price: 4 },
         { id: "s7", name: "حناء أو صبغة ذقن", price: 5 },
@@ -937,24 +1060,16 @@
         { id: "s9", name: "حلاقة شعر", price: 7 },
         { id: "s10", name: "حناء أو صبغة شعر وذقن", price: 15 },
         { id: "s11", name: "كرياتين بروتين", price: 20 },
-
-        // العناية بالوجه والبشرة
         { id: "s12", name: "شمع", price: 2 },
         { id: "s13", name: "خيط", price: 2 },
         { id: "s14", name: "ماسك نضارة", price: 2 },
         { id: "s15", name: "تنظيف بشرة ناعم مع ماسك وبخار", price: 10 },
         { id: "s16", name: "تنظيف بشرة عميق مع بخار وماسك", price: 25 },
-
-        // الراحة والعناية بالجسم
         { id: "s17", name: "مساج ناعم", price: 2 },
         { id: "s18", name: "بدكير اليدين", price: 8 },
         { id: "s19", name: "بدكير كامل", price: 15 },
         { id: "s20", name: "مساج كامل للجسم", price: 35 },
-
-        // العطور
         { id: "s21", name: "عطور هارون الرشيد الفخمة", price: 10 },
-
-        // خدمة مخصصة / خصومات
         { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
       ];
 
@@ -966,17 +1081,23 @@
         { id: "b5", name: "أحمد" },
       ];
 
-      let transactions = [];
+      let dailyTransactions = [];
       let activeUserId = null;
       let selectedPayMethod = "cash";
       let modalCallback = null;
       let cloudPasswords = null;
 
+      // بيانات الزبون الحالي في الواجهة
+      let currentCustomer = {
+        name: "",
+        phone: "",
+        services: [], // خدمات الزبون الحالي المسجلة
+      };
+
       function onAccountSelected() {
         const val = document.getElementById("mainBarberSelect").value;
         if (val) {
-          const input = document.getElementById("mainPassInput");
-          input.focus();
+          document.getElementById("mainPassInput").focus();
         }
       }
 
@@ -996,8 +1117,6 @@
           const doc = await db.collection("settings").doc("passwords").get();
           if (doc.exists) {
             cloudPasswords = doc.data();
-          } else {
-            console.error("لم يتم العثور على مستند كلمات المرور في الفايربيس!");
           }
         } catch (e) {
           console.error("خطأ بجلَب البيانات:", e);
@@ -1028,7 +1147,6 @@
           customAlert("⚠️ تنبيه", "يرجى اختيار الحساب أولاً!");
           return;
         }
-
         if (!pass) {
           customAlert("⚠️ تنبيه", "يرجى إدخال كلمة المرور!");
           return;
@@ -1047,15 +1165,12 @@
 
         if (userId === "admin") {
           const adminPass = passes ? passes["ADMIN_VAULT_KEY"] : null;
-          if (pass === adminPass) {
-            isAccessGranted = true;
-          }
+          if (pass === adminPass) isAccessGranted = true;
         } else {
           const barberPass = passes ? passes[userId] : null;
           const masterPass = passes ? passes["MASTER_KEY"] : null;
-          if (pass === barberPass || pass === masterPass) {
+          if (pass === barberPass || pass === masterPass)
             isAccessGranted = true;
-          }
         }
 
         if (isAccessGranted) {
@@ -1069,6 +1184,7 @@
             document.getElementById("appContainer").style.display = "flex";
             document.getElementById("adminContainer").style.display = "none";
             updateActiveBarberDisplay();
+            openCustomerModal(); // إجبار الحلاق على فتح شاشة الزبون فور الدخول
           }
           renderUI();
         } else {
@@ -1079,10 +1195,11 @@
         }
       }
 
-      db.collection("transactions").onSnapshot((snapshot) => {
-        transactions = [];
+      // الاستماع للـ Transactions اليومية
+      db.collection("daily_transactions").onSnapshot((snapshot) => {
+        dailyTransactions = [];
         snapshot.forEach((doc) => {
-          transactions.push({ docId: doc.id, ...doc.data() });
+          dailyTransactions.push({ docId: doc.id, ...doc.data() });
         });
         renderUI();
       });
@@ -1092,6 +1209,120 @@
         const currentBarberObj = barbers.find((b) => b.id === activeUserId);
         if (display && currentBarberObj) {
           display.innerText = currentBarberObj.name;
+        }
+      }
+
+      /* إدارة الزبون الحالي */
+      function openCustomerModal() {
+        document.getElementById("custNameInput").value = "";
+        document.getElementById("custPhoneInput").value = "";
+        document.getElementById("customerModal").classList.add("active");
+        setTimeout(() => document.getElementById("custNameInput").focus(), 100);
+      }
+
+      function submitCustomerData() {
+        const name = document.getElementById("custNameInput").value.trim();
+        const phone = document.getElementById("custPhoneInput").value.trim();
+
+        if (!name || !phone) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال اسم الزبون ورقم هاتفه للبدء!");
+          return;
+        }
+
+        currentCustomer = {
+          name: name,
+          phone: phone,
+          services: [], // مصفر للزبون الجديد
+        };
+
+        document.getElementById("activeCustomerDisplay").innerText =
+          `${name} (${phone})`;
+        document.getElementById("customerModal").classList.remove("active");
+        renderUI();
+      }
+
+      function addServiceToCurrentCustomer(serviceId, price, note = "") {
+        if (!currentCustomer.name) {
+          openCustomerModal();
+          return;
+        }
+
+        currentCustomer.services.push({
+          serviceId: serviceId,
+          price: price,
+          note: note,
+          timestamp: new Date().getTime(),
+        });
+
+        renderUI();
+      }
+
+      function removeServiceFromCurrentCustomer(serviceId) {
+        let idx = currentCustomer.services
+          .slice()
+          .reverse()
+          .findIndex((s) => s.serviceId === serviceId);
+        if (idx !== -1) {
+          let realIdx = currentCustomer.services.length - 1 - idx;
+          currentCustomer.services.splice(realIdx, 1);
+        }
+        renderUI();
+      }
+
+      /* حفظ زيارة الزبون بالفاتورة الكاملة بالسحابة */
+      async function saveCustomerVisit() {
+        if (!currentCustomer.name || !currentCustomer.phone) {
+          customAlert("⚠️ تنبيه", "يرجى تحديد الزبون ورقم هاتفه أولاً!");
+          return;
+        }
+
+        if (currentCustomer.services.length === 0) {
+          customAlert(
+            "⚠️ تنبيه",
+            "يرجى اختيار خدمة واحدة على الأقل للزبون قبل الحفظ!",
+          );
+          return;
+        }
+
+        const currentBarberObj = barbers.find((b) => b.id === activeUserId);
+        let totalVal = currentCustomer.services.reduce(
+          (acc, curr) => acc + curr.price,
+          0,
+        );
+
+        let visitRecord = {
+          customerName: currentCustomer.name,
+          customerPhone: currentCustomer.phone,
+          barberId: activeUserId,
+          barberName: currentBarberObj ? currentBarberObj.name : activeUserId,
+          payMethod: selectedPayMethod,
+          totalPrice: totalVal,
+          services: currentCustomer.services,
+          formattedDate: new Date().toLocaleString("ar-JO"),
+          timestamp: new Date().getTime(),
+        };
+
+        try {
+          // 1. حفظ في سجل الزبائن الدائم
+          await db.collection("customer_history").add(visitRecord);
+
+          // 2. حفظ في سجل اليومي للكاونتر
+          await db.collection("daily_transactions").add(visitRecord);
+
+          customAlert(
+            "✅ تم الحفظ",
+            `تم إنهاء الفاتورة وحفظ الزيارة للزبون (${currentCustomer.name}) بنجاح!`,
+          );
+
+          // تصفير الزبون الحالي لاستقبال زبون جديد
+          currentCustomer = { name: "", phone: "", services: [] };
+          document.getElementById("activeCustomerDisplay").innerText =
+            "لم يحدد";
+          openCustomerModal();
+          renderUI();
+        } catch (e) {
+          console.error("خطأ بالحفظ:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الفاتورة بالسحابة!");
         }
       }
 
@@ -1122,9 +1353,7 @@
 
       function submitModalPass() {
         const enteredPass = document.getElementById("modalPassInput").value;
-        if (modalCallback) {
-          modalCallback(enteredPass);
-        }
+        if (modalCallback) modalCallback(enteredPass);
         document.getElementById("passwordModal").classList.remove("active");
       }
 
@@ -1160,18 +1389,18 @@
           customAlert("⚠️ تنبيه", "يرجى كتابة تفاصيل الملاحظة أو الخصم!");
           return;
         }
-
         if (isNaN(priceVal) || priceVal < 0) {
           customAlert("⚠️ تنبيه", "يرجى إدخال مبلغ صحيح!");
           return;
         }
 
-        addTransaction("custom", priceVal, note);
+        addServiceToCurrentCustomer("custom", priceVal, note);
         closeCustomModal();
       }
 
       function logoutUser() {
         activeUserId = null;
+        currentCustomer = { name: "", phone: "", services: [] };
         document.getElementById("appContainer").style.display = "none";
         document.getElementById("adminContainer").style.display = "none";
         document.getElementById("mainLoginScreen").style.display = "flex";
@@ -1179,24 +1408,25 @@
         document.getElementById("mainBarberSelect").value = "";
       }
 
+      /* تصفير العداد اليومي فقط (لا يمس سجل الزبائن الدائم) */
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
 
         openModal(
-          "تصفير العداد",
-          "أدخل كلمة المرور لتصفير العداد وبداية يوم جديد:",
+          "تصفير العداد اليومي",
+          "أدخل كلمة المرور لتصفير العداد اليومي (لن يتم مسح سجل الزبائن):",
           function (enteredPass) {
             const p = enteredPass.trim();
             if (resetPass && p === resetPass) {
-              db.collection("transactions")
+              db.collection("daily_transactions")
                 .get()
                 .then((snapshot) => {
                   snapshot.forEach((doc) => doc.ref.delete());
                 });
               customAlert(
                 "✅ تم التصفير",
-                "تم تصفير جميع العدادات وبداية يوم جديد بنجاح.",
+                "تم تصفير العداد اليومي بنجاح، وظل سجل الزبائن محفوضاً.",
               );
             } else {
               customAlert(
@@ -1208,48 +1438,105 @@
         );
       }
 
-      function renderUI() {
-        let cashTotal = 0;
-        let visaTotal = 0;
+      /* تصفير أرباح الشهر (حذف السجل الشهر التراكمي للمدير) */
+      async function promptResetMonth() {
+        const passes = await fetchCloudPasswords();
+        const resetPass = passes ? passes["RESET_KEY"] : null;
 
-        let allBarbersStats = {};
-        barbers.forEach((b) => {
-          allBarbersStats[b.id] = { count: 0, total: 0 };
-        });
-
-        let currentBarberStats = { count: 0, total: 0 };
-        let currentBarberServiceCounts = {};
-        let currentCustomTxs = [];
-
-        transactions.forEach((tx) => {
-          if (tx.payMethod === "cash") cashTotal += tx.price;
-          if (tx.payMethod === "visa") visaTotal += tx.price;
-
-          if (allBarbersStats[tx.barberId]) {
-            allBarbersStats[tx.barberId].count += 1;
-            allBarbersStats[tx.barberId].total += tx.price;
-          }
-
-          if (activeUserId && tx.barberId === activeUserId) {
-            currentBarberStats.count += 1;
-            currentBarberStats.total += tx.price;
-            currentBarberServiceCounts[tx.serviceId] =
-              (currentBarberServiceCounts[tx.serviceId] || 0) + 1;
-
-            if (tx.serviceId === "custom") {
-              currentCustomTxs.push(tx);
+        openModal(
+          "تصفير أرباح الشهر",
+          "أدخل كلمة المرور لتصفير السجل التراكمي للشهر كلياً:",
+          function (enteredPass) {
+            const p = enteredPass.trim();
+            if (resetPass && p === resetPass) {
+              db.collection("customer_history")
+                .get()
+                .then((snapshot) => {
+                  snapshot.forEach((doc) => doc.ref.delete());
+                });
+              customAlert(
+                "✅ تم التصفير",
+                "تم تصفير السجل التراكمي للشهر بنجاح.",
+              );
+            } else {
+              customAlert("⚠️ كلمة المرور خاطئة", "كلمة المرور غير صحيحة!");
             }
-          }
-        });
+          },
+        );
+      }
 
-        // 1️⃣ واجهة الحلاقين
+      /* البحث عن تاريخ وتفاصيل زبون برقم هاتفه للمدير */
+      async function searchCustomerHistory() {
+        const phone = document.getElementById("searchPhoneInput").value.trim();
+        const tbody = document.getElementById("customerHistoryBody");
+
+        if (!phone) {
+          customAlert("⚠️ تنبيه", "يرجى كتابة رقم هاتف الزبون للبحث!");
+          return;
+        }
+
+        tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">جاري البحث في قاعدة البيانات...</td></tr>`;
+
+        try {
+          const snapshot = await db
+            .collection("customer_history")
+            .where("customerPhone", "==", phone)
+            .get();
+
+          tbody.innerHTML = "";
+
+          if (snapshot.empty) {
+            tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">لم يتم العثور على أي زيارات سابقة للرقم (${phone}).</td></tr>`;
+            return;
+          }
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            let servicesListText = data.services
+              .map((s) => {
+                const foundS = services.find((x) => x.id === s.serviceId);
+                return s.serviceId === "custom"
+                  ? `✍️ ${s.note}`
+                  : foundS
+                    ? foundS.name
+                    : s.serviceId;
+              })
+              .join(" + ");
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${data.formattedDate}</td>
+              <td><b>${data.customerName}</b></td>
+              <td dir="ltr">${data.customerPhone}</td>
+              <td>${data.barberName}</td>
+              <td>${data.payMethod === "cash" ? "💵 كاش" : "💳 فيزا"}</td>
+              <td style="color: #00ffcc;">${servicesListText}</td>
+              <td style="font-weight: bold; color: #00ffcc;">${Number(data.totalPrice).toFixed(2)} د.أ</td>
+            `;
+            tbody.appendChild(row);
+          });
+        } catch (e) {
+          console.error("خطأ بالبحث:", e);
+          tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">حدث خطأ أثناء جلب تاريخ الزبون!</td></tr>`;
+        }
+      }
+
+      function renderUI() {
+        // 1️⃣ حسابات واجهة الحلاقين (للزبون الحالي ولليومي)
         if (activeUserId && activeUserId !== "admin") {
           const container = document.getElementById("servicesContainer");
           container.innerHTML = "";
 
+          // حصر أعداد خدمات الزبون الحالي
+          let currentCustCounts = {};
+          currentCustomer.services.forEach((s) => {
+            currentCustCounts[s.serviceId] =
+              (currentCustCounts[s.serviceId] || 0) + 1;
+          });
+
           services.forEach((service) => {
             const isCustom = service.id === "custom";
-            const count = currentBarberServiceCounts[service.id] || 0;
+            const count = currentCustCounts[service.id] || 0;
 
             const card = document.createElement("div");
             card.className = "card" + (isCustom ? " custom-service-card" : "");
@@ -1263,28 +1550,30 @@
               if (isCustom) {
                 openCustomModal();
               } else {
-                addTransaction(service.id, service.price);
+                addServiceToCurrentCustomer(service.id, service.price);
               }
             };
-
-            let pressTimer;
-            card.ontouchstart = () => {
-              pressTimer = setTimeout(() => {
-                removeTransaction(service.id);
-              }, 600);
-            };
-            card.ontouchend = () => clearTimeout(pressTimer);
-            card.ontouchmove = () => clearTimeout(pressTimer);
 
             card.innerHTML = `
               <div class="card-title">${service.name}</div>
               <div class="card-price">${isCustom ? "تحديد مبلغ مخصص" : service.price + " د.أ"}</div>
               <div class="card-footer-row">
-                <span class="badge">العدد: ${count}</span>
-                ${count > 0 ? `<button class="btn-undo-small" onclick="removeTransaction('${service.id}')" title="تراجع">✕</button>` : ""}
+                <span class="badge">العدد للزبون: ${count}</span>
+                ${count > 0 ? `<button class="btn-undo-small" onclick="removeServiceFromCurrentCustomer('${service.id}')" title="تراجع">✕</button>` : ""}
               </div>
             `;
             container.appendChild(card);
+          });
+
+          // ملخص أرباح الحلاق اليومية التراكمية من المعاملات اليومية
+          let currentBarberDailyTotal = 0;
+          let currentBarberDailyCount = 0;
+
+          dailyTransactions.forEach((tx) => {
+            if (tx.barberId === activeUserId) {
+              currentBarberDailyTotal += tx.totalPrice;
+              currentBarberDailyCount += 1;
+            }
           });
 
           const currentBarberObj = barbers.find((b) => b.id === activeUserId);
@@ -1293,89 +1582,92 @@
 
           if (currentBarberObj) {
             document.getElementById("barberSummaryTitle").innerText =
-              `📊 ملخص أرباح الحلاق (${currentBarberObj.name})`;
-            const barberShare = (currentBarberStats.total * 0.6).toFixed(2);
-            const salonShare = (currentBarberStats.total * 0.4).toFixed(2);
+              `📊 ملخص أرباح الحلاق اليومي (${currentBarberObj.name})`;
+            const barberShare = (currentBarberDailyTotal * 0.5).toFixed(2);
+            const salonShare = (currentBarberDailyTotal * 0.5).toFixed(2);
 
             const summaryRow = document.createElement("tr");
             summaryRow.innerHTML = `
               <td><b>${currentBarberObj.name}</b></td>
-              <td>${currentBarberStats.count}</td>
-              <td>${currentBarberStats.total.toFixed(2)} د.أ</td>
+              <td>${currentBarberDailyCount} فاتورة</td>
+              <td>${currentBarberDailyTotal.toFixed(2)} د.أ</td>
               <td style="color: #00ffcc;"><b>${barberShare} د.أ</b></td>
               <td style="color: #c0c0c0;">${salonShare} د.أ</td>
             `;
             summaryBody.appendChild(summaryRow);
           }
 
+          // تفاصيل الخدمات المحددة للزبون الحالي
           const detailsBody = document.getElementById("barbersDetailsBody");
           detailsBody.innerHTML = "";
 
-          if (currentBarberObj) {
+          if (currentCustomer.services.length > 0) {
             document.getElementById("barberDetailsTitle").innerText =
-              `📝 تفاصيل الخدمات المقدمة من (${currentBarberObj.name})`;
-            let hasUsedServices = false;
+              `📝 تفاصيل خدمات الزبون الحالي (${currentCustomer.name})`;
 
-            services.forEach((s) => {
-              if (s.id !== "custom") {
-                const sCount = currentBarberServiceCounts[s.id] || 0;
-                if (sCount > 0) {
-                  hasUsedServices = true;
-                  const sTotal = sCount * s.price;
-                  const row = document.createElement("tr");
-                  row.innerHTML = `
-                    <td><b>${s.name}</b></td>
-                    <td>${sCount} مرات</td>
-                    <td style="color: #00ffcc;">${sTotal.toFixed(2)} د.أ</td>
-                  `;
-                  detailsBody.appendChild(row);
-                }
-              }
-            });
-
-            currentCustomTxs.forEach((ctxItem) => {
-              hasUsedServices = true;
+            currentCustomer.services.forEach((sItem) => {
+              const sObj = services.find((x) => x.id === sItem.serviceId);
               const row = document.createElement("tr");
               row.innerHTML = `
-                <td style="color: #00ffcc;"><b>✍️ ${ctxItem.note || "خدمة مخصصة"}</b></td>
+                <td style="color: #00ffcc;"><b>${sItem.serviceId === "custom" ? "✍️ " + sItem.note : sObj.name}</b></td>
                 <td>1 مرة</td>
-                <td style="color: #00ffcc;">${Number(ctxItem.price).toFixed(2)} د.أ</td>
+                <td style="color: #00ffcc;">${Number(sItem.price).toFixed(2)} د.أ</td>
               `;
               detailsBody.appendChild(row);
             });
-
-            if (!hasUsedServices) {
-              detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم تسجيل أي خدمة لـ (${currentBarberObj.name}) حتى الآن.</td></tr>`;
-            }
+          } else {
+            document.getElementById("barberDetailsTitle").innerText =
+              `📝 تفاصيل خدمات الزبون الحالي`;
+            detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم تسجيل أي خدمة للزبون الحالي بعد.</td></tr>`;
           }
         }
 
-        // 2️⃣ واجهة المدير
-        const grandTotalSum = cashTotal + visaTotal;
-        document.getElementById("cashTotal").innerText = cashTotal.toFixed(2);
-        document.getElementById("visaTotal").innerText = visaTotal.toFixed(2);
+        // 2️⃣ حسابات واجهة المدير (اليومية والشهرية بنسبة 50% / 50%)
+        let cashTotalDay = 0;
+        let visaTotalDay = 0;
+
+        let allBarbersDayStats = {};
+        barbers.forEach((b) => {
+          allBarbersDayStats[b.id] = { count: 0, total: 0 };
+        });
+
+        dailyTransactions.forEach((tx) => {
+          if (tx.payMethod === "cash") cashTotalDay += tx.totalPrice;
+          if (tx.payMethod === "visa") visaTotalDay += tx.totalPrice;
+
+          if (allBarbersDayStats[tx.barberId]) {
+            allBarbersDayStats[tx.barberId].count += 1;
+            allBarbersDayStats[tx.barberId].total += tx.totalPrice;
+          }
+        });
+
+        const grandTotalSumDay = cashTotalDay + visaTotalDay;
+        document.getElementById("cashTotal").innerText =
+          cashTotalDay.toFixed(2);
+        document.getElementById("visaTotal").innerText =
+          visaTotalDay.toFixed(2);
         document.getElementById("grandTotal").innerText =
-          grandTotalSum.toFixed(2);
+          grandTotalSumDay.toFixed(2);
 
         const vaultBody = document.getElementById("allBarbersVaultBody");
         const vaultFoot = document.getElementById("vaultTableFoot");
         vaultBody.innerHTML = "";
         vaultFoot.innerHTML = "";
 
-        let sumTxCount = 0;
-        let sumTotalMoney = 0;
-        let sumBarbersShare = 0;
-        let sumSalonShare = 0;
+        let sumTxCountDay = 0;
+        let sumTotalMoneyDay = 0;
+        let sumBarbersShareDay = 0;
+        let sumSalonShareDay = 0;
 
         barbers.forEach((b) => {
-          const stats = allBarbersStats[b.id];
-          const barberShare = stats.total * 0.6;
-          const salonShare = stats.total * 0.4;
+          const stats = allBarbersDayStats[b.id];
+          const barberShare = stats.total * 0.5;
+          const salonShare = stats.total * 0.5;
 
-          sumTxCount += stats.count;
-          sumTotalMoney += stats.total;
-          sumBarbersShare += barberShare;
-          sumSalonShare += salonShare;
+          sumTxCountDay += stats.count;
+          sumTotalMoneyDay += stats.total;
+          sumBarbersShareDay += barberShare;
+          sumSalonShareDay += salonShare;
 
           const row = document.createElement("tr");
           row.innerHTML = `
@@ -1391,43 +1683,47 @@
         const footRow = document.createElement("tr");
         footRow.className = "total-summary-row";
         footRow.innerHTML = `
-          <td><b>إجمالي الصالون الكلي</b></td>
-          <td><b>${sumTxCount}</b></td>
-          <td><b>${sumTotalMoney.toFixed(2)} د.أ</b></td>
-          <td style="color: #00ffcc;"><b>${sumBarbersShare.toFixed(2)} د.أ</b></td>
-          <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShare.toFixed(2)} د.أ</b></td>
+          <td><b>إجمالي اليوم الكلي</b></td>
+          <td><b>${sumTxCountDay}</b></td>
+          <td><b>${sumTotalMoneyDay.toFixed(2)} د.أ</b></td>
+          <td style="color: #00ffcc;"><b>${sumBarbersShareDay.toFixed(2)} د.أ</b></td>
+          <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShareDay.toFixed(2)} د.أ</b></td>
         `;
         vaultFoot.appendChild(footRow);
 
         document.getElementById("totalSalonShareCard").innerText =
-          sumSalonShare.toFixed(2);
+          sumSalonShareDay.toFixed(2);
+
+        // جلب الإحصائيات الشهرية من سجل الزبائن
+        fetchMonthlyStats();
       }
 
-      function addTransaction(serviceId, price, note = "") {
-        if (!activeUserId || activeUserId === "admin") return;
+      /* جلب الأرباح الشهرية التراكمية من السجل الدائم */
+      async function fetchMonthlyStats() {
+        try {
+          const snapshot = await db.collection("customer_history").get();
+          let mCash = 0;
+          let mVisa = 0;
 
-        db.collection("transactions").add({
-          serviceId: serviceId,
-          price: price,
-          note: note,
-          barberId: activeUserId,
-          payMethod: selectedPayMethod,
-          timestamp: new Date().getTime(),
-        });
-      }
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.payMethod === "cash") mCash += data.totalPrice;
+            if (data.payMethod === "visa") mVisa += data.totalPrice;
+          });
 
-      function removeTransaction(serviceId) {
-        if (!activeUserId || activeUserId === "admin") return;
+          const mGrand = mCash + mVisa;
+          const mSalon = mGrand * 0.5;
 
-        let targetTx = transactions
-          .slice()
-          .reverse()
-          .find(
-            (tx) => tx.serviceId === serviceId && tx.barberId === activeUserId,
-          );
-
-        if (targetTx && targetTx.docId) {
-          db.collection("transactions").doc(targetTx.docId).delete();
+          document.getElementById("monthlyCashTotal").innerText =
+            mCash.toFixed(2);
+          document.getElementById("monthlyVisaTotal").innerText =
+            mVisa.toFixed(2);
+          document.getElementById("monthlyGrandTotal").innerText =
+            mGrand.toFixed(2);
+          document.getElementById("monthlySalonShareCard").innerText =
+            mSalon.toFixed(2);
+        } catch (e) {
+          console.error("خطأ بجلَب الأرباح الشهرية:", e);
         }
       }
 
