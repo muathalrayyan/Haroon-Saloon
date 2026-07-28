@@ -97,7 +97,7 @@
       .login-box input {
         letter-spacing: 4px;
         font-size: 22px;
-        -webkit-text-security: disc; /* لإخفاء الأرقام بنقاط الأمان */
+        -webkit-text-security: disc;
       }
 
       .btn-login-submit {
@@ -125,6 +125,7 @@
         display: none;
         flex-direction: column;
         align-items: center;
+        position: relative;
       }
 
       .header {
@@ -135,6 +136,36 @@
         align-items: center;
         justify-content: center;
         width: 100%;
+        position: relative;
+      }
+
+      /* زر تسجيل الخروج الأنيق في الزاوية العلوية */
+      .top-logout-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(255, 68, 68, 0.12);
+        color: #ff5555;
+        border: 1px solid rgba(255, 68, 68, 0.4);
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 10;
+      }
+
+      .top-logout-btn:hover,
+      .top-logout-btn:active {
+        background: #ff4444;
+        color: #ffffff;
+        box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+        transform: translateY(-2px);
       }
 
       .logo {
@@ -181,7 +212,7 @@
         margin-bottom: 25px;
         display: flex;
         flex-wrap: wrap;
-        gap: 25px;
+        gap: 30px;
         justify-content: center;
         align-items: center;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -204,35 +235,13 @@
         background: #1f2a28;
         color: #00ffcc;
         border: 1px solid #00ffcc;
-        padding: 9px 20px;
+        padding: 9px 24px;
         border-radius: 8px;
         font-size: 16px;
         font-weight: bold;
         text-align: center;
-        min-width: 130px;
+        min-width: 150px;
         box-shadow: 0 0 12px rgba(0, 255, 204, 0.15);
-      }
-
-      .btn-logout {
-        background: rgba(255, 68, 68, 0.15);
-        color: #ff5555;
-        border: 1px solid #ff444466;
-        padding: 9px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .btn-logout:hover,
-      .btn-logout:active {
-        background: #ff4444;
-        color: #fff;
-        box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
       }
 
       .pay-toggle-container {
@@ -601,6 +610,15 @@
         font-weight: bold;
         cursor: pointer;
       }
+
+      @media (max-width: 768px) {
+        .top-logout-btn {
+          position: relative;
+          top: 0;
+          left: 0;
+          margin-bottom: 15px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -627,7 +645,6 @@
           <option value="b5">أحمد</option>
         </select>
 
-        <!-- كيبورد الأرقام الفقط + انتقال تلقائي -->
         <input
           type="tel"
           inputmode="numeric"
@@ -650,6 +667,13 @@
     <!-- 1️⃣ حاوية الحلاقين (الكاونتر والخدمات) -->
     <div class="app-container" id="appContainer">
       <div class="header">
+        <button
+          class="top-logout-btn"
+          onclick="logoutUser()"
+          title="تسجيل الخروج من الحساب"
+        >
+          🚪 خروج
+        </button>
         <img
           src="logo.jpeg"
           alt="Haroun Logo"
@@ -664,16 +688,7 @@
       <div class="controls-panel">
         <div class="control-group">
           <label>الحلاق الحالي:</label>
-          <div style="display: flex; align-items: center; gap: 8px">
-            <div class="active-barber-badge" id="activeBarberDisplay">--</div>
-            <button
-              class="btn-logout"
-              onclick="logoutUser()"
-              title="تسجيل الخروج"
-            >
-              🚪 خروج
-            </button>
-          </div>
+          <div class="active-barber-badge" id="activeBarberDisplay">--</div>
         </div>
 
         <div class="control-group">
@@ -747,6 +762,13 @@
     <!-- 2️⃣ حاوية لوحة تحكم المدير الخاصة -->
     <div class="admin-container" id="adminContainer">
       <div class="header">
+        <button
+          class="top-logout-btn"
+          onclick="logoutUser()"
+          title="تسجيل الخروج من الحساب"
+        >
+          🚪 تسجيل الخروج
+        </button>
         <img
           src="logo.jpeg"
           alt="Haroun Logo"
@@ -759,19 +781,6 @@
       </div>
 
       <div class="summary-box">
-        <div
-          style="
-            display: flex;
-            justify-content: flex-end;
-            width: 100%;
-            margin-bottom: -10px;
-          "
-        >
-          <button class="btn-logout" onclick="logoutUser()">
-            🚪 تسجيل الخروج
-          </button>
-        </div>
-
         <div class="totals-row">
           <div class="total-item">
             دخل الكاش: <span id="cashTotal">0</span> د.أ
@@ -813,7 +822,7 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال الباسورد (أرقام فقط) -->
+    <!-- نافذة بوب أب إدخال الباسورد -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
         <h3 id="modalTitle">إدخال كلمة المرور</h3>
@@ -891,7 +900,6 @@
       let modalCallback = null;
       let cloudPasswords = null;
 
-      // الانتقال التلقائي للباسورد عند اختيار الحساب
       function onAccountSelected() {
         const val = document.getElementById("mainBarberSelect").value;
         if (val) {
