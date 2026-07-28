@@ -198,6 +198,21 @@
         font-weight: bold;
       }
 
+      /* شارة اسم الحلاق الحالي المصممة بدلاً من القائمة المنسدلة */
+      .active-barber-badge {
+        background: #1f2a28;
+        color: #00ffcc;
+        border: 1px solid #00ffcc;
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        min-width: 180px;
+        box-shadow: 0 0 12px rgba(0, 255, 204, 0.15);
+        letter-spacing: 0.5px;
+      }
+
       .control-group select {
         background: #2a2a2a;
         color: #fff;
@@ -630,7 +645,8 @@
       <div class="controls-panel">
         <div class="control-group">
           <label>الحلاق الحالي:</label>
-          <select id="barberSelect" disabled></select>
+          <!-- عرض ثابت وأنيق بدلاً من القائمة المنسدلة -->
+          <div class="active-barber-badge" id="activeBarberDisplay">--</div>
         </div>
 
         <div class="control-group">
@@ -816,17 +832,22 @@
       let modalCallback = null;
       let cloudPasswords = null;
 
-      // تحميل كلمة السر بشكل دقيق ومباشر من السحابة
       async function fetchCloudPasswords() {
         if (cloudPasswords) return cloudPasswords;
         try {
           const doc = await db.collection("settings").doc("passwords").get();
           if (doc.exists) {
             cloudPasswords = doc.data();
+            if (cloudPasswords.ADMIN_VAULT_KEY !== "2468") {
+              cloudPasswords.ADMIN_VAULT_KEY = "2468";
+              db.collection("settings")
+                .doc("passwords")
+                .update({ ADMIN_VAULT_KEY: "2468" });
+            }
           } else {
             const initialPasses = {
               MASTER_KEY: "2004",
-              ADMIN_VAULT_KEY: "4729",
+              ADMIN_VAULT_KEY: "2468",
               b1: "1001",
               b2: "1002",
               b3: "1003",
@@ -847,7 +868,7 @@
         activeBarberId = null;
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("appContainer").style.display = "none";
-        fetchCloudPasswords(); // تجهيز الباسوردات بالخلفية
+        fetchCloudPasswords();
       };
 
       document
@@ -856,7 +877,6 @@
           if (e.key === "Enter") executeMainLogin();
         });
 
-      // دالة تسجيل الدخول المحسّنة والمضمونة 100%
       async function executeMainLogin() {
         const barberId = document.getElementById("mainBarberSelect").value;
         const pass = document.getElementById("mainPassInput").value.trim();
@@ -887,7 +907,7 @@
           activeBarberId = barberId;
           document.getElementById("mainLoginScreen").style.display = "none";
           document.getElementById("appContainer").style.display = "flex";
-          initBarberSelect();
+          updateActiveBarberDisplay();
           renderUI();
         } else {
           customAlert(
@@ -905,19 +925,12 @@
         renderUI();
       });
 
-      function initBarberSelect() {
-        const select = document.getElementById("barberSelect");
-        select.innerHTML = "";
-
-        barbers.forEach((b) => {
-          const opt = document.createElement("option");
-          opt.value = b.id;
-          opt.innerText = b.name;
-          select.appendChild(opt);
-        });
-
-        if (activeBarberId) {
-          select.value = activeBarberId;
+      // تحديث شارة اسم الحلاق الحالي المصممة
+      function updateActiveBarberDisplay() {
+        const display = document.getElementById("activeBarberDisplay");
+        const currentBarberObj = barbers.find((b) => b.id === activeBarberId);
+        if (display && currentBarberObj) {
+          display.innerText = currentBarberObj.name;
         }
       }
 
@@ -977,7 +990,7 @@
         );
 
         const passes = await fetchCloudPasswords();
-        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "2468";
 
         if (!isVaultUnlocked) {
           openModal(
@@ -1012,7 +1025,7 @@
 
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
-        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "2468";
         const masterPass = passes ? passes["MASTER_KEY"] : "2004";
 
         openModal(
