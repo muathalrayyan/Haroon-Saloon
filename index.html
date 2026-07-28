@@ -120,7 +120,7 @@
       .app-container {
         width: 100%;
         max-width: 1200px;
-        display: none; /* يتغير لـ flex بعد اللوج إن */
+        display: none;
         flex-direction: column;
         align-items: center;
       }
@@ -807,12 +807,12 @@
       ];
 
       let transactions = [];
-      let activeBarberId = localStorage.getItem("haroun_active_barber") || null;
+      let activeBarberId = null;
       let isVaultUnlocked = false;
 
       let modalCallback = null;
 
-      // جلب الماستر كي والتفاصيل بأمان من السحابة بدون كتابتها جهاراً
+      // جلب كلمات السر من السحابة عند البداية
       let cloudPasswords = {};
       db.collection("settings")
         .doc("passwords")
@@ -821,7 +821,6 @@
           if (doc.exists) {
             cloudPasswords = doc.data();
           } else {
-            // رفع الباسوردات تلقائياً للسحابة لأول مرة لو مش موجودة
             const initialPasses = {
               MASTER_KEY: "2004",
               ADMIN_VAULT_KEY: "4729",
@@ -836,13 +835,12 @@
           }
         });
 
-      // التحقق عند البداية لو في جلسة مسجلة
+      // إجبار ظهور شاشة تسجيل الدخول في كل مرة يتم فتح الموقع أو عمل Refresh
       window.onload = function () {
-        if (activeBarberId) {
-          document.getElementById("mainLoginScreen").style.display = "none";
-          document.getElementById("appContainer").style.display = "flex";
-          initBarberSelect();
-        }
+        localStorage.removeItem("haroun_active_barber");
+        activeBarberId = null;
+        document.getElementById("mainLoginScreen").style.display = "flex";
+        document.getElementById("appContainer").style.display = "none";
       };
 
       function executeMainLogin() {
@@ -859,7 +857,6 @@
 
         if (pass === correctPass || pass === masterPass) {
           activeBarberId = barberId;
-          localStorage.setItem("haroun_active_barber", activeBarberId);
           document.getElementById("mainLoginScreen").style.display = "none";
           document.getElementById("appContainer").style.display = "flex";
           initBarberSelect();
@@ -938,6 +935,7 @@
         document.getElementById("appContainer").style.display = "none";
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("mainPassInput").value = "";
+        document.getElementById("mainBarberSelect").value = "";
       }
 
       function toggleAdminVault() {
