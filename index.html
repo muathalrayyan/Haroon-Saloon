@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>صالون هارون الرشيد - نظام الكاونتر المتقدم</title>
+    <title>صالون هارون الرشيد - نظام الكاونتر السحابي</title>
+
+    <!-- مكتبات Firebase السحابية -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
       * {
         box-sizing: border-box;
@@ -128,7 +133,6 @@
         min-width: 180px;
       }
 
-      /* تم ضبط الحاوية بتوزيع Flexbox وتنسيق محاذاة مركزية (Center Alignment) */
       .grid-container {
         display: flex;
         flex-wrap: wrap;
@@ -152,7 +156,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         position: relative;
         min-height: 125px;
-        flex: 0 1 calc(25% - 18px); /* 4 كروت بالصف على الشاشات الكبيرة */
+        flex: 0 1 calc(25% - 18px);
         min-width: 230px;
         max-width: 270px;
       }
@@ -657,6 +661,20 @@
     </div>
 
     <script>
+      // تهيئة Firebase الخاصة بمشروعك
+      const firebaseConfig = {
+        apiKey: "AIzaSyAFVoFBsZsf3SU0863UfK6GAMckyvu4hrk",
+        authDomain: "haroon-saloon.firebaseapp.com",
+        projectId: "haroon-saloon",
+        storageBucket: "haroon-saloon.firebasestorage.app",
+        messagingSenderId: "889013655333",
+        appId: "1:889013655333:web:2565734231e6ed168c2ccc",
+        measurementId: "G-0PTELSS2EL",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
       const MASTER_KEY = "2004";
       const ADMIN_VAULT_KEY = "4729";
 
@@ -682,13 +700,21 @@
         { id: "b5", name: "أحمد", pass: "1005" },
       ];
 
-      let transactions =
-        JSON.parse(localStorage.getItem("haroun_transactions")) || [];
+      let transactions = [];
       let activeBarberId = localStorage.getItem("haroun_active_barber") || null;
       let isVaultUnlocked = false;
 
       let modalCallback = null;
       let pendingSelectedBarberId = null;
+
+      // مزامنة لحظية سحابية عبر Firestore
+      db.collection("transactions").onSnapshot((snapshot) => {
+        transactions = [];
+        snapshot.forEach((doc) => {
+          transactions.push({ docId: doc.id, ...doc.data() });
+        });
+        renderUI();
+      });
 
       function initBarberSelect() {
         const select = document.getElementById("barberSelect");
@@ -842,9 +868,11 @@
           "أدخل كلمة مرور المدير لتصفير العداد وبداية يوم جديد:",
           function (enteredPass) {
             if (enteredPass === ADMIN_VAULT_KEY || enteredPass === MASTER_KEY) {
-              transactions = [];
-              localStorage.removeItem("haroun_transactions");
-              renderUI();
+              db.collection("transactions")
+                .get()
+                .then((snapshot) => {
+                  snapshot.forEach((doc) => doc.ref.delete());
+                });
               customAlert(
                 "✅ تم التصفير",
                 "تم تصفير جميع العدادات وبداية يوم جديد بنجاح.",
@@ -1045,42 +1073,28 @@
         if (!activeBarberId) return;
         const payMethod = document.getElementById("payMethodSelect").value;
 
-        transactions.push({
+        db.collection("transactions").add({
           serviceId: serviceId,
           price: price,
           barberId: activeBarberId,
           payMethod: payMethod,
           timestamp: new Date().getTime(),
         });
-
-        localStorage.setItem(
-          "haroun_transactions",
-          JSON.stringify(transactions),
-        );
-        renderUI();
       }
 
       function removeTransaction(serviceId) {
         if (!activeBarberId) return;
 
-        let indexToRemove = -1;
-        for (let i = transactions.length - 1; i >= 0; i--) {
-          if (
-            transactions[i].serviceId === serviceId &&
-            transactions[i].barberId === activeBarberId
-          ) {
-            indexToRemove = i;
-            break;
-          }
-        }
-
-        if (indexToRemove !== -1) {
-          transactions.splice(indexToRemove, 1);
-          localStorage.setItem(
-            "haroun_transactions",
-            JSON.stringify(transactions),
+        let targetTx = transactions
+          .slice()
+          .reverse()
+          .find(
+            (tx) =>
+              tx.serviceId === serviceId && tx.barberId === activeBarberId,
           );
-          renderUI();
+
+        if (targetTx && targetTx.docId) {
+          db.collection("transactions").doc(targetTx.docId).delete();
         }
       }
 
