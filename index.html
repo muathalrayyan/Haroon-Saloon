@@ -39,10 +39,88 @@
         pointer-events: none;
       }
 
+      /* شاشة تسجيل الدخول الرئيسية */
+      #mainLoginScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(13, 13, 13, 0.95);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+
+      .login-box {
+        background: #1a1a1a;
+        border: 1px solid #00ffcc;
+        border-radius: 20px;
+        padding: 35px 30px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 255, 204, 0.2);
+      }
+
+      .login-box .logo-login {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        border: 3px solid #00ffcc;
+        margin: 0 auto 15px auto;
+        display: block;
+        object-fit: cover;
+      }
+
+      .login-box select,
+      .login-box input {
+        width: 100%;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        color: #fff;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .login-box select {
+        color: #00ffcc;
+        font-weight: bold;
+      }
+
+      .login-box input {
+        letter-spacing: 4px;
+        font-size: 20px;
+      }
+
+      .btn-login-submit {
+        width: 100%;
+        background: #00ffcc;
+        color: #000;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-login-submit:hover {
+        background: #00cca3;
+      }
+
+      /* إخفاء التطبيق حتى تسجيل الدخول */
       .app-container {
         width: 100%;
         max-width: 1200px;
-        display: flex;
+        display: none; /* يتغير لـ flex بعد اللوج إن */
         flex-direction: column;
         align-items: center;
       }
@@ -500,7 +578,39 @@
   <body>
     <canvas id="bgCanvas"></canvas>
 
-    <div class="app-container">
+    <!-- شاشة اللوج إن الرئيسية عند فتح الموقع -->
+    <div id="mainLoginScreen">
+      <div class="login-box">
+        <img src="logo.jpeg" alt="Haroun Logo" class="logo-login" />
+        <h2 style="color: #fff; margin-bottom: 5px">👑 صالون هارون الرشيد</h2>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 20px">
+          يرجى تسجيل الدخول للوصول للكاونتر
+        </p>
+
+        <select id="mainBarberSelect">
+          <option value="">-- اختر الحلاق --</option>
+          <option value="b1">زيد</option>
+          <option value="b2">محمد</option>
+          <option value="b3">أبو صبرة</option>
+          <option value="b4">عبد الله</option>
+          <option value="b5">أحمد</option>
+        </select>
+
+        <input
+          type="password"
+          id="mainPassInput"
+          placeholder="••••"
+          maxlength="10"
+        />
+
+        <button class="btn-login-submit" onclick="executeMainLogin()">
+          دخول النظام
+        </button>
+      </div>
+    </div>
+
+    <!-- حاوية التطبيق الرئيسية -->
+    <div class="app-container" id="appContainer">
       <div class="header">
         <img
           src="logo.jpeg"
@@ -515,8 +625,8 @@
 
       <div class="controls-panel">
         <div class="control-group">
-          <label>اختر الحلاق الحالي:</label>
-          <select id="barberSelect" onchange="handleBarberChange()"></select>
+          <label>الحلاق الحالي:</label>
+          <select id="barberSelect" disabled></select>
         </div>
 
         <div class="control-group">
@@ -661,7 +771,6 @@
     </div>
 
     <script>
-      // تهيئة Firebase الخاصة بمشروعك
       const firebaseConfig = {
         apiKey: "AIzaSyAFVoFBsZsf3SU0863UfK6GAMckyvu4hrk",
         authDomain: "haroon-saloon.firebaseapp.com",
@@ -674,9 +783,6 @@
 
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
-
-      const MASTER_KEY = "2004";
-      const ADMIN_VAULT_KEY = "4729";
 
       const services = [
         { id: "s1", name: "باقة الطالب", price: 8 },
@@ -693,11 +799,11 @@
       ];
 
       const barbers = [
-        { id: "b1", name: "زيد", pass: "1001" },
-        { id: "b2", name: "محمد", pass: "1002" },
-        { id: "b3", name: "أبو صبرة", pass: "1003" },
-        { id: "b4", name: "عبد الله", pass: "1004" },
-        { id: "b5", name: "أحمد", pass: "1005" },
+        { id: "b1", name: "زيد" },
+        { id: "b2", name: "محمد" },
+        { id: "b3", name: "أبو صبرة" },
+        { id: "b4", name: "عبد الله" },
+        { id: "b5", name: "أحمد" },
       ];
 
       let transactions = [];
@@ -705,9 +811,64 @@
       let isVaultUnlocked = false;
 
       let modalCallback = null;
-      let pendingSelectedBarberId = null;
 
-      // مزامنة لحظية سحابية عبر Firestore
+      // جلب الماستر كي والتفاصيل بأمان من السحابة بدون كتابتها جهاراً
+      let cloudPasswords = {};
+      db.collection("settings")
+        .doc("passwords")
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            cloudPasswords = doc.data();
+          } else {
+            // رفع الباسوردات تلقائياً للسحابة لأول مرة لو مش موجودة
+            const initialPasses = {
+              MASTER_KEY: "2004",
+              ADMIN_VAULT_KEY: "4729",
+              b1: "1001",
+              b2: "1002",
+              b3: "1003",
+              b4: "1004",
+              b5: "1005",
+            };
+            db.collection("settings").doc("passwords").set(initialPasses);
+            cloudPasswords = initialPasses;
+          }
+        });
+
+      // التحقق عند البداية لو في جلسة مسجلة
+      window.onload = function () {
+        if (activeBarberId) {
+          document.getElementById("mainLoginScreen").style.display = "none";
+          document.getElementById("appContainer").style.display = "flex";
+          initBarberSelect();
+        }
+      };
+
+      function executeMainLogin() {
+        const barberId = document.getElementById("mainBarberSelect").value;
+        const pass = document.getElementById("mainPassInput").value;
+
+        if (!barberId) {
+          customAlert("⚠️ تنبيه", "يرجى اختيار الحلاق!");
+          return;
+        }
+
+        const correctPass = cloudPasswords[barberId] || "1000";
+        const masterPass = cloudPasswords["MASTER_KEY"] || "2004";
+
+        if (pass === correctPass || pass === masterPass) {
+          activeBarberId = barberId;
+          localStorage.setItem("haroun_active_barber", activeBarberId);
+          document.getElementById("mainLoginScreen").style.display = "none";
+          document.getElementById("appContainer").style.display = "flex";
+          initBarberSelect();
+          renderUI();
+        } else {
+          customAlert("⚠️ كلمة المرور خاطئة", "كلمة المرور غير صحيحة!");
+        }
+      }
+
       db.collection("transactions").onSnapshot((snapshot) => {
         transactions = [];
         snapshot.forEach((doc) => {
@@ -719,11 +880,6 @@
       function initBarberSelect() {
         const select = document.getElementById("barberSelect");
         select.innerHTML = "";
-
-        const defaultOpt = document.createElement("option");
-        defaultOpt.value = "";
-        defaultOpt.innerText = "-- اختر اسمك --";
-        select.appendChild(defaultOpt);
 
         barbers.forEach((b) => {
           const opt = document.createElement("option");
@@ -760,8 +916,6 @@
       function closeModal() {
         document.getElementById("passwordModal").classList.remove("active");
         modalCallback = null;
-        const select = document.getElementById("barberSelect");
-        if (select) select.value = activeBarberId || "";
       }
 
       function submitModalPass() {
@@ -778,50 +932,12 @@
           if (e.key === "Enter") submitModalPass();
         });
 
-      function handleBarberChange() {
-        const select = document.getElementById("barberSelect");
-        const selectedId = select.value;
-
-        if (!selectedId) {
-          activeBarberId = null;
-          localStorage.removeItem("haroun_active_barber");
-          renderUI();
-          return;
-        }
-
-        const targetBarber = barbers.find((b) => b.id === selectedId);
-
-        if (selectedId !== activeBarberId) {
-          pendingSelectedBarberId = selectedId;
-          openModal(
-            `دخول حساب: ${targetBarber.name}`,
-            `أدخل كلمة المرور الخاصة بك أو الماستر كي:`,
-            function (enteredPass) {
-              if (
-                enteredPass === targetBarber.pass ||
-                enteredPass === MASTER_KEY
-              ) {
-                activeBarberId = pendingSelectedBarberId;
-                localStorage.setItem("haroun_active_barber", activeBarberId);
-                renderUI();
-              } else {
-                customAlert(
-                  "⚠️ كلمة المرور خاطئة",
-                  "كلمة المرور التي أدخلتها غير صحيحة، يرجى المحاولة مرة أخرى.",
-                );
-                select.value = activeBarberId || "";
-              }
-            },
-          );
-        }
-      }
-
       function logoutBarber() {
-        if (!activeBarberId) return;
         activeBarberId = null;
         localStorage.removeItem("haroun_active_barber");
-        document.getElementById("barberSelect").value = "";
-        renderUI();
+        document.getElementById("appContainer").style.display = "none";
+        document.getElementById("mainLoginScreen").style.display = "flex";
+        document.getElementById("mainPassInput").value = "";
       }
 
       function toggleAdminVault() {
@@ -831,12 +947,14 @@
           "barberPersonalSection",
         );
 
+        const vaultPass = cloudPasswords["ADMIN_VAULT_KEY"] || "4729";
+
         if (!isVaultUnlocked) {
           openModal(
             "جرد الصالون العام",
             "أدخل كلمة مرور المدير للوصول للجرد العام:",
             function (enteredPass) {
-              if (enteredPass === ADMIN_VAULT_KEY) {
+              if (enteredPass === vaultPass) {
                 isVaultUnlocked = true;
                 totalsRow.style.display = "flex";
                 barberPersonalSection.style.display = "none";
@@ -863,11 +981,14 @@
       }
 
       function promptResetDay() {
+        const vaultPass = cloudPasswords["ADMIN_VAULT_KEY"] || "4729";
+        const masterPass = cloudPasswords["MASTER_KEY"] || "2004";
+
         openModal(
           "تصفير العداد",
           "أدخل كلمة مرور المدير لتصفير العداد وبداية يوم جديد:",
           function (enteredPass) {
-            if (enteredPass === ADMIN_VAULT_KEY || enteredPass === MASTER_KEY) {
+            if (enteredPass === vaultPass || enteredPass === masterPass) {
               db.collection("transactions")
                 .get()
                 .then((snapshot) => {
@@ -928,13 +1049,7 @@
           card.className = "card";
 
           card.onclick = (e) => {
-            if (!activeBarberId) {
-              customAlert(
-                "🔒 يتطلب تسجيل الدخول",
-                "يرجى اختيار اسمك وتسجيل الدخول أولاً لإضافة خدمات!",
-              );
-              return;
-            }
+            if (!activeBarberId) return;
             if (e.target.closest(".btn-undo-small")) return;
             addTransaction(service.id, service.price);
           };
@@ -1167,9 +1282,7 @@
         requestAnimationFrame(animate);
       }
 
-      initBarberSelect();
       animate();
-      renderUI();
     </script>
   </body>
 </html>
