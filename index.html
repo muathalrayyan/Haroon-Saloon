@@ -36,7 +36,7 @@
 
       .app-container {
         width: 100%;
-        max-width: 950px;
+        max-width: 1200px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -63,11 +63,15 @@
         object-fit: cover;
         object-position: 45% center;
         transform: scale(1.1);
-        transition: transform 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          border-color 0.3s ease;
+        cursor: pointer;
       }
 
       .logo:hover {
         transform: scale(1.15);
+        border-color: #ff4444;
       }
 
       h1 {
@@ -87,12 +91,12 @@
         backdrop-filter: blur(10px);
         border: 1px solid #333;
         border-radius: 12px;
-        padding: 15px 20px;
+        padding: 18px 25px;
         width: 100%;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 25px;
         justify-content: center;
         align-items: center;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -121,30 +125,15 @@
         outline: none;
         cursor: pointer;
         text-align: center;
+        min-width: 180px;
       }
 
-      .btn-exit-barber {
-        background: rgba(255, 68, 68, 0.2);
-        color: #ff4444;
-        border: 1px solid #ff444488;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        align-self: flex-end;
-      }
-
-      .btn-exit-barber:hover {
-        background: #ff4444;
-        color: #fff;
-      }
-
+      /* تم ضبط الحاوية بتوزيع Flexbox وتنسيق محاذاة مركزية (Center Alignment) */
       .grid-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 18px;
         width: 100%;
         margin-bottom: 25px;
       }
@@ -153,7 +142,7 @@
         background: rgba(30, 30, 30, 0.9);
         border: 1px solid #333;
         border-radius: 12px;
-        padding: 15px;
+        padding: 18px 15px;
         text-align: center;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -162,13 +151,10 @@
         justify-content: space-between;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         position: relative;
-      }
-
-      .card:last-child:nth-child(11) {
-        grid-column: 1 / -1;
-        max-width: 250px;
-        justify-self: center;
-        width: 100%;
+        min-height: 125px;
+        flex: 0 1 calc(25% - 18px); /* 4 كروت بالصف على الشاشات الكبيرة */
+        min-width: 230px;
+        max-width: 270px;
       }
 
       .card:hover {
@@ -512,7 +498,13 @@
 
     <div class="app-container">
       <div class="header">
-        <img src="logo.jpeg" alt="Haroun Logo" class="logo" />
+        <img
+          src="logo.jpeg"
+          alt="Haroun Logo"
+          class="logo"
+          onclick="logoutBarber()"
+          title="اضغط هنا للخروج وقفل الحساب"
+        />
         <h1>👑 صالون هارون الرشيد</h1>
         <div class="subtitle">الجبيهة - عمان</div>
       </div>
@@ -530,16 +522,11 @@
             <option value="visa">فيزا (Visa)</option>
           </select>
         </div>
-
-        <button class="btn-exit-barber" onclick="logoutBarber()">
-          🚪 خروج وقفل الحساب
-        </button>
       </div>
 
       <div class="grid-container" id="servicesContainer"></div>
 
       <div class="summary-box">
-        <!-- قسم الجرد العام الشامل للمدير -->
         <div class="admin-vault-container">
           <button
             class="btn-toggle-vault"
@@ -591,7 +578,6 @@
           </div>
         </div>
 
-        <!-- الأقسام الشخصية للحلاق (تختفي عند فتح الجرد العام) -->
         <div id="barberPersonalSection">
           <div class="section-title" id="barberSummaryTitle">
             📊 ملخص أرباح الحلاق
@@ -638,7 +624,6 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال الباسورد -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
         <h3 id="modalTitle">إدخال كلمة المرور</h3>
@@ -663,7 +648,6 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب التحذير المخصصة بالمنتصف -->
     <div class="modal-overlay" id="alertModal">
       <div class="alert-modal-card">
         <h3 id="alertTitle">⚠️ تنبيه</h3>
@@ -807,6 +791,7 @@
       }
 
       function logoutBarber() {
+        if (!activeBarberId) return;
         activeBarberId = null;
         localStorage.removeItem("haroun_active_barber");
         document.getElementById("barberSelect").value = "";
@@ -828,7 +813,7 @@
               if (enteredPass === ADMIN_VAULT_KEY) {
                 isVaultUnlocked = true;
                 totalsRow.style.display = "flex";
-                barberPersonalSection.style.display = "none"; // إخفاء القسم الخاص بالحلاق عند فتح الجرد
+                barberPersonalSection.style.display = "none";
                 vaultBtn.innerText = "🔓 إغلاق الجرد العام";
                 vaultBtn.style.borderColor = "#ff4444";
                 vaultBtn.style.color = "#ff4444";
@@ -844,7 +829,7 @@
         } else {
           isVaultUnlocked = false;
           totalsRow.style.display = "none";
-          barberPersonalSection.style.display = "block"; // إعادة إظهار القسم الخاص بالحلاق عند إغلاق الجرد
+          barberPersonalSection.style.display = "block";
           vaultBtn.innerText = "🔒 فتح جرد الصالون العام (للمدير)";
           vaultBtn.style.borderColor = "#00ffcc66";
           vaultBtn.style.color = "#00ffcc";
@@ -952,7 +937,6 @@
         document.getElementById("visaTotal").innerText = visaTotal;
         document.getElementById("grandTotal").innerText = grandTotalSum;
 
-        // تعبئة التقرير المالي الشامل في الجرد العام للمدير
         if (isVaultUnlocked) {
           const vaultBody = document.getElementById("allBarbersVaultBody");
           const vaultFoot = document.getElementById("vaultTableFoot");
@@ -1000,7 +984,6 @@
             sumSalonShare.toFixed(2);
         }
 
-        // ملخص أرباح الحلاق الفردي
         const summaryBody = document.getElementById("barbersSummaryBody");
         summaryBody.innerHTML = "";
 
@@ -1025,7 +1008,6 @@
           summaryBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">يرجى تسجيل الدخول لعرض ملخص الحساب.</td></tr>`;
         }
 
-        // تفاصيل الخدمات للحلاق الفردي
         const detailsBody = document.getElementById("barbersDetailsBody");
         detailsBody.innerHTML = "";
 
