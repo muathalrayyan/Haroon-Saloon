@@ -96,7 +96,8 @@
 
       .login-box input {
         letter-spacing: 4px;
-        font-size: 20px;
+        font-size: 22px;
+        -webkit-text-security: disc; /* لإخفاء الأرقام بنقاط الأمان */
       }
 
       .btn-login-submit {
@@ -203,26 +204,62 @@
         background: #1f2a28;
         color: #00ffcc;
         border: 1px solid #00ffcc;
-        padding: 9px 24px;
+        padding: 9px 20px;
         border-radius: 8px;
         font-size: 16px;
         font-weight: bold;
         text-align: center;
-        min-width: 180px;
+        min-width: 130px;
         box-shadow: 0 0 12px rgba(0, 255, 204, 0.15);
       }
 
-      .control-group select {
-        background: #2a2a2a;
+      .btn-logout {
+        background: rgba(255, 68, 68, 0.15);
+        color: #ff5555;
+        border: 1px solid #ff444466;
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-logout:hover,
+      .btn-logout:active {
+        background: #ff4444;
         color: #fff;
-        border: 1px solid #00ffcc;
-        padding: 8px 16px;
+        box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+      }
+
+      .pay-toggle-container {
+        display: flex;
+        gap: 8px;
+        background: #1a1a1a;
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid #333;
+      }
+
+      .pay-btn {
+        background: transparent;
+        color: #888;
+        border: none;
+        padding: 8px 18px;
         border-radius: 8px;
         font-size: 15px;
-        outline: none;
+        font-weight: bold;
         cursor: pointer;
-        text-align: center;
-        min-width: 180px;
+        transition: all 0.2s ease;
+      }
+
+      .pay-btn.active {
+        background: #00ffcc;
+        color: #000;
+        box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
       }
 
       .grid-container {
@@ -241,7 +278,10 @@
         padding: 18px 15px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition:
+          transform 0.12s ease,
+          box-shadow 0.12s ease,
+          border-color 0.12s ease;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -251,6 +291,7 @@
         flex: 0 1 calc(25% - 18px);
         min-width: 230px;
         max-width: 270px;
+        touch-action: manipulation;
       }
 
       .card:hover {
@@ -259,9 +300,12 @@
         box-shadow: 0 6px 12px rgba(0, 255, 204, 0.15);
       }
 
-      .card:active {
-        transform: scale(0.95);
-        background: #2a2a2a;
+      .card:active,
+      .card.card-tap-feedback {
+        transform: scale(0.92) !important;
+        border-color: #00ffcc !important;
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.5) !important;
+        background: #252525 !important;
       }
 
       .card-title {
@@ -282,35 +326,37 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
         margin-top: 5px;
       }
 
       .btn-undo-small {
-        background: rgba(255, 68, 68, 0.15);
+        background: rgba(255, 68, 68, 0.2);
         color: #ff4444;
-        border: 1px solid #ff444455;
+        border: 1px solid #ff444477;
         border-radius: 50%;
-        width: 26px;
-        height: 26px;
-        font-size: 12px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        font-weight: bold;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
+        touch-action: manipulation;
       }
 
       .btn-undo-small:active {
         background: #ff4444;
         color: #fff;
-        transform: scale(0.9);
+        transform: scale(0.85);
       }
 
       .badge {
         background: #222;
         color: #00ffcc;
-        padding: 4px 10px;
+        padding: 6px 12px;
         border-radius: 20px;
         font-weight: bold;
         font-size: 13px;
@@ -486,11 +532,12 @@
         color: #00ffcc;
         text-align: center;
         padding: 12px;
-        font-size: 20px;
+        font-size: 22px;
         letter-spacing: 4px;
         border-radius: 8px;
         outline: none;
         margin-bottom: 20px;
+        -webkit-text-security: disc;
       }
 
       .modal-card input:focus {
@@ -568,7 +615,7 @@
           يرجى تسجيل الدخول للوصول للنظام
         </p>
 
-        <select id="mainBarberSelect">
+        <select id="mainBarberSelect" onchange="onAccountSelected()">
           <option value="">-- اختر الحساب --</option>
           <option value="admin" style="color: #00ffcc; font-weight: bold">
             👑 المدير (إدارة الصالون)
@@ -580,8 +627,11 @@
           <option value="b5">أحمد</option>
         </select>
 
+        <!-- كيبورد الأرقام الفقط + انتقال تلقائي -->
         <input
-          type="password"
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9]*"
           id="mainPassInput"
           placeholder="••••"
           maxlength="10"
@@ -614,15 +664,38 @@
       <div class="controls-panel">
         <div class="control-group">
           <label>الحلاق الحالي:</label>
-          <div class="active-barber-badge" id="activeBarberDisplay">--</div>
+          <div style="display: flex; align-items: center; gap: 8px">
+            <div class="active-barber-badge" id="activeBarberDisplay">--</div>
+            <button
+              class="btn-logout"
+              onclick="logoutUser()"
+              title="تسجيل الخروج"
+            >
+              🚪 خروج
+            </button>
+          </div>
         </div>
 
         <div class="control-group">
           <label>طريقة الدفع:</label>
-          <select id="payMethodSelect">
-            <option value="cash">كاش (Cash)</option>
-            <option value="visa">فيزا (Visa)</option>
-          </select>
+          <div class="pay-toggle-container">
+            <button
+              type="button"
+              class="pay-btn active"
+              id="payCashBtn"
+              onclick="setPayMethod('cash')"
+            >
+              💵 كاش
+            </button>
+            <button
+              type="button"
+              class="pay-btn"
+              id="payVisaBtn"
+              onclick="setPayMethod('visa')"
+            >
+              💳 فيزا
+            </button>
+          </div>
         </div>
       </div>
 
@@ -686,6 +759,19 @@
       </div>
 
       <div class="summary-box">
+        <div
+          style="
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-bottom: -10px;
+          "
+        >
+          <button class="btn-logout" onclick="logoutUser()">
+            🚪 تسجيل الخروج
+          </button>
+        </div>
+
         <div class="totals-row">
           <div class="total-item">
             دخل الكاش: <span id="cashTotal">0</span> د.أ
@@ -727,13 +813,15 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال الباسورد -->
+    <!-- نافذة بوب أب إدخال الباسورد (أرقام فقط) -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
         <h3 id="modalTitle">إدخال كلمة المرور</h3>
         <p id="modalDesc">يرجى إدخال كلمة السر للمتابعة</p>
         <input
-          type="password"
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9]*"
           id="modalPassInput"
           placeholder="••••"
           maxlength="10"
@@ -799,10 +887,29 @@
 
       let transactions = [];
       let activeUserId = null;
+      let selectedPayMethod = "cash";
       let modalCallback = null;
       let cloudPasswords = null;
 
-      // جلب وتحديث كلمات المرور بالسحابة وفق المنطق الجديد
+      // الانتقال التلقائي للباسورد عند اختيار الحساب
+      function onAccountSelected() {
+        const val = document.getElementById("mainBarberSelect").value;
+        if (val) {
+          const input = document.getElementById("mainPassInput");
+          input.focus();
+        }
+      }
+
+      function setPayMethod(method) {
+        selectedPayMethod = method;
+        document
+          .getElementById("payCashBtn")
+          .classList.toggle("active", method === "cash");
+        document
+          .getElementById("payVisaBtn")
+          .classList.toggle("active", method === "visa");
+      }
+
       async function fetchCloudPasswords() {
         if (cloudPasswords) return cloudPasswords;
         try {
@@ -831,9 +938,9 @@
             }
           } else {
             const initialPasses = {
-              MASTER_KEY: "2004", // للعمال فقط
-              ADMIN_VAULT_KEY: "4729", // للمدير فقط
-              RESET_KEY: "0000", // للتصفير فقط
+              MASTER_KEY: "2004",
+              ADMIN_VAULT_KEY: "4729",
+              RESET_KEY: "0000",
               b1: "1001",
               b2: "1002",
               b3: "1003",
@@ -1057,6 +1164,10 @@
 
             card.onclick = (e) => {
               if (e.target.closest(".btn-undo-small")) return;
+
+              card.classList.add("card-tap-feedback");
+              setTimeout(() => card.classList.remove("card-tap-feedback"), 150);
+
               addTransaction(service.id, service.price);
             };
 
@@ -1087,7 +1198,6 @@
           if (currentBarberObj) {
             document.getElementById("barberSummaryTitle").innerText =
               `📊 ملخص أرباح الحلاق (${currentBarberObj.name})`;
-            // الحسبة الجديدة: 60% للحلاق و40% للصالون
             const barberShare = (currentBarberStats.total * 0.6).toFixed(2);
             const salonShare = (currentBarberStats.total * 0.4).toFixed(2);
 
@@ -1149,7 +1259,6 @@
 
         barbers.forEach((b) => {
           const stats = allBarbersStats[b.id];
-          // الحسبة الجديدة للمدير: 60% للحلاقين و40% للصالون
           const barberShare = stats.total * 0.6;
           const salonShare = stats.total * 0.4;
 
@@ -1186,13 +1295,12 @@
 
       function addTransaction(serviceId, price) {
         if (!activeUserId || activeUserId === "admin") return;
-        const payMethod = document.getElementById("payMethodSelect").value;
 
         db.collection("transactions").add({
           serviceId: serviceId,
           price: price,
           barberId: activeUserId,
-          payMethod: payMethod,
+          payMethod: selectedPayMethod,
           timestamp: new Date().getTime(),
         });
       }
