@@ -496,7 +496,6 @@
         background: #cc0000;
       }
 
-      /* صندوق البحث عن تاريخ الزبون للمدير */
       .search-box-container {
         display: flex;
         gap: 10px;
@@ -1087,11 +1086,10 @@
       let modalCallback = null;
       let cloudPasswords = null;
 
-      // بيانات الزبون الحالي في الواجهة
       let currentCustomer = {
         name: "",
         phone: "",
-        services: [], // خدمات الزبون الحالي المسجلة
+        services: [],
       };
 
       function onAccountSelected() {
@@ -1184,7 +1182,7 @@
             document.getElementById("appContainer").style.display = "flex";
             document.getElementById("adminContainer").style.display = "none";
             updateActiveBarberDisplay();
-            openCustomerModal(); // إجبار الحلاق على فتح شاشة الزبون فور الدخول
+            openCustomerModal();
           }
           renderUI();
         } else {
@@ -1195,7 +1193,6 @@
         }
       }
 
-      // الاستماع للـ Transactions اليومية
       db.collection("daily_transactions").onSnapshot((snapshot) => {
         dailyTransactions = [];
         snapshot.forEach((doc) => {
@@ -1212,7 +1209,6 @@
         }
       }
 
-      /* إدارة الزبون الحالي */
       function openCustomerModal() {
         document.getElementById("custNameInput").value = "";
         document.getElementById("custPhoneInput").value = "";
@@ -1232,7 +1228,7 @@
         currentCustomer = {
           name: name,
           phone: phone,
-          services: [], // مصفر للزبون الجديد
+          services: [],
         };
 
         document.getElementById("activeCustomerDisplay").innerText =
@@ -1269,7 +1265,7 @@
         renderUI();
       }
 
-      /* حفظ زيارة الزبون بالفاتورة الكاملة بالسحابة */
+      /* حفظ زيارة الزبون بالفاتورة الكاملة بالسحابة ثم الخروج التلقائي */
       async function saveCustomerVisit() {
         if (!currentCustomer.name || !currentCustomer.phone) {
           customAlert("⚠️ تنبيه", "يرجى تحديد الزبون ورقم هاتفه أولاً!");
@@ -1303,10 +1299,7 @@
         };
 
         try {
-          // 1. حفظ في سجل الزبائن الدائم
           await db.collection("customer_history").add(visitRecord);
-
-          // 2. حفظ في سجل اليومي للكاونتر
           await db.collection("daily_transactions").add(visitRecord);
 
           customAlert(
@@ -1314,12 +1307,8 @@
             `تم إنهاء الفاتورة وحفظ الزيارة للزبون (${currentCustomer.name}) بنجاح!`,
           );
 
-          // تصفير الزبون الحالي لاستقبال زبون جديد
-          currentCustomer = { name: "", phone: "", services: [] };
-          document.getElementById("activeCustomerDisplay").innerText =
-            "لم يحدد";
-          openCustomerModal();
-          renderUI();
+          // الخروج التلقائي للوصول لشاشة اللوج إن فوراً
+          logoutUser();
         } catch (e) {
           console.error("خطأ بالحفظ:", e);
           customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الفاتورة بالسحابة!");
@@ -1406,9 +1395,9 @@
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("mainPassInput").value = "";
         document.getElementById("mainBarberSelect").value = "";
+        document.getElementById("customerModal").classList.remove("active");
       }
 
-      /* تصفير العداد اليومي فقط (لا يمس سجل الزبائن الدائم) */
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
@@ -1438,7 +1427,6 @@
         );
       }
 
-      /* تصفير أرباح الشهر (حذف السجل الشهر التراكمي للمدير) */
       async function promptResetMonth() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
@@ -1465,7 +1453,6 @@
         );
       }
 
-      /* البحث عن تاريخ وتفاصيل زبون برقم هاتفه للمدير */
       async function searchCustomerHistory() {
         const phone = document.getElementById("searchPhoneInput").value.trim();
         const tbody = document.getElementById("customerHistoryBody");
@@ -1522,12 +1509,10 @@
       }
 
       function renderUI() {
-        // 1️⃣ حسابات واجهة الحلاقين (للزبون الحالي ولليومي)
         if (activeUserId && activeUserId !== "admin") {
           const container = document.getElementById("servicesContainer");
           container.innerHTML = "";
 
-          // حصر أعداد خدمات الزبون الحالي
           let currentCustCounts = {};
           currentCustomer.services.forEach((s) => {
             currentCustCounts[s.serviceId] =
@@ -1565,7 +1550,6 @@
             container.appendChild(card);
           });
 
-          // ملخص أرباح الحلاق اليومية التراكمية من المعاملات اليومية
           let currentBarberDailyTotal = 0;
           let currentBarberDailyCount = 0;
 
@@ -1597,7 +1581,6 @@
             summaryBody.appendChild(summaryRow);
           }
 
-          // تفاصيل الخدمات المحددة للزبون الحالي
           const detailsBody = document.getElementById("barbersDetailsBody");
           detailsBody.innerHTML = "";
 
@@ -1622,7 +1605,6 @@
           }
         }
 
-        // 2️⃣ حسابات واجهة المدير (اليومية والشهرية بنسبة 50% / 50%)
         let cashTotalDay = 0;
         let visaTotalDay = 0;
 
@@ -1694,11 +1676,9 @@
         document.getElementById("totalSalonShareCard").innerText =
           sumSalonShareDay.toFixed(2);
 
-        // جلب الإحصائيات الشهرية من سجل الزبائن
         fetchMonthlyStats();
       }
 
-      /* جلب الأرباح الشهرية التراكمية من السجل الدائم */
       async function fetchMonthlyStats() {
         try {
           const snapshot = await db.collection("customer_history").get();
