@@ -640,8 +640,8 @@
                   <th>الحلاق</th>
                   <th>إجمالي العمليات</th>
                   <th>المبلغ الإجمالي</th>
-                  <th>حصة الحلاق (40%)</th>
-                  <th>حصة الصالون (60%)</th>
+                  <th>حصة الحلاق (60%)</th>
+                  <th>حصة الصالون (40%)</th>
                 </tr>
               </thead>
               <tbody id="barbersSummaryBody"></tbody>
@@ -697,13 +697,13 @@
             الإجمالي الكلي: <span id="grandTotal">0</span> د.أ
           </div>
           <div class="total-item highlight-salon">
-            👑 صافي أرباح الصالون (60%):
+            👑 صافي أرباح الصالون (40%):
             <span id="totalSalonShareCard">0</span> د.أ
           </div>
         </div>
 
         <div class="section-title">
-          📊 التقرير المالي الشامل وتوزيع الأرباح (40% / 60%)
+          📊 التقرير المالي الشامل وتوزيع الأرباح (60% / 40%)
         </div>
         <div class="table-responsive">
           <table class="report-table">
@@ -712,8 +712,8 @@
                 <th>الحلاق</th>
                 <th>العمليات</th>
                 <th>المبلغ الإجمالي</th>
-                <th>حصة الحلاقين (40%)</th>
-                <th>حصة الصالون (60%)</th>
+                <th>حصة الحلاقين (60%)</th>
+                <th>حصة الصالون (40%)</th>
               </tr>
             </thead>
             <tbody id="allBarbersVaultBody"></tbody>
@@ -810,7 +810,6 @@
           if (doc.exists) {
             cloudPasswords = doc.data();
 
-            // تحديث القيم بالسحابة تلقائياً للقيم المطلوبة
             let needsUpdate = false;
             if (cloudPasswords.ADMIN_VAULT_KEY !== "4729") {
               cloudPasswords.ADMIN_VAULT_KEY = "4729";
@@ -891,13 +890,11 @@
         let isAccessGranted = false;
 
         if (userId === "admin") {
-          // المدير يفتح بكلمة المرور 4729 فقط (الماستر كي لا يعمل هنا)
           const adminPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
           if (pass === adminPass) {
             isAccessGranted = true;
           }
         } else {
-          // الحلاقين يفتحون بكلمة مرورهم الخاصة أو الماستر كي 2004
           const barberPass = passes ? passes[userId] : null;
           const masterPass = passes ? passes["MASTER_KEY"] : "2004";
           if (pass === barberPass || pass === masterPass) {
@@ -990,7 +987,6 @@
         document.getElementById("mainBarberSelect").value = "";
       }
 
-      // تصفير العداد بكلمة المرور 0000 فقط
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : "0000";
@@ -1091,8 +1087,9 @@
           if (currentBarberObj) {
             document.getElementById("barberSummaryTitle").innerText =
               `📊 ملخص أرباح الحلاق (${currentBarberObj.name})`;
-            const barberShare = (currentBarberStats.total * 0.4).toFixed(2);
-            const salonShare = (currentBarberStats.total * 0.6).toFixed(2);
+            // الحسبة الجديدة: 60% للحلاق و40% للصالون
+            const barberShare = (currentBarberStats.total * 0.6).toFixed(2);
+            const salonShare = (currentBarberStats.total * 0.4).toFixed(2);
 
             const summaryRow = document.createElement("tr");
             summaryRow.innerHTML = `
@@ -1152,8 +1149,9 @@
 
         barbers.forEach((b) => {
           const stats = allBarbersStats[b.id];
-          const barberShare = stats.total * 0.4;
-          const salonShare = stats.total * 0.6;
+          // الحسبة الجديدة للمدير: 60% للحلاقين و40% للصالون
+          const barberShare = stats.total * 0.6;
+          const salonShare = stats.total * 0.4;
 
           sumTxCount += stats.count;
           sumTotalMoney += stats.total;
