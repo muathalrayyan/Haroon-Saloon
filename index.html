@@ -848,9 +848,10 @@
         />
         <input
           type="number"
+          step="any"
           inputmode="decimal"
           id="customPriceInput"
-          placeholder="المبلغ المستلم بالدينار (مثال: 5)"
+          placeholder="المبلغ المستلم بالدينار (مثال: 2.5)"
         />
         <div class="modal-btns">
           <button
@@ -920,18 +921,40 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
 
+      // قائمة جميع الخدمات والأسعار المحدثة بالكامل
       const services = [
+        // الباقات
         { id: "s1", name: "باقة الطالب", price: 8 },
         { id: "s2", name: "باقة الخريج", price: 10 },
         { id: "s3", name: "باقة هارون الرشيد", price: 15 },
         { id: "s4", name: "باقة العريس", price: 50 },
-        { id: "s5", name: "حلاقة شعر", price: 7 },
+
+        // خدمات الشعر والذقن
+        { id: "s5", name: "سشوار", price: 4 },
         { id: "s6", name: "حلاقة ذقن", price: 4 },
-        { id: "s7", name: "حلاقة ذقن بخار", price: 5 },
-        { id: "s8", name: "سشوار", price: 4 },
-        { id: "s9", name: "تنظيف بشرة عميق", price: 25 },
-        { id: "s10", name: "مساج كامل", price: 35 },
-        { id: "s11", name: "عطور فخمة", price: 10 },
+        { id: "s7", name: "حناء أو صبغة ذقن", price: 5 },
+        { id: "s8", name: "حلاقة ذقن على البخار", price: 5 },
+        { id: "s9", name: "حلاقة شعر", price: 7 },
+        { id: "s10", name: "حناء أو صبغة شعر وذقن", price: 15 },
+        { id: "s11", name: "كرياتين بروتين", price: 20 },
+
+        // العناية بالوجه والبشرة
+        { id: "s12", name: "شمع", price: 2 },
+        { id: "s13", name: "خيط", price: 2 },
+        { id: "s14", name: "ماسك نضارة", price: 2 },
+        { id: "s15", name: "تنظيف بشرة ناعم مع ماسك وبخار", price: 10 },
+        { id: "s16", name: "تنظيف بشرة عميق مع بخار وماسك", price: 25 },
+
+        // الراحة والعناية بالجسم
+        { id: "s17", name: "مساج ناعم", price: 2 },
+        { id: "s18", name: "بدكير اليدين", price: 8 },
+        { id: "s19", name: "بدكير كامل", price: 15 },
+        { id: "s20", name: "مساج كامل للجسم", price: 35 },
+
+        // العطور
+        { id: "s21", name: "عطور هارون الرشيد الفخمة", price: 10 },
+
+        // خدمة مخصصة / خصومات
         { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
       ];
 
@@ -1111,7 +1134,6 @@
           if (e.key === "Enter") submitModalPass();
         });
 
-      /* فتح وإغلاق دالة الخدمة المخصصة */
       function openCustomModal() {
         document.getElementById("customNoteInput").value = "";
         document.getElementById("customPriceInput").value = "";
@@ -1197,7 +1219,7 @@
 
         let currentBarberStats = { count: 0, total: 0 };
         let currentBarberServiceCounts = {};
-        let currentCustomTxs = []; // لحفظ الخدمات المخصصة للحلاق الحالي
+        let currentCustomTxs = [];
 
         transactions.forEach((tx) => {
           if (tx.payMethod === "cash") cashTotal += tx.price;
@@ -1279,7 +1301,7 @@
             summaryRow.innerHTML = `
               <td><b>${currentBarberObj.name}</b></td>
               <td>${currentBarberStats.count}</td>
-              <td>${currentBarberStats.total} د.أ</td>
+              <td>${currentBarberStats.total.toFixed(2)} د.أ</td>
               <td style="color: #00ffcc;"><b>${barberShare} د.أ</b></td>
               <td style="color: #c0c0c0;">${salonShare} د.أ</td>
             `;
@@ -1304,21 +1326,20 @@
                   row.innerHTML = `
                     <td><b>${s.name}</b></td>
                     <td>${sCount} مرات</td>
-                    <td style="color: #00ffcc;">${sTotal} د.أ</td>
+                    <td style="color: #00ffcc;">${sTotal.toFixed(2)} د.أ</td>
                   `;
                   detailsBody.appendChild(row);
                 }
               }
             });
 
-            // إظهار الخدمات المخصصة إن وجدت بشكل مستقل ومفصل
             currentCustomTxs.forEach((ctxItem) => {
               hasUsedServices = true;
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td style="color: #00ffcc;"><b>✍️ ${ctxItem.note || "خدمة مخصصة"}</b></td>
                 <td>1 مرة</td>
-                <td style="color: #00ffcc;">${ctxItem.price} د.أ</td>
+                <td style="color: #00ffcc;">${Number(ctxItem.price).toFixed(2)} د.أ</td>
               `;
               detailsBody.appendChild(row);
             });
@@ -1331,9 +1352,10 @@
 
         // 2️⃣ واجهة المدير
         const grandTotalSum = cashTotal + visaTotal;
-        document.getElementById("cashTotal").innerText = cashTotal;
-        document.getElementById("visaTotal").innerText = visaTotal;
-        document.getElementById("grandTotal").innerText = grandTotalSum;
+        document.getElementById("cashTotal").innerText = cashTotal.toFixed(2);
+        document.getElementById("visaTotal").innerText = visaTotal.toFixed(2);
+        document.getElementById("grandTotal").innerText =
+          grandTotalSum.toFixed(2);
 
         const vaultBody = document.getElementById("allBarbersVaultBody");
         const vaultFoot = document.getElementById("vaultTableFoot");
@@ -1359,7 +1381,7 @@
           row.innerHTML = `
             <td><b>${b.name}</b></td>
             <td>${stats.count}</td>
-            <td>${stats.total} د.أ</td>
+            <td>${stats.total.toFixed(2)} د.أ</td>
             <td style="color: #00ffcc;">${barberShare.toFixed(2)} د.أ</td>
             <td style="color: #c0c0c0;">${salonShare.toFixed(2)} د.أ</td>
           `;
@@ -1371,7 +1393,7 @@
         footRow.innerHTML = `
           <td><b>إجمالي الصالون الكلي</b></td>
           <td><b>${sumTxCount}</b></td>
-          <td><b>${sumTotalMoney} د.أ</b></td>
+          <td><b>${sumTotalMoney.toFixed(2)} د.أ</b></td>
           <td style="color: #00ffcc;"><b>${sumBarbersShare.toFixed(2)} د.أ</b></td>
           <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShare.toFixed(2)} د.أ</b></td>
         `;
