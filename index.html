@@ -918,45 +918,15 @@
           .classList.toggle("active", method === "visa");
       }
 
+      // جلب كلمات السر من السحابة بدون كتابتها في الكود
       async function fetchCloudPasswords() {
         if (cloudPasswords) return cloudPasswords;
         try {
           const doc = await db.collection("settings").doc("passwords").get();
           if (doc.exists) {
             cloudPasswords = doc.data();
-
-            let needsUpdate = false;
-            if (cloudPasswords.ADMIN_VAULT_KEY !== "4729") {
-              cloudPasswords.ADMIN_VAULT_KEY = "4729";
-              needsUpdate = true;
-            }
-            if (cloudPasswords.RESET_KEY !== "0000") {
-              cloudPasswords.RESET_KEY = "0000";
-              needsUpdate = true;
-            }
-            if (cloudPasswords.MASTER_KEY !== "2004") {
-              cloudPasswords.MASTER_KEY = "2004";
-              needsUpdate = true;
-            }
-
-            if (needsUpdate) {
-              db.collection("settings")
-                .doc("passwords")
-                .set(cloudPasswords, { merge: true });
-            }
           } else {
-            const initialPasses = {
-              MASTER_KEY: "2004",
-              ADMIN_VAULT_KEY: "4729",
-              RESET_KEY: "0000",
-              b1: "1001",
-              b2: "1002",
-              b3: "1003",
-              b4: "1004",
-              b5: "1005",
-            };
-            await db.collection("settings").doc("passwords").set(initialPasses);
-            cloudPasswords = initialPasses;
+            console.error("لم يتم العثور على مستند كلمات المرور في الفايربيس!");
           }
         } catch (e) {
           console.error("خطأ بجلَب البيانات:", e);
@@ -1005,13 +975,13 @@
         let isAccessGranted = false;
 
         if (userId === "admin") {
-          const adminPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+          const adminPass = passes ? passes["ADMIN_VAULT_KEY"] : null;
           if (pass === adminPass) {
             isAccessGranted = true;
           }
         } else {
           const barberPass = passes ? passes[userId] : null;
-          const masterPass = passes ? passes["MASTER_KEY"] : "2004";
+          const masterPass = passes ? passes["MASTER_KEY"] : null;
           if (pass === barberPass || pass === masterPass) {
             isAccessGranted = true;
           }
@@ -1104,14 +1074,14 @@
 
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
-        const resetPass = passes ? passes["RESET_KEY"] : "0000";
+        const resetPass = passes ? passes["RESET_KEY"] : null;
 
         openModal(
           "تصفير العداد",
           "أدخل كلمة المرور لتصفير العداد وبداية يوم جديد:",
           function (enteredPass) {
             const p = enteredPass.trim();
-            if (p === resetPass) {
+            if (resetPass && p === resetPass) {
               db.collection("transactions")
                 .get()
                 .then((snapshot) => {
