@@ -458,7 +458,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 999;
+        z-index: 99999;
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.25s ease;
@@ -603,7 +603,11 @@
           maxlength="10"
         />
 
-        <button class="btn-login-submit" onclick="executeMainLogin()">
+        <button
+          class="btn-login-submit"
+          id="loginBtn"
+          onclick="executeMainLogin()"
+        >
           دخول النظام
         </button>
       </div>
@@ -809,15 +813,14 @@
       let transactions = [];
       let activeBarberId = null;
       let isVaultUnlocked = false;
-
       let modalCallback = null;
+      let cloudPasswords = null;
 
-      // جلب كلمات السر من السحابة عند البداية
-      let cloudPasswords = {};
-      db.collection("settings")
-        .doc("passwords")
-        .get()
-        .then((doc) => {
+      // تحميل كلمة السر بشكل دقيق ومباشر من السحابة
+      async function fetchCloudPasswords() {
+        if (cloudPasswords) return cloudPasswords;
+        try {
+          const doc = await db.collection("settings").doc("passwords").get();
           if (doc.exists) {
             cloudPasswords = doc.data();
           } else {
@@ -830,30 +833,55 @@
               b4: "1004",
               b5: "1005",
             };
-            db.collection("settings").doc("passwords").set(initialPasses);
+            await db.collection("settings").doc("passwords").set(initialPasses);
             cloudPasswords = initialPasses;
           }
-        });
+        } catch (e) {
+          console.error("خطأ بجلَب البيانات:", e);
+        }
+        return cloudPasswords;
+      }
 
-      // إجبار ظهور شاشة تسجيل الدخول في كل مرة يتم فتح الموقع أو عمل Refresh
       window.onload = function () {
         localStorage.removeItem("haroun_active_barber");
         activeBarberId = null;
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("appContainer").style.display = "none";
+        fetchCloudPasswords(); // تجهيز الباسوردات بالخلفية
       };
 
-      function executeMainLogin() {
+      document
+        .getElementById("mainPassInput")
+        .addEventListener("keyup", function (e) {
+          if (e.key === "Enter") executeMainLogin();
+        });
+
+      // دالة تسجيل الدخول المحسّنة والمضمونة 100%
+      async function executeMainLogin() {
         const barberId = document.getElementById("mainBarberSelect").value;
-        const pass = document.getElementById("mainPassInput").value;
+        const pass = document.getElementById("mainPassInput").value.trim();
 
         if (!barberId) {
-          customAlert("⚠️ تنبيه", "يرجى اختيار الحلاق!");
+          customAlert("⚠️ تنبيه", "يرجى اختيار اسم الحلاق أولاً!");
           return;
         }
 
-        const correctPass = cloudPasswords[barberId] || "1000";
-        const masterPass = cloudPasswords["MASTER_KEY"] || "2004";
+        if (!pass) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال كلمة المرور!");
+          return;
+        }
+
+        const loginBtn = document.getElementById("loginBtn");
+        loginBtn.innerText = "جاري التحقق...";
+        loginBtn.disabled = true;
+
+        const passes = await fetchCloudPasswords();
+
+        loginBtn.innerText = "دخول النظام";
+        loginBtn.disabled = false;
+
+        const correctPass = passes ? passes[barberId] : null;
+        const masterPass = passes ? passes["MASTER_KEY"] : "2004";
 
         if (pass === correctPass || pass === masterPass) {
           activeBarberId = barberId;
@@ -862,7 +890,10 @@
           initBarberSelect();
           renderUI();
         } else {
-          customAlert("⚠️ كلمة المرور خاطئة", "كلمة المرور غير صحيحة!");
+          customAlert(
+            "⚠️ كلمة المرور خاطئة",
+            "كلمة المرور التي أدخلتها غير صحيحة، يرجى المحاولة مرة أخرى.",
+          );
         }
       }
 
@@ -938,21 +969,22 @@
         document.getElementById("mainBarberSelect").value = "";
       }
 
-      function toggleAdminVault() {
+      async function toggleAdminVault() {
         const totalsRow = document.getElementById("adminTotalsRow");
         const vaultBtn = document.getElementById("vaultBtn");
         const barberPersonalSection = document.getElementById(
           "barberPersonalSection",
         );
 
-        const vaultPass = cloudPasswords["ADMIN_VAULT_KEY"] || "4729";
+        const passes = await fetchCloudPasswords();
+        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
 
         if (!isVaultUnlocked) {
           openModal(
             "جرد الصالون العام",
             "أدخل كلمة مرور المدير للوصول للجرد العام:",
             function (enteredPass) {
-              if (enteredPass === vaultPass) {
+              if (enteredPass.trim() === vaultPass) {
                 isVaultUnlocked = true;
                 totalsRow.style.display = "flex";
                 barberPersonalSection.style.display = "none";
@@ -978,15 +1010,17 @@
         }
       }
 
-      function promptResetDay() {
-        const vaultPass = cloudPasswords["ADMIN_VAULT_KEY"] || "4729";
-        const masterPass = cloudPasswords["MASTER_KEY"] || "2004";
+      async function promptResetDay() {
+        const passes = await fetchCloudPasswords();
+        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+        const masterPass = passes ? passes["MASTER_KEY"] : "2004";
 
         openModal(
           "تصفير العداد",
           "أدخل كلمة مرور المدير لتصفير العداد وبداية يوم جديد:",
           function (enteredPass) {
-            if (enteredPass === vaultPass || enteredPass === masterPass) {
+            const p = enteredPass.trim();
+            if (p === vaultPass || p === masterPass) {
               db.collection("transactions")
                 .get()
                 .then((snapshot) => {
