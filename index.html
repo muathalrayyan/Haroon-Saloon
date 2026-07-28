@@ -308,6 +308,11 @@
         touch-action: manipulation;
       }
 
+      .card.custom-service-card {
+        border-color: #00ffcc88;
+        background: rgba(25, 40, 38, 0.85);
+      }
+
       .card:hover {
         border-color: #00ffcc;
         transform: translateY(-3px);
@@ -546,11 +551,15 @@
         color: #00ffcc;
         text-align: center;
         padding: 12px;
-        font-size: 22px;
-        letter-spacing: 4px;
+        font-size: 18px;
         border-radius: 8px;
         outline: none;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+      }
+
+      .modal-card input.pass-style {
+        font-size: 22px;
+        letter-spacing: 4px;
         -webkit-text-security: disc;
       }
 
@@ -753,7 +762,7 @@
               <thead>
                 <tr>
                   <th>الخدمة / الباقة</th>
-                  <th>عدد المرات</th>
+                  <th>عدد المرات / التفصيل</th>
                   <th>الإجمالي بالدينار</th>
                 </tr>
               </thead>
@@ -827,6 +836,39 @@
       </div>
     </div>
 
+    <!-- نافذة بوب أب إضافة خدمة مخصصة -->
+    <div class="modal-overlay" id="customServiceModal">
+      <div class="modal-card">
+        <h3>✍️ خدمة مخصصة / خصم</h3>
+        <p>يرجى كتابة تفاصيل الخدمة والمبلغ المستلم:</p>
+        <input
+          type="text"
+          id="customNoteInput"
+          placeholder="التفاصيل (مثال: خصم زبون خاص)"
+        />
+        <input
+          type="number"
+          inputmode="decimal"
+          id="customPriceInput"
+          placeholder="المبلغ المستلم بالدينار (مثال: 5)"
+        />
+        <div class="modal-btns">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="submitCustomService()"
+          >
+            إضافة الخدمة
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeCustomModal()"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- نافذة بوب أب إدخال الباسورد -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
@@ -837,6 +879,7 @@
           inputmode="numeric"
           pattern="[0-9]*"
           id="modalPassInput"
+          class="pass-style"
           placeholder="••••"
           maxlength="10"
         />
@@ -889,6 +932,7 @@
         { id: "s9", name: "تنظيف بشرة عميق", price: 25 },
         { id: "s10", name: "مساج كامل", price: 35 },
         { id: "s11", name: "عطور فخمة", price: 10 },
+        { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
       ];
 
       const barbers = [
@@ -923,7 +967,6 @@
           .classList.toggle("active", method === "visa");
       }
 
-      // جلب كلمات السر من السحابة بدون كتابتها في الكود
       async function fetchCloudPasswords() {
         if (cloudPasswords) return cloudPasswords;
         try {
@@ -1068,6 +1111,43 @@
           if (e.key === "Enter") submitModalPass();
         });
 
+      /* فتح وإغلاق دالة الخدمة المخصصة */
+      function openCustomModal() {
+        document.getElementById("customNoteInput").value = "";
+        document.getElementById("customPriceInput").value = "";
+        document.getElementById("customServiceModal").classList.add("active");
+        setTimeout(
+          () => document.getElementById("customNoteInput").focus(),
+          100,
+        );
+      }
+
+      function closeCustomModal() {
+        document
+          .getElementById("customServiceModal")
+          .classList.remove("active");
+      }
+
+      function submitCustomService() {
+        const note = document.getElementById("customNoteInput").value.trim();
+        const priceVal = parseFloat(
+          document.getElementById("customPriceInput").value,
+        );
+
+        if (!note) {
+          customAlert("⚠️ تنبيه", "يرجى كتابة تفاصيل الملاحظة أو الخصم!");
+          return;
+        }
+
+        if (isNaN(priceVal) || priceVal < 0) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال مبلغ صحيح!");
+          return;
+        }
+
+        addTransaction("custom", priceVal, note);
+        closeCustomModal();
+      }
+
       function logoutUser() {
         activeUserId = null;
         document.getElementById("appContainer").style.display = "none";
@@ -1117,6 +1197,7 @@
 
         let currentBarberStats = { count: 0, total: 0 };
         let currentBarberServiceCounts = {};
+        let currentCustomTxs = []; // لحفظ الخدمات المخصصة للحلاق الحالي
 
         transactions.forEach((tx) => {
           if (tx.payMethod === "cash") cashTotal += tx.price;
@@ -1132,6 +1213,10 @@
             currentBarberStats.total += tx.price;
             currentBarberServiceCounts[tx.serviceId] =
               (currentBarberServiceCounts[tx.serviceId] || 0) + 1;
+
+            if (tx.serviceId === "custom") {
+              currentCustomTxs.push(tx);
+            }
           }
         });
 
@@ -1141,9 +1226,11 @@
           container.innerHTML = "";
 
           services.forEach((service) => {
+            const isCustom = service.id === "custom";
             const count = currentBarberServiceCounts[service.id] || 0;
+
             const card = document.createElement("div");
-            card.className = "card";
+            card.className = "card" + (isCustom ? " custom-service-card" : "");
 
             card.onclick = (e) => {
               if (e.target.closest(".btn-undo-small")) return;
@@ -1151,7 +1238,11 @@
               card.classList.add("card-tap-feedback");
               setTimeout(() => card.classList.remove("card-tap-feedback"), 150);
 
-              addTransaction(service.id, service.price);
+              if (isCustom) {
+                openCustomModal();
+              } else {
+                addTransaction(service.id, service.price);
+              }
             };
 
             let pressTimer;
@@ -1165,7 +1256,7 @@
 
             card.innerHTML = `
               <div class="card-title">${service.name}</div>
-              <div class="card-price">${service.price} د.أ</div>
+              <div class="card-price">${isCustom ? "تحديد مبلغ مخصص" : service.price + " د.أ"}</div>
               <div class="card-footer-row">
                 <span class="badge">العدد: ${count}</span>
                 ${count > 0 ? `<button class="btn-undo-small" onclick="removeTransaction('${service.id}')" title="تراجع">✕</button>` : ""}
@@ -1204,18 +1295,32 @@
             let hasUsedServices = false;
 
             services.forEach((s) => {
-              const sCount = currentBarberServiceCounts[s.id] || 0;
-              if (sCount > 0) {
-                hasUsedServices = true;
-                const sTotal = sCount * s.price;
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                  <td><b>${s.name}</b></td>
-                  <td>${sCount}</td>
-                  <td style="color: #00ffcc;">${sTotal} د.أ</td>
-                `;
-                detailsBody.appendChild(row);
+              if (s.id !== "custom") {
+                const sCount = currentBarberServiceCounts[s.id] || 0;
+                if (sCount > 0) {
+                  hasUsedServices = true;
+                  const sTotal = sCount * s.price;
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                    <td><b>${s.name}</b></td>
+                    <td>${sCount} مرات</td>
+                    <td style="color: #00ffcc;">${sTotal} د.أ</td>
+                  `;
+                  detailsBody.appendChild(row);
+                }
               }
+            });
+
+            // إظهار الخدمات المخصصة إن وجدت بشكل مستقل ومفصل
+            currentCustomTxs.forEach((ctxItem) => {
+              hasUsedServices = true;
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td style="color: #00ffcc;"><b>✍️ ${ctxItem.note || "خدمة مخصصة"}</b></td>
+                <td>1 مرة</td>
+                <td style="color: #00ffcc;">${ctxItem.price} د.أ</td>
+              `;
+              detailsBody.appendChild(row);
             });
 
             if (!hasUsedServices) {
@@ -1276,12 +1381,13 @@
           sumSalonShare.toFixed(2);
       }
 
-      function addTransaction(serviceId, price) {
+      function addTransaction(serviceId, price, note = "") {
         if (!activeUserId || activeUserId === "admin") return;
 
         db.collection("transactions").add({
           serviceId: serviceId,
           price: price,
+          note: note,
           barberId: activeUserId,
           payMethod: selectedPayMethod,
           timestamp: new Date().getTime(),
