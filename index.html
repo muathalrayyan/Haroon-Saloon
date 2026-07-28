@@ -116,8 +116,9 @@
         background: #00cca3;
       }
 
-      /* إخفاء التطبيق حتى تسجيل الدخول */
-      .app-container {
+      /* حاويات النظام */
+      .app-container,
+      .admin-container {
         width: 100%;
         max-width: 1200px;
         display: none;
@@ -198,7 +199,6 @@
         font-weight: bold;
       }
 
-      /* شارة اسم الحلاق الحالي المصممة بدلاً من القائمة المنسدلة */
       .active-barber-badge {
         background: #1f2a28;
         color: #00ffcc;
@@ -210,7 +210,6 @@
         text-align: center;
         min-width: 180px;
         box-shadow: 0 0 12px rgba(0, 255, 204, 0.15);
-        letter-spacing: 0.5px;
       }
 
       .control-group select {
@@ -332,39 +331,6 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
       }
 
-      .admin-vault-container {
-        border-bottom: 1px solid #333;
-        padding-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .btn-toggle-vault {
-        background: #222;
-        color: #00ffcc;
-        border: 1px solid #00ffcc66;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .btn-toggle-vault:hover {
-        background: #00ffcc;
-        color: #000;
-      }
-
-      .vault-details-box {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 15px;
-      }
-
       .totals-row {
         display: flex;
         justify-content: space-around;
@@ -377,7 +343,7 @@
         font-size: 15px;
         font-weight: bold;
         background: #1e1e1e;
-        padding: 10px 15px;
+        padding: 12px 18px;
         border-radius: 8px;
         border: 1px solid #333;
       }
@@ -393,7 +359,7 @@
 
       .total-item.highlight-salon span {
         color: #00ffcc;
-        font-size: 17px;
+        font-size: 18px;
       }
 
       .section-title {
@@ -419,7 +385,7 @@
       .report-table th,
       .report-table td {
         border: 1px solid #333;
-        padding: 10px;
+        padding: 12px;
         text-align: center;
         font-size: 14px;
       }
@@ -450,7 +416,7 @@
         background: #990000;
         color: white;
         border: none;
-        padding: 12px 24px;
+        padding: 14px 28px;
         border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
@@ -593,17 +559,20 @@
   <body>
     <canvas id="bgCanvas"></canvas>
 
-    <!-- شاشة اللوج إن الرئيسية عند فتح الموقع -->
+    <!-- شاشة تسجيل الدخول الرئيسية -->
     <div id="mainLoginScreen">
       <div class="login-box">
         <img src="logo.jpeg" alt="Haroun Logo" class="logo-login" />
         <h2 style="color: #fff; margin-bottom: 5px">👑 صالون هارون الرشيد</h2>
         <p style="color: #aaa; font-size: 13px; margin-bottom: 20px">
-          يرجى تسجيل الدخول للوصول للكاونتر
+          يرجى تسجيل الدخول للوصول للنظام
         </p>
 
         <select id="mainBarberSelect">
-          <option value="">-- اختر الحلاق --</option>
+          <option value="">-- اختر الحساب --</option>
+          <option value="admin" style="color: #00ffcc; font-weight: bold">
+            👑 المدير (إدارة الصالون)
+          </option>
           <option value="b1">زيد</option>
           <option value="b2">محمد</option>
           <option value="b3">أبو صبرة</option>
@@ -628,14 +597,14 @@
       </div>
     </div>
 
-    <!-- حاوية التطبيق الرئيسية -->
+    <!-- 1️⃣ حاوية الحلاقين (الكاونتر والخدمات) -->
     <div class="app-container" id="appContainer">
       <div class="header">
         <img
           src="logo.jpeg"
           alt="Haroun Logo"
           class="logo"
-          onclick="logoutBarber()"
+          onclick="logoutUser()"
           title="اضغط هنا للخروج وقفل الحساب"
         />
         <h1>👑 صالون هارون الرشيد</h1>
@@ -645,7 +614,6 @@
       <div class="controls-panel">
         <div class="control-group">
           <label>الحلاق الحالي:</label>
-          <!-- عرض ثابت وأنيق بدلاً من القائمة المنسدلة -->
           <div class="active-barber-badge" id="activeBarberDisplay">--</div>
         </div>
 
@@ -661,57 +629,6 @@
       <div class="grid-container" id="servicesContainer"></div>
 
       <div class="summary-box">
-        <div class="admin-vault-container">
-          <button
-            class="btn-toggle-vault"
-            id="vaultBtn"
-            onclick="toggleAdminVault()"
-          >
-            🔒 فتح جرد الصالون العام (للمدير)
-          </button>
-
-          <div
-            class="vault-details-box"
-            id="adminTotalsRow"
-            style="display: none"
-          >
-            <div class="totals-row">
-              <div class="total-item">
-                دخل الكاش: <span id="cashTotal">0</span> د.أ
-              </div>
-              <div class="total-item">
-                دخل الفيزا: <span id="visaTotal">0</span> د.أ
-              </div>
-              <div class="total-item">
-                الإجمالي الكلي: <span id="grandTotal">0</span> د.أ
-              </div>
-              <div class="total-item highlight-salon">
-                👑 صافي أرباح الصالون (60%):
-                <span id="totalSalonShareCard">0</span> د.أ
-              </div>
-            </div>
-
-            <div class="section-title">
-              📊 التقرير المالي الشامل وتوزيع الأرباح (40% / 60%)
-            </div>
-            <div class="table-responsive">
-              <table class="report-table">
-                <thead>
-                  <tr>
-                    <th>الحلاق</th>
-                    <th>العمليات</th>
-                    <th>المبلغ الإجمالي</th>
-                    <th>حصة الحلاقين (40%)</th>
-                    <th>حصة الصالون (60%)</th>
-                  </tr>
-                </thead>
-                <tbody id="allBarbersVaultBody"></tbody>
-                <tfoot id="vaultTableFoot"></tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-
         <div id="barberPersonalSection">
           <div class="section-title" id="barberSummaryTitle">
             📊 ملخص أرباح الحلاق
@@ -751,13 +668,66 @@
             </table>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- 2️⃣ حاوية لوحة تحكم المدير الخاصة -->
+    <div class="admin-container" id="adminContainer">
+      <div class="header">
+        <img
+          src="logo.jpeg"
+          alt="Haroun Logo"
+          class="logo"
+          onclick="logoutUser()"
+          title="اضغط هنا للخروج وقفل الحساب"
+        />
+        <h1>👑 لوحة تحكم مدير الصالون</h1>
+        <div class="subtitle">الجبيهة - عمان</div>
+      </div>
+
+      <div class="summary-box">
+        <div class="totals-row">
+          <div class="total-item">
+            دخل الكاش: <span id="cashTotal">0</span> د.أ
+          </div>
+          <div class="total-item">
+            دخل الفيزا: <span id="visaTotal">0</span> د.أ
+          </div>
+          <div class="total-item">
+            الإجمالي الكلي: <span id="grandTotal">0</span> د.أ
+          </div>
+          <div class="total-item highlight-salon">
+            👑 صافي أرباح الصالون (60%):
+            <span id="totalSalonShareCard">0</span> د.أ
+          </div>
+        </div>
+
+        <div class="section-title">
+          📊 التقرير المالي الشامل وتوزيع الأرباح (40% / 60%)
+        </div>
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>الحلاق</th>
+                <th>العمليات</th>
+                <th>المبلغ الإجمالي</th>
+                <th>حصة الحلاقين (40%)</th>
+                <th>حصة الصالون (60%)</th>
+              </tr>
+            </thead>
+            <tbody id="allBarbersVaultBody"></tbody>
+            <tfoot id="vaultTableFoot"></tfoot>
+          </table>
+        </div>
 
         <button class="btn-reset" onclick="promptResetDay()">
-          تصفير العداد لليوم جديد
+          تصفير العداد
         </button>
       </div>
     </div>
 
+    <!-- نافذة بوب أب إدخال الباسورد -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
         <h3 id="modalTitle">إدخال كلمة المرور</h3>
@@ -782,6 +752,7 @@
       </div>
     </div>
 
+    <!-- نافذة بوب أب التحذير -->
     <div class="modal-overlay" id="alertModal">
       <div class="alert-modal-card">
         <h3 id="alertTitle">⚠️ تنبيه</h3>
@@ -827,8 +798,7 @@
       ];
 
       let transactions = [];
-      let activeBarberId = null;
-      let isVaultUnlocked = false;
+      let activeUserId = null;
       let modalCallback = null;
       let cloudPasswords = null;
 
@@ -838,16 +808,16 @@
           const doc = await db.collection("settings").doc("passwords").get();
           if (doc.exists) {
             cloudPasswords = doc.data();
-            if (cloudPasswords.ADMIN_VAULT_KEY !== "2468") {
-              cloudPasswords.ADMIN_VAULT_KEY = "2468";
+            if (cloudPasswords.ADMIN_VAULT_KEY !== "4729") {
+              cloudPasswords.ADMIN_VAULT_KEY = "4729";
               db.collection("settings")
                 .doc("passwords")
-                .update({ ADMIN_VAULT_KEY: "2468" });
+                .update({ ADMIN_VAULT_KEY: "4729" });
             }
           } else {
             const initialPasses = {
               MASTER_KEY: "2004",
-              ADMIN_VAULT_KEY: "2468",
+              ADMIN_VAULT_KEY: "4729",
               b1: "1001",
               b2: "1002",
               b3: "1003",
@@ -864,10 +834,11 @@
       }
 
       window.onload = function () {
-        localStorage.removeItem("haroun_active_barber");
-        activeBarberId = null;
+        localStorage.removeItem("haroun_active_user");
+        activeUserId = null;
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("appContainer").style.display = "none";
+        document.getElementById("adminContainer").style.display = "none";
         fetchCloudPasswords();
       };
 
@@ -878,11 +849,11 @@
         });
 
       async function executeMainLogin() {
-        const barberId = document.getElementById("mainBarberSelect").value;
+        const userId = document.getElementById("mainBarberSelect").value;
         const pass = document.getElementById("mainPassInput").value.trim();
 
-        if (!barberId) {
-          customAlert("⚠️ تنبيه", "يرجى اختيار اسم الحلاق أولاً!");
+        if (!userId) {
+          customAlert("⚠️ تنبيه", "يرجى اختيار الحساب أولاً!");
           return;
         }
 
@@ -900,14 +871,27 @@
         loginBtn.innerText = "دخول النظام";
         loginBtn.disabled = false;
 
-        const correctPass = passes ? passes[barberId] : null;
+        let correctPass = null;
+        if (userId === "admin") {
+          correctPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+        } else {
+          correctPass = passes ? passes[userId] : null;
+        }
+
         const masterPass = passes ? passes["MASTER_KEY"] : "2004";
 
         if (pass === correctPass || pass === masterPass) {
-          activeBarberId = barberId;
+          activeUserId = userId;
           document.getElementById("mainLoginScreen").style.display = "none";
-          document.getElementById("appContainer").style.display = "flex";
-          updateActiveBarberDisplay();
+
+          if (userId === "admin") {
+            document.getElementById("adminContainer").style.display = "flex";
+            document.getElementById("appContainer").style.display = "none";
+          } else {
+            document.getElementById("appContainer").style.display = "flex";
+            document.getElementById("adminContainer").style.display = "none";
+            updateActiveBarberDisplay();
+          }
           renderUI();
         } else {
           customAlert(
@@ -925,10 +909,9 @@
         renderUI();
       });
 
-      // تحديث شارة اسم الحلاق الحالي المصممة
       function updateActiveBarberDisplay() {
         const display = document.getElementById("activeBarberDisplay");
-        const currentBarberObj = barbers.find((b) => b.id === activeBarberId);
+        const currentBarberObj = barbers.find((b) => b.id === activeUserId);
         if (display && currentBarberObj) {
           display.innerText = currentBarberObj.name;
         }
@@ -973,64 +956,23 @@
           if (e.key === "Enter") submitModalPass();
         });
 
-      function logoutBarber() {
-        activeBarberId = null;
-        localStorage.removeItem("haroun_active_barber");
+      function logoutUser() {
+        activeUserId = null;
         document.getElementById("appContainer").style.display = "none";
+        document.getElementById("adminContainer").style.display = "none";
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("mainPassInput").value = "";
         document.getElementById("mainBarberSelect").value = "";
       }
 
-      async function toggleAdminVault() {
-        const totalsRow = document.getElementById("adminTotalsRow");
-        const vaultBtn = document.getElementById("vaultBtn");
-        const barberPersonalSection = document.getElementById(
-          "barberPersonalSection",
-        );
-
-        const passes = await fetchCloudPasswords();
-        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "2468";
-
-        if (!isVaultUnlocked) {
-          openModal(
-            "جرد الصالون العام",
-            "أدخل كلمة مرور المدير للوصول للجرد العام:",
-            function (enteredPass) {
-              if (enteredPass.trim() === vaultPass) {
-                isVaultUnlocked = true;
-                totalsRow.style.display = "flex";
-                barberPersonalSection.style.display = "none";
-                vaultBtn.innerText = "🔓 إغلاق الجرد العام";
-                vaultBtn.style.borderColor = "#ff4444";
-                vaultBtn.style.color = "#ff4444";
-                renderUI();
-              } else {
-                customAlert(
-                  "⚠️ كلمة المرور خاطئة",
-                  "كلمة مرور الجرد العام غير صحيحة!",
-                );
-              }
-            },
-          );
-        } else {
-          isVaultUnlocked = false;
-          totalsRow.style.display = "none";
-          barberPersonalSection.style.display = "block";
-          vaultBtn.innerText = "🔒 فتح جرد الصالون العام (للمدير)";
-          vaultBtn.style.borderColor = "#00ffcc66";
-          vaultBtn.style.color = "#00ffcc";
-        }
-      }
-
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
-        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "2468";
+        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
         const masterPass = passes ? passes["MASTER_KEY"] : "2004";
 
         openModal(
           "تصفير العداد",
-          "أدخل كلمة مرور المدير لتصفير العداد وبداية يوم جديد:",
+          "أدخل كلمة المرور لتصفير العداد وبداية يوم جديد:",
           function (enteredPass) {
             const p = enteredPass.trim();
             if (p === vaultPass || p === masterPass) {
@@ -1054,9 +996,6 @@
       }
 
       function renderUI() {
-        const container = document.getElementById("servicesContainer");
-        container.innerHTML = "";
-
         let cashTotal = 0;
         let visaTotal = 0;
 
@@ -1067,7 +1006,6 @@
 
         let currentBarberStats = { count: 0, total: 0 };
         let currentBarberServiceCounts = {};
-        const currentBarberObj = barbers.find((b) => b.id === activeBarberId);
 
         transactions.forEach((tx) => {
           if (tx.payMethod === "cash") cashTotal += tx.price;
@@ -1078,7 +1016,7 @@
             allBarbersStats[tx.barberId].total += tx.price;
           }
 
-          if (activeBarberId && tx.barberId === activeBarberId) {
+          if (activeUserId && tx.barberId === activeUserId) {
             currentBarberStats.count += 1;
             currentBarberStats.total += tx.price;
             currentBarberServiceCounts[tx.serviceId] =
@@ -1086,171 +1024,164 @@
           }
         });
 
-        services.forEach((service) => {
-          const count = activeBarberId
-            ? currentBarberServiceCounts[service.id] || 0
-            : 0;
-          const card = document.createElement("div");
-          card.className = "card";
+        // 1️⃣ واجهة الحلاقين
+        if (activeUserId && activeUserId !== "admin") {
+          const container = document.getElementById("servicesContainer");
+          container.innerHTML = "";
 
-          card.onclick = (e) => {
-            if (!activeBarberId) return;
-            if (e.target.closest(".btn-undo-small")) return;
-            addTransaction(service.id, service.price);
-          };
+          services.forEach((service) => {
+            const count = currentBarberServiceCounts[service.id] || 0;
+            const card = document.createElement("div");
+            card.className = "card";
 
-          let pressTimer;
-          card.ontouchstart = () => {
-            if (!activeBarberId) return;
-            pressTimer = setTimeout(() => {
-              removeTransaction(service.id);
-            }, 600);
-          };
-          card.ontouchend = () => clearTimeout(pressTimer);
-          card.ontouchmove = () => clearTimeout(pressTimer);
+            card.onclick = (e) => {
+              if (e.target.closest(".btn-undo-small")) return;
+              addTransaction(service.id, service.price);
+            };
 
-          card.innerHTML = `
-            <div class="card-title">${service.name}</div>
-            <div class="card-price">${service.price} د.أ</div>
-            <div class="card-footer-row">
-              <span class="badge">العدد: ${count}</span>
-              ${count > 0 && activeBarberId ? `<button class="btn-undo-small" onclick="removeTransaction('${service.id}')" title="تراجع">✕</button>` : ""}
-            </div>
-          `;
-          container.appendChild(card);
-        });
+            let pressTimer;
+            card.ontouchstart = () => {
+              pressTimer = setTimeout(() => {
+                removeTransaction(service.id);
+              }, 600);
+            };
+            card.ontouchend = () => clearTimeout(pressTimer);
+            card.ontouchmove = () => clearTimeout(pressTimer);
 
+            card.innerHTML = `
+              <div class="card-title">${service.name}</div>
+              <div class="card-price">${service.price} د.أ</div>
+              <div class="card-footer-row">
+                <span class="badge">العدد: ${count}</span>
+                ${count > 0 ? `<button class="btn-undo-small" onclick="removeTransaction('${service.id}')" title="تراجع">✕</button>` : ""}
+              </div>
+            `;
+            container.appendChild(card);
+          });
+
+          const currentBarberObj = barbers.find((b) => b.id === activeUserId);
+          const summaryBody = document.getElementById("barbersSummaryBody");
+          summaryBody.innerHTML = "";
+
+          if (currentBarberObj) {
+            document.getElementById("barberSummaryTitle").innerText =
+              `📊 ملخص أرباح الحلاق (${currentBarberObj.name})`;
+            const barberShare = (currentBarberStats.total * 0.4).toFixed(2);
+            const salonShare = (currentBarberStats.total * 0.6).toFixed(2);
+
+            const summaryRow = document.createElement("tr");
+            summaryRow.innerHTML = `
+              <td><b>${currentBarberObj.name}</b></td>
+              <td>${currentBarberStats.count}</td>
+              <td>${currentBarberStats.total} د.أ</td>
+              <td style="color: #00ffcc;"><b>${barberShare} د.أ</b></td>
+              <td style="color: #c0c0c0;">${salonShare} د.أ</td>
+            `;
+            summaryBody.appendChild(summaryRow);
+          }
+
+          const detailsBody = document.getElementById("barbersDetailsBody");
+          detailsBody.innerHTML = "";
+
+          if (currentBarberObj) {
+            document.getElementById("barberDetailsTitle").innerText =
+              `📝 تفاصيل الخدمات المقدمة من (${currentBarberObj.name})`;
+            let hasUsedServices = false;
+
+            services.forEach((s) => {
+              const sCount = currentBarberServiceCounts[s.id] || 0;
+              if (sCount > 0) {
+                hasUsedServices = true;
+                const sTotal = sCount * s.price;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                  <td><b>${s.name}</b></td>
+                  <td>${sCount}</td>
+                  <td style="color: #00ffcc;">${sTotal} د.أ</td>
+                `;
+                detailsBody.appendChild(row);
+              }
+            });
+
+            if (!hasUsedServices) {
+              detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم تسجيل أي خدمة لـ (${currentBarberObj.name}) حتى الآن.</td></tr>`;
+            }
+          }
+        }
+
+        // 2️⃣ واجهة المدير
         const grandTotalSum = cashTotal + visaTotal;
         document.getElementById("cashTotal").innerText = cashTotal;
         document.getElementById("visaTotal").innerText = visaTotal;
         document.getElementById("grandTotal").innerText = grandTotalSum;
 
-        if (isVaultUnlocked) {
-          const vaultBody = document.getElementById("allBarbersVaultBody");
-          const vaultFoot = document.getElementById("vaultTableFoot");
-          vaultBody.innerHTML = "";
-          vaultFoot.innerHTML = "";
+        const vaultBody = document.getElementById("allBarbersVaultBody");
+        const vaultFoot = document.getElementById("vaultTableFoot");
+        vaultBody.innerHTML = "";
+        vaultFoot.innerHTML = "";
 
-          let sumTxCount = 0;
-          let sumTotalMoney = 0;
-          let sumBarbersShare = 0;
-          let sumSalonShare = 0;
+        let sumTxCount = 0;
+        let sumTotalMoney = 0;
+        let sumBarbersShare = 0;
+        let sumSalonShare = 0;
 
-          barbers.forEach((b) => {
-            const stats = allBarbersStats[b.id];
-            const barberShare = stats.total * 0.4;
-            const salonShare = stats.total * 0.6;
+        barbers.forEach((b) => {
+          const stats = allBarbersStats[b.id];
+          const barberShare = stats.total * 0.4;
+          const salonShare = stats.total * 0.6;
 
-            sumTxCount += stats.count;
-            sumTotalMoney += stats.total;
-            sumBarbersShare += barberShare;
-            sumSalonShare += salonShare;
+          sumTxCount += stats.count;
+          sumTotalMoney += stats.total;
+          sumBarbersShare += barberShare;
+          sumSalonShare += salonShare;
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td><b>${b.name}</b></td>
-              <td>${stats.count}</td>
-              <td>${stats.total} د.أ</td>
-              <td style="color: #00ffcc;">${barberShare.toFixed(2)} د.أ</td>
-              <td style="color: #c0c0c0;">${salonShare.toFixed(2)} د.أ</td>
-            `;
-            vaultBody.appendChild(row);
-          });
-
-          const footRow = document.createElement("tr");
-          footRow.className = "total-summary-row";
-          footRow.innerHTML = `
-            <td><b>إجمالي الصالون الكلي</b></td>
-            <td><b>${sumTxCount}</b></td>
-            <td><b>${sumTotalMoney} د.أ</b></td>
-            <td style="color: #00ffcc;"><b>${sumBarbersShare.toFixed(2)} د.أ</b></td>
-            <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShare.toFixed(2)} د.أ</b></td>
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><b>${b.name}</b></td>
+            <td>${stats.count}</td>
+            <td>${stats.total} د.أ</td>
+            <td style="color: #00ffcc;">${barberShare.toFixed(2)} د.أ</td>
+            <td style="color: #c0c0c0;">${salonShare.toFixed(2)} د.أ</td>
           `;
-          vaultFoot.appendChild(footRow);
+          vaultBody.appendChild(row);
+        });
 
-          document.getElementById("totalSalonShareCard").innerText =
-            sumSalonShare.toFixed(2);
-        }
+        const footRow = document.createElement("tr");
+        footRow.className = "total-summary-row";
+        footRow.innerHTML = `
+          <td><b>إجمالي الصالون الكلي</b></td>
+          <td><b>${sumTxCount}</b></td>
+          <td><b>${sumTotalMoney} د.أ</b></td>
+          <td style="color: #00ffcc;"><b>${sumBarbersShare.toFixed(2)} د.أ</b></td>
+          <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShare.toFixed(2)} د.أ</b></td>
+        `;
+        vaultFoot.appendChild(footRow);
 
-        const summaryBody = document.getElementById("barbersSummaryBody");
-        summaryBody.innerHTML = "";
-
-        if (activeBarberId && currentBarberObj) {
-          document.getElementById("barberSummaryTitle").innerText =
-            `📊 ملخص أرباح الحلاق (${currentBarberObj.name})`;
-          const barberShare = (currentBarberStats.total * 0.4).toFixed(2);
-          const salonShare = (currentBarberStats.total * 0.6).toFixed(2);
-
-          const summaryRow = document.createElement("tr");
-          summaryRow.innerHTML = `
-            <td><b>${currentBarberObj.name}</b></td>
-            <td>${currentBarberStats.count}</td>
-            <td>${currentBarberStats.total} د.أ</td>
-            <td style="color: #00ffcc;"><b>${barberShare} د.أ</b></td>
-            <td style="color: #c0c0c0;">${salonShare} د.أ</td>
-          `;
-          summaryBody.appendChild(summaryRow);
-        } else {
-          document.getElementById("barberSummaryTitle").innerText =
-            `📊 ملخص أرباح الحلاق`;
-          summaryBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">يرجى تسجيل الدخول لعرض ملخص الحساب.</td></tr>`;
-        }
-
-        const detailsBody = document.getElementById("barbersDetailsBody");
-        detailsBody.innerHTML = "";
-
-        if (activeBarberId && currentBarberObj) {
-          document.getElementById("barberDetailsTitle").innerText =
-            `📝 تفاصيل الخدمات المقدمة من (${currentBarberObj.name})`;
-          let hasUsedServices = false;
-
-          services.forEach((s) => {
-            const sCount = currentBarberServiceCounts[s.id] || 0;
-            if (sCount > 0) {
-              hasUsedServices = true;
-              const sTotal = sCount * s.price;
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td><b>${s.name}</b></td>
-                <td>${sCount}</td>
-                <td style="color: #00ffcc;">${sTotal} د.أ</td>
-              `;
-              detailsBody.appendChild(row);
-            }
-          });
-
-          if (!hasUsedServices) {
-            detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم تسجيل أي خدمة لـ (${currentBarberObj.name}) حتى الآن.</td></tr>`;
-          }
-        } else {
-          document.getElementById("barberDetailsTitle").innerText =
-            `📝 تفاصيل الخدمات المقدمة`;
-          detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">يرجى تسجيل الدخول لعرض التفاصيل.</td></tr>`;
-        }
+        document.getElementById("totalSalonShareCard").innerText =
+          sumSalonShare.toFixed(2);
       }
 
       function addTransaction(serviceId, price) {
-        if (!activeBarberId) return;
+        if (!activeUserId || activeUserId === "admin") return;
         const payMethod = document.getElementById("payMethodSelect").value;
 
         db.collection("transactions").add({
           serviceId: serviceId,
           price: price,
-          barberId: activeBarberId,
+          barberId: activeUserId,
           payMethod: payMethod,
           timestamp: new Date().getTime(),
         });
       }
 
       function removeTransaction(serviceId) {
-        if (!activeBarberId) return;
+        if (!activeUserId || activeUserId === "admin") return;
 
         let targetTx = transactions
           .slice()
           .reverse()
           .find(
-            (tx) =>
-              tx.serviceId === serviceId && tx.barberId === activeBarberId,
+            (tx) => tx.serviceId === serviceId && tx.barberId === activeUserId,
           );
 
         if (targetTx && targetTx.docId) {
