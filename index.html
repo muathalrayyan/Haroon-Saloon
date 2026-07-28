@@ -123,6 +123,24 @@
         text-align: center;
       }
 
+      .btn-exit-barber {
+        background: rgba(255, 68, 68, 0.2);
+        color: #ff4444;
+        border: 1px solid #ff444488;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        align-self: flex-end;
+      }
+
+      .btn-exit-barber:hover {
+        background: #ff4444;
+        color: #fff;
+      }
+
       .grid-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -143,9 +161,9 @@
         flex-direction: column;
         justify-content: space-between;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
       }
 
-      /* توسيط كرت العطور الفخمة (الكرت الـ 11) */
       .card:last-child:nth-child(11) {
         grid-column: 1 / -1;
         max-width: 250px;
@@ -169,12 +187,42 @@
         font-weight: bold;
         color: #fff;
         margin-bottom: 8px;
+        padding-top: 5px;
       }
 
       .card-price {
         color: #c0c0c0;
         font-size: 14px;
         margin-bottom: 10px;
+      }
+
+      .card-footer-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 5px;
+      }
+
+      .btn-undo-small {
+        background: rgba(255, 68, 68, 0.15);
+        color: #ff4444;
+        border: 1px solid #ff444455;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-undo-small:active {
+        background: #ff4444;
+        color: #fff;
+        transform: scale(0.9);
       }
 
       .badge {
@@ -201,19 +249,51 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
       }
 
+      .admin-vault-container {
+        border-bottom: 1px solid #333;
+        padding-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn-toggle-vault {
+        background: #222;
+        color: #00ffcc;
+        border: 1px solid #00ffcc66;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-toggle-vault:hover {
+        background: #00ffcc;
+        color: #000;
+      }
+
+      .vault-details-box {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
       .totals-row {
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
         gap: 15px;
-        border-bottom: 1px solid #333;
-        padding-bottom: 15px;
+        width: 100%;
       }
 
       .total-item {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
-        background: #222;
+        background: #1e1e1e;
         padding: 10px 15px;
         border-radius: 8px;
         border: 1px solid #333;
@@ -221,6 +301,16 @@
 
       .total-item span {
         color: #00ffcc;
+      }
+
+      .total-item.highlight-salon {
+        border-color: #00ffcc;
+        background: rgba(0, 255, 204, 0.08);
+      }
+
+      .total-item.highlight-salon span {
+        color: #00ffcc;
+        font-size: 17px;
       }
 
       .section-title {
@@ -260,6 +350,19 @@
         background-color: #1a1a1a;
       }
 
+      .report-table tr.total-summary-row td {
+        background-color: #252525;
+        font-size: 15px;
+        border-top: 2px solid #00ffcc;
+      }
+
+      .no-data-msg {
+        text-align: center;
+        color: #888;
+        font-size: 14px;
+        padding: 15px;
+      }
+
       .btn-reset {
         background: #990000;
         color: white;
@@ -275,6 +378,133 @@
       .btn-reset:hover {
         background: #cc0000;
       }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-card {
+        background: #1a1a1a;
+        border: 1px solid #00ffcc;
+        border-radius: 16px;
+        padding: 25px 30px;
+        width: 90%;
+        max-width: 380px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2);
+        transform: translateY(-20px);
+        transition: transform 0.25s ease;
+      }
+
+      .modal-overlay.active .modal-card {
+        transform: translateY(0);
+      }
+
+      .modal-card h3 {
+        margin: 0 0 10px 0;
+        color: #fff;
+        font-size: 20px;
+      }
+
+      .modal-card p {
+        color: #aaa;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .modal-card input {
+        width: 100%;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        color: #00ffcc;
+        text-align: center;
+        padding: 12px;
+        font-size: 20px;
+        letter-spacing: 4px;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 20px;
+      }
+
+      .modal-card input:focus {
+        border-color: #00ffcc;
+      }
+
+      .modal-btns {
+        display: flex;
+        gap: 12px;
+      }
+
+      .modal-btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .modal-btn-confirm {
+        background: #00ffcc;
+        color: #000;
+      }
+
+      .modal-btn-cancel {
+        background: #333;
+        color: #ccc;
+      }
+
+      .alert-modal-card {
+        background: #1a1a1a;
+        border: 1px solid #ff4444;
+        border-radius: 16px;
+        padding: 25px 30px;
+        width: 90%;
+        max-width: 360px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(255, 68, 68, 0.25);
+      }
+
+      .alert-modal-card h3 {
+        color: #ff4444;
+        margin: 0 0 10px 0;
+        font-size: 20px;
+      }
+
+      .alert-modal-card p {
+        color: #ddd;
+        font-size: 15px;
+        margin-bottom: 20px;
+      }
+
+      .alert-btn {
+        background: #ff4444;
+        color: #fff;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -287,11 +517,10 @@
         <div class="subtitle">الجبيهة - عمان</div>
       </div>
 
-      <!-- لوحة الاختيارات مع أسماء الحلاقين الجدد -->
       <div class="controls-panel">
         <div class="control-group">
           <label>اختر الحلاق الحالي:</label>
-          <select id="barberSelect"></select>
+          <select id="barberSelect" onchange="handleBarberChange()"></select>
         </div>
 
         <div class="control-group">
@@ -301,59 +530,152 @@
             <option value="visa">فيزا (Visa)</option>
           </select>
         </div>
+
+        <button class="btn-exit-barber" onclick="logoutBarber()">
+          🚪 خروج وقفل الحساب
+        </button>
       </div>
 
       <div class="grid-container" id="servicesContainer"></div>
 
       <div class="summary-box">
-        <div class="totals-row">
-          <div class="total-item">
-            دخل الكاش: <span id="cashTotal">0</span> د.أ
-          </div>
-          <div class="total-item">
-            دخل الفيزا: <span id="visaTotal">0</span> د.أ
-          </div>
-          <div class="total-item">
-            إجمالي اليوم: <span id="grandTotal">0</span> د.أ
+        <!-- قسم الجرد العام الشامل للمدير -->
+        <div class="admin-vault-container">
+          <button
+            class="btn-toggle-vault"
+            id="vaultBtn"
+            onclick="toggleAdminVault()"
+          >
+            🔒 فتح جرد الصالون العام (للمدير)
+          </button>
+
+          <div
+            class="vault-details-box"
+            id="adminTotalsRow"
+            style="display: none"
+          >
+            <div class="totals-row">
+              <div class="total-item">
+                دخل الكاش: <span id="cashTotal">0</span> د.أ
+              </div>
+              <div class="total-item">
+                دخل الفيزا: <span id="visaTotal">0</span> د.أ
+              </div>
+              <div class="total-item">
+                الإجمالي الكلي: <span id="grandTotal">0</span> د.أ
+              </div>
+              <div class="total-item highlight-salon">
+                👑 صافي أرباح الصالون (60%):
+                <span id="totalSalonShareCard">0</span> د.أ
+              </div>
+            </div>
+
+            <div class="section-title">
+              📊 التقرير المالي الشامل وتوزيع الأرباح (40% / 60%)
+            </div>
+            <div class="table-responsive">
+              <table class="report-table">
+                <thead>
+                  <tr>
+                    <th>الحلاق</th>
+                    <th>العمليات</th>
+                    <th>المبلغ الإجمالي</th>
+                    <th>حصة الحلاقين (40%)</th>
+                    <th>حصة الصالون (60%)</th>
+                  </tr>
+                </thead>
+                <tbody id="allBarbersVaultBody"></tbody>
+                <tfoot id="vaultTableFoot"></tfoot>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="section-title">📊 ملخص الأرباح والنسب (40% / 60%)</div>
-        <div class="table-responsive">
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th>الحلاق</th>
-                <th>إجمالي العمليات</th>
-                <th>المبلغ الإجمالي</th>
-                <th>حصة الحلاق (40%)</th>
-                <th>حصة الصالون (60%)</th>
-              </tr>
-            </thead>
-            <tbody id="barbersSummaryBody"></tbody>
-          </table>
+        <!-- الأقسام الشخصية للحلاق (تختفي عند فتح الجرد العام) -->
+        <div id="barberPersonalSection">
+          <div class="section-title" id="barberSummaryTitle">
+            📊 ملخص أرباح الحلاق
+          </div>
+          <div class="table-responsive">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>الحلاق</th>
+                  <th>إجمالي العمليات</th>
+                  <th>المبلغ الإجمالي</th>
+                  <th>حصة الحلاق (40%)</th>
+                  <th>حصة الصالون (60%)</th>
+                </tr>
+              </thead>
+              <tbody id="barbersSummaryBody"></tbody>
+            </table>
+          </div>
+
+          <div
+            class="section-title"
+            id="barberDetailsTitle"
+            style="margin-top: 20px"
+          >
+            📝 تفاصيل الخدمات المقدمة
+          </div>
+          <div class="table-responsive">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>الخدمة / الباقة</th>
+                  <th>عدد المرات</th>
+                  <th>الإجمالي بالدينار</th>
+                </tr>
+              </thead>
+              <tbody id="barbersDetailsBody"></tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="section-title">📝 تفاصيل أداء كل حلاق بالخدمات</div>
-        <div class="table-responsive">
-          <table class="report-table">
-            <thead>
-              <tr id="detailsHeaderRow">
-                <th>الخدمة / الباقة</th>
-                <!-- سيتم تعبئة أسرّة الأسماء ديناميكياً -->
-              </tr>
-            </thead>
-            <tbody id="barbersDetailsBody"></tbody>
-          </table>
-        </div>
-
-        <button class="btn-reset" onclick="resetDay()">
+        <button class="btn-reset" onclick="promptResetDay()">
           تصفير العداد لليوم جديد
         </button>
       </div>
     </div>
 
+    <!-- نافذة بوب أب إدخال الباسورد -->
+    <div class="modal-overlay" id="passwordModal">
+      <div class="modal-card" id="modalCard">
+        <h3 id="modalTitle">إدخال كلمة المرور</h3>
+        <p id="modalDesc">يرجى إدخال كلمة السر للمتابعة</p>
+        <input
+          type="password"
+          id="modalPassInput"
+          placeholder="••••"
+          maxlength="10"
+        />
+        <div class="modal-btns">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="submitModalPass()"
+          >
+            تأكيد
+          </button>
+          <button class="modal-btn modal-btn-cancel" onclick="closeModal()">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة بوب أب التحذير المخصصة بالمنتصف -->
+    <div class="modal-overlay" id="alertModal">
+      <div class="alert-modal-card">
+        <h3 id="alertTitle">⚠️ تنبيه</h3>
+        <p id="alertMsg">حدث خطأ ما</p>
+        <button class="alert-btn" onclick="closeAlertModal()">حسناً</button>
+      </div>
+    </div>
+
     <script>
+      const MASTER_KEY = "2004";
+      const ADMIN_VAULT_KEY = "4729";
+
       const services = [
         { id: "s1", name: "باقة الطالب", price: 8 },
         { id: "s2", name: "باقة الخريج", price: 10 },
@@ -368,28 +690,188 @@
         { id: "s11", name: "عطور فخمة", price: 10 },
       ];
 
-      // أسماء الحلاقين الجدد
       const barbers = [
-        { id: "b1", name: "زيد" },
-        { id: "b2", name: "محمد" },
-        { id: "b3", name: "أبو صبرة" },
-        { id: "b4", name: "عبد الله" },
-        { id: "b5", name: "أحمد" },
+        { id: "b1", name: "زيد", pass: "1001" },
+        { id: "b2", name: "محمد", pass: "1002" },
+        { id: "b3", name: "أبو صبرة", pass: "1003" },
+        { id: "b4", name: "عبد الله", pass: "1004" },
+        { id: "b5", name: "أحمد", pass: "1005" },
       ];
 
       let transactions =
         JSON.parse(localStorage.getItem("haroun_transactions")) || [];
+      let activeBarberId = localStorage.getItem("haroun_active_barber") || null;
+      let isVaultUnlocked = false;
 
-      // تعبئة القائمة المنسدلة بالحلاقين تلقائياً
+      let modalCallback = null;
+      let pendingSelectedBarberId = null;
+
       function initBarberSelect() {
         const select = document.getElementById("barberSelect");
         select.innerHTML = "";
+
+        const defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.innerText = "-- اختر اسمك --";
+        select.appendChild(defaultOpt);
+
         barbers.forEach((b) => {
           const opt = document.createElement("option");
           opt.value = b.id;
           opt.innerText = b.name;
           select.appendChild(opt);
         });
+
+        if (activeBarberId) {
+          select.value = activeBarberId;
+        }
+      }
+
+      function customAlert(title, msg) {
+        document.getElementById("alertTitle").innerText = title;
+        document.getElementById("alertMsg").innerText = msg;
+        document.getElementById("alertModal").classList.add("active");
+      }
+
+      function closeAlertModal() {
+        document.getElementById("alertModal").classList.remove("active");
+      }
+
+      function openModal(title, desc, callback) {
+        document.getElementById("modalTitle").innerText = title;
+        document.getElementById("modalDesc").innerText = desc;
+        const input = document.getElementById("modalPassInput");
+        input.value = "";
+        modalCallback = callback;
+        document.getElementById("passwordModal").classList.add("active");
+        setTimeout(() => input.focus(), 100);
+      }
+
+      function closeModal() {
+        document.getElementById("passwordModal").classList.remove("active");
+        modalCallback = null;
+        const select = document.getElementById("barberSelect");
+        if (select) select.value = activeBarberId || "";
+      }
+
+      function submitModalPass() {
+        const enteredPass = document.getElementById("modalPassInput").value;
+        if (modalCallback) {
+          modalCallback(enteredPass);
+        }
+        document.getElementById("passwordModal").classList.remove("active");
+      }
+
+      document
+        .getElementById("modalPassInput")
+        .addEventListener("keyup", function (e) {
+          if (e.key === "Enter") submitModalPass();
+        });
+
+      function handleBarberChange() {
+        const select = document.getElementById("barberSelect");
+        const selectedId = select.value;
+
+        if (!selectedId) {
+          activeBarberId = null;
+          localStorage.removeItem("haroun_active_barber");
+          renderUI();
+          return;
+        }
+
+        const targetBarber = barbers.find((b) => b.id === selectedId);
+
+        if (selectedId !== activeBarberId) {
+          pendingSelectedBarberId = selectedId;
+          openModal(
+            `دخول حساب: ${targetBarber.name}`,
+            `أدخل كلمة المرور الخاصة بك أو الماستر كي:`,
+            function (enteredPass) {
+              if (
+                enteredPass === targetBarber.pass ||
+                enteredPass === MASTER_KEY
+              ) {
+                activeBarberId = pendingSelectedBarberId;
+                localStorage.setItem("haroun_active_barber", activeBarberId);
+                renderUI();
+              } else {
+                customAlert(
+                  "⚠️ كلمة المرور خاطئة",
+                  "كلمة المرور التي أدخلتها غير صحيحة، يرجى المحاولة مرة أخرى.",
+                );
+                select.value = activeBarberId || "";
+              }
+            },
+          );
+        }
+      }
+
+      function logoutBarber() {
+        activeBarberId = null;
+        localStorage.removeItem("haroun_active_barber");
+        document.getElementById("barberSelect").value = "";
+        renderUI();
+      }
+
+      function toggleAdminVault() {
+        const totalsRow = document.getElementById("adminTotalsRow");
+        const vaultBtn = document.getElementById("vaultBtn");
+        const barberPersonalSection = document.getElementById(
+          "barberPersonalSection",
+        );
+
+        if (!isVaultUnlocked) {
+          openModal(
+            "جرد الصالون العام",
+            "أدخل كلمة مرور المدير للوصول للجرد العام:",
+            function (enteredPass) {
+              if (enteredPass === ADMIN_VAULT_KEY) {
+                isVaultUnlocked = true;
+                totalsRow.style.display = "flex";
+                barberPersonalSection.style.display = "none"; // إخفاء القسم الخاص بالحلاق عند فتح الجرد
+                vaultBtn.innerText = "🔓 إغلاق الجرد العام";
+                vaultBtn.style.borderColor = "#ff4444";
+                vaultBtn.style.color = "#ff4444";
+                renderUI();
+              } else {
+                customAlert(
+                  "⚠️ كلمة المرور خاطئة",
+                  "كلمة مرور الجرد العام غير صحيحة!",
+                );
+              }
+            },
+          );
+        } else {
+          isVaultUnlocked = false;
+          totalsRow.style.display = "none";
+          barberPersonalSection.style.display = "block"; // إعادة إظهار القسم الخاص بالحلاق عند إغلاق الجرد
+          vaultBtn.innerText = "🔒 فتح جرد الصالون العام (للمدير)";
+          vaultBtn.style.borderColor = "#00ffcc66";
+          vaultBtn.style.color = "#00ffcc";
+        }
+      }
+
+      function promptResetDay() {
+        openModal(
+          "تصفير العداد",
+          "أدخل كلمة مرور المدير لتصفير العداد وبداية يوم جديد:",
+          function (enteredPass) {
+            if (enteredPass === ADMIN_VAULT_KEY || enteredPass === MASTER_KEY) {
+              transactions = [];
+              localStorage.removeItem("haroun_transactions");
+              renderUI();
+              customAlert(
+                "✅ تم التصفير",
+                "تم تصفير جميع العدادات وبداية يوم جديد بنجاح.",
+              );
+            } else {
+              customAlert(
+                "⚠️ كلمة المرور خاطئة",
+                "كلمة المرور غير صحيحة! لم يتم التصفير.",
+              );
+            }
+          },
+        );
       }
 
       function renderUI() {
@@ -398,116 +880,193 @@
 
         let cashTotal = 0;
         let visaTotal = 0;
-        let serviceCounts = {};
 
-        // تهيئة إحصائيات الحلاقين ديناميكياً
-        let barberStats = {};
+        let allBarbersStats = {};
         barbers.forEach((b) => {
-          barberStats[b.id] = { count: 0, total: 0 };
+          allBarbersStats[b.id] = { count: 0, total: 0 };
         });
 
-        // مصفوفة التفاصيل
-        let detailMatrix = {};
-        services.forEach((s) => {
-          detailMatrix[s.id] = {};
-          barbers.forEach((b) => {
-            detailMatrix[s.id][b.id] = 0;
-          });
-        });
+        let currentBarberStats = { count: 0, total: 0 };
+        let currentBarberServiceCounts = {};
+        const currentBarberObj = barbers.find((b) => b.id === activeBarberId);
 
         transactions.forEach((tx) => {
           if (tx.payMethod === "cash") cashTotal += tx.price;
           if (tx.payMethod === "visa") visaTotal += tx.price;
 
-          serviceCounts[tx.serviceId] = (serviceCounts[tx.serviceId] || 0) + 1;
-
-          if (barberStats[tx.barberId]) {
-            barberStats[tx.barberId].count += 1;
-            barberStats[tx.barberId].total += tx.price;
+          if (allBarbersStats[tx.barberId]) {
+            allBarbersStats[tx.barberId].count += 1;
+            allBarbersStats[tx.barberId].total += tx.price;
           }
 
-          if (
-            detailMatrix[tx.serviceId] &&
-            detailMatrix[tx.serviceId][tx.barberId] !== undefined
-          ) {
-            detailMatrix[tx.serviceId][tx.barberId] += 1;
+          if (activeBarberId && tx.barberId === activeBarberId) {
+            currentBarberStats.count += 1;
+            currentBarberStats.total += tx.price;
+            currentBarberServiceCounts[tx.serviceId] =
+              (currentBarberServiceCounts[tx.serviceId] || 0) + 1;
           }
         });
 
         services.forEach((service) => {
-          const count = serviceCounts[service.id] || 0;
+          const count = activeBarberId
+            ? currentBarberServiceCounts[service.id] || 0
+            : 0;
           const card = document.createElement("div");
           card.className = "card";
-          card.onclick = () => addTransaction(service.id, service.price);
+
+          card.onclick = (e) => {
+            if (!activeBarberId) {
+              customAlert(
+                "🔒 يتطلب تسجيل الدخول",
+                "يرجى اختيار اسمك وتسجيل الدخول أولاً لإضافة خدمات!",
+              );
+              return;
+            }
+            if (e.target.closest(".btn-undo-small")) return;
+            addTransaction(service.id, service.price);
+          };
+
+          let pressTimer;
+          card.ontouchstart = () => {
+            if (!activeBarberId) return;
+            pressTimer = setTimeout(() => {
+              removeTransaction(service.id);
+            }, 600);
+          };
+          card.ontouchend = () => clearTimeout(pressTimer);
+          card.ontouchmove = () => clearTimeout(pressTimer);
+
           card.innerHTML = `
             <div class="card-title">${service.name}</div>
             <div class="card-price">${service.price} د.أ</div>
-            <div><span class="badge">العدد: ${count}</span></div>
+            <div class="card-footer-row">
+              <span class="badge">العدد: ${count}</span>
+              ${count > 0 && activeBarberId ? `<button class="btn-undo-small" onclick="removeTransaction('${service.id}')" title="تراجع">✕</button>` : ""}
+            </div>
           `;
           container.appendChild(card);
         });
 
+        const grandTotalSum = cashTotal + visaTotal;
         document.getElementById("cashTotal").innerText = cashTotal;
         document.getElementById("visaTotal").innerText = visaTotal;
-        document.getElementById("grandTotal").innerText = cashTotal + visaTotal;
+        document.getElementById("grandTotal").innerText = grandTotalSum;
 
-        // 1. جدول ملخص النسب والأرباح
+        // تعبئة التقرير المالي الشامل في الجرد العام للمدير
+        if (isVaultUnlocked) {
+          const vaultBody = document.getElementById("allBarbersVaultBody");
+          const vaultFoot = document.getElementById("vaultTableFoot");
+          vaultBody.innerHTML = "";
+          vaultFoot.innerHTML = "";
+
+          let sumTxCount = 0;
+          let sumTotalMoney = 0;
+          let sumBarbersShare = 0;
+          let sumSalonShare = 0;
+
+          barbers.forEach((b) => {
+            const stats = allBarbersStats[b.id];
+            const barberShare = stats.total * 0.4;
+            const salonShare = stats.total * 0.6;
+
+            sumTxCount += stats.count;
+            sumTotalMoney += stats.total;
+            sumBarbersShare += barberShare;
+            sumSalonShare += salonShare;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><b>${b.name}</b></td>
+              <td>${stats.count}</td>
+              <td>${stats.total} د.أ</td>
+              <td style="color: #00ffcc;">${barberShare.toFixed(2)} د.أ</td>
+              <td style="color: #c0c0c0;">${salonShare.toFixed(2)} د.أ</td>
+            `;
+            vaultBody.appendChild(row);
+          });
+
+          const footRow = document.createElement("tr");
+          footRow.className = "total-summary-row";
+          footRow.innerHTML = `
+            <td><b>إجمالي الصالون الكلي</b></td>
+            <td><b>${sumTxCount}</b></td>
+            <td><b>${sumTotalMoney} د.أ</b></td>
+            <td style="color: #00ffcc;"><b>${sumBarbersShare.toFixed(2)} د.أ</b></td>
+            <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShare.toFixed(2)} د.أ</b></td>
+          `;
+          vaultFoot.appendChild(footRow);
+
+          document.getElementById("totalSalonShareCard").innerText =
+            sumSalonShare.toFixed(2);
+        }
+
+        // ملخص أرباح الحلاق الفردي
         const summaryBody = document.getElementById("barbersSummaryBody");
         summaryBody.innerHTML = "";
 
-        barbers.forEach((b) => {
-          const stats = barberStats[b.id];
-          const barberShare = (stats.total * 0.4).toFixed(2);
-          const salonShare = (stats.total * 0.6).toFixed(2);
+        if (activeBarberId && currentBarberObj) {
+          document.getElementById("barberSummaryTitle").innerText =
+            `📊 ملخص أرباح الحلاق (${currentBarberObj.name})`;
+          const barberShare = (currentBarberStats.total * 0.4).toFixed(2);
+          const salonShare = (currentBarberStats.total * 0.6).toFixed(2);
 
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td><b>${b.name}</b></td>
-            <td>${stats.count}</td>
-            <td>${stats.total} د.أ</td>
-            <td style="color: #00ffcc;">${barberShare} د.أ</td>
+          const summaryRow = document.createElement("tr");
+          summaryRow.innerHTML = `
+            <td><b>${currentBarberObj.name}</b></td>
+            <td>${currentBarberStats.count}</td>
+            <td>${currentBarberStats.total} د.أ</td>
+            <td style="color: #00ffcc;"><b>${barberShare} د.أ</b></td>
             <td style="color: #c0c0c0;">${salonShare} د.أ</td>
           `;
-          summaryBody.appendChild(row);
-        });
+          summaryBody.appendChild(summaryRow);
+        } else {
+          document.getElementById("barberSummaryTitle").innerText =
+            `📊 ملخص أرباح الحلاق`;
+          summaryBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">يرجى تسجيل الدخول لعرض ملخص الحساب.</td></tr>`;
+        }
 
-        // 2. تحديث ترويسة وجدول تفاصيل خدمات الحلاقين
-        const detailsHeader = document.getElementById("detailsHeaderRow");
-        detailsHeader.innerHTML = `<th>الخدمة / الباقة</th>`;
-        barbers.forEach((b) => {
-          detailsHeader.innerHTML += `<th>${b.name}</th>`;
-        });
-        detailsHeader.innerHTML += `<th>الإجمالي الكلي</th>`;
-
+        // تفاصيل الخدمات للحلاق الفردي
         const detailsBody = document.getElementById("barbersDetailsBody");
         detailsBody.innerHTML = "";
 
-        services.forEach((s) => {
-          let rowHTML = `<td><b>${s.name}</b></td>`;
-          let totalServiceCount = 0;
+        if (activeBarberId && currentBarberObj) {
+          document.getElementById("barberDetailsTitle").innerText =
+            `📝 تفاصيل الخدمات المقدمة من (${currentBarberObj.name})`;
+          let hasUsedServices = false;
 
-          barbers.forEach((b) => {
-            const bCount = detailMatrix[s.id][b.id] || 0;
-            totalServiceCount += bCount;
-            rowHTML += `<td>${bCount}</td>`;
+          services.forEach((s) => {
+            const sCount = currentBarberServiceCounts[s.id] || 0;
+            if (sCount > 0) {
+              hasUsedServices = true;
+              const sTotal = sCount * s.price;
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td><b>${s.name}</b></td>
+                <td>${sCount}</td>
+                <td style="color: #00ffcc;">${sTotal} د.أ</td>
+              `;
+              detailsBody.appendChild(row);
+            }
           });
 
-          rowHTML += `<td style="color: #00ffcc;"><b>${totalServiceCount}</b></td>`;
-
-          const row = document.createElement("tr");
-          row.innerHTML = rowHTML;
-          detailsBody.appendChild(row);
-        });
+          if (!hasUsedServices) {
+            detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم تسجيل أي خدمة لـ (${currentBarberObj.name}) حتى الآن.</td></tr>`;
+          }
+        } else {
+          document.getElementById("barberDetailsTitle").innerText =
+            `📝 تفاصيل الخدمات المقدمة`;
+          detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">يرجى تسجيل الدخول لعرض التفاصيل.</td></tr>`;
+        }
       }
 
       function addTransaction(serviceId, price) {
-        const barberId = document.getElementById("barberSelect").value;
+        if (!activeBarberId) return;
         const payMethod = document.getElementById("payMethodSelect").value;
 
         transactions.push({
           serviceId: serviceId,
           price: price,
-          barberId: barberId,
+          barberId: activeBarberId,
           payMethod: payMethod,
           timestamp: new Date().getTime(),
         });
@@ -519,10 +1078,26 @@
         renderUI();
       }
 
-      function resetDay() {
-        if (confirm("هل أنت تأكد من تصفير جميع العدادات وبداية يوم جديد؟")) {
-          transactions = [];
-          localStorage.removeItem("haroun_transactions");
+      function removeTransaction(serviceId) {
+        if (!activeBarberId) return;
+
+        let indexToRemove = -1;
+        for (let i = transactions.length - 1; i >= 0; i--) {
+          if (
+            transactions[i].serviceId === serviceId &&
+            transactions[i].barberId === activeBarberId
+          ) {
+            indexToRemove = i;
+            break;
+          }
+        }
+
+        if (indexToRemove !== -1) {
+          transactions.splice(indexToRemove, 1);
+          localStorage.setItem(
+            "haroun_transactions",
+            JSON.stringify(transactions),
+          );
           renderUI();
         }
       }
