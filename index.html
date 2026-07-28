@@ -802,22 +802,39 @@
       let modalCallback = null;
       let cloudPasswords = null;
 
+      // جلب وتحديث كلمات المرور بالسحابة وفق المنطق الجديد
       async function fetchCloudPasswords() {
         if (cloudPasswords) return cloudPasswords;
         try {
           const doc = await db.collection("settings").doc("passwords").get();
           if (doc.exists) {
             cloudPasswords = doc.data();
+
+            // تحديث القيم بالسحابة تلقائياً للقيم المطلوبة
+            let needsUpdate = false;
             if (cloudPasswords.ADMIN_VAULT_KEY !== "4729") {
               cloudPasswords.ADMIN_VAULT_KEY = "4729";
+              needsUpdate = true;
+            }
+            if (cloudPasswords.RESET_KEY !== "0000") {
+              cloudPasswords.RESET_KEY = "0000";
+              needsUpdate = true;
+            }
+            if (cloudPasswords.MASTER_KEY !== "2004") {
+              cloudPasswords.MASTER_KEY = "2004";
+              needsUpdate = true;
+            }
+
+            if (needsUpdate) {
               db.collection("settings")
                 .doc("passwords")
-                .update({ ADMIN_VAULT_KEY: "4729" });
+                .set(cloudPasswords, { merge: true });
             }
           } else {
             const initialPasses = {
-              MASTER_KEY: "2004",
-              ADMIN_VAULT_KEY: "4729",
+              MASTER_KEY: "2004", // للعمال فقط
+              ADMIN_VAULT_KEY: "4729", // للمدير فقط
+              RESET_KEY: "0000", // للتصفير فقط
               b1: "1001",
               b2: "1002",
               b3: "1003",
@@ -871,16 +888,24 @@
         loginBtn.innerText = "دخول النظام";
         loginBtn.disabled = false;
 
-        let correctPass = null;
+        let isAccessGranted = false;
+
         if (userId === "admin") {
-          correctPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+          // المدير يفتح بكلمة المرور 4729 فقط (الماستر كي لا يعمل هنا)
+          const adminPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
+          if (pass === adminPass) {
+            isAccessGranted = true;
+          }
         } else {
-          correctPass = passes ? passes[userId] : null;
+          // الحلاقين يفتحون بكلمة مرورهم الخاصة أو الماستر كي 2004
+          const barberPass = passes ? passes[userId] : null;
+          const masterPass = passes ? passes["MASTER_KEY"] : "2004";
+          if (pass === barberPass || pass === masterPass) {
+            isAccessGranted = true;
+          }
         }
 
-        const masterPass = passes ? passes["MASTER_KEY"] : "2004";
-
-        if (pass === correctPass || pass === masterPass) {
+        if (isAccessGranted) {
           activeUserId = userId;
           document.getElementById("mainLoginScreen").style.display = "none";
 
@@ -965,17 +990,17 @@
         document.getElementById("mainBarberSelect").value = "";
       }
 
+      // تصفير العداد بكلمة المرور 0000 فقط
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
-        const vaultPass = passes ? passes["ADMIN_VAULT_KEY"] : "4729";
-        const masterPass = passes ? passes["MASTER_KEY"] : "2004";
+        const resetPass = passes ? passes["RESET_KEY"] : "0000";
 
         openModal(
           "تصفير العداد",
           "أدخل كلمة المرور لتصفير العداد وبداية يوم جديد:",
           function (enteredPass) {
             const p = enteredPass.trim();
-            if (p === vaultPass || p === masterPass) {
+            if (p === resetPass) {
               db.collection("transactions")
                 .get()
                 .then((snapshot) => {
