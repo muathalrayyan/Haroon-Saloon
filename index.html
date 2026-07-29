@@ -11,10 +11,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-    <!-- مكتبة jsPDF لتوليد ملفات الـ PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
     <style>
       * {
         box-sizing: border-box;
@@ -759,10 +755,50 @@
         display: inline-block;
         font-family: monospace, monospace;
       }
+
+      /* تنسيق خاص للطباعة إلى PDF باللغة العربية */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #printArea,
+        #printArea * {
+          visibility: visible;
+        }
+        #printArea {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          color: #000 !important;
+          background: #fff !important;
+          padding: 20px;
+          direction: rtl;
+        }
+        #printArea table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+        }
+        #printArea th,
+        #printArea td {
+          border: 1px solid #000 !important;
+          padding: 8px;
+          text-align: center;
+          color: #000 !important;
+          background: transparent !important;
+        }
+        #printArea th {
+          background-color: #f0f0f0 !important;
+        }
+      }
     </style>
   </head>
   <body>
     <canvas id="bgCanvas"></canvas>
+
+    <!-- منطقة مستند الطباعة المباشر إلى PDF باللغة العربية -->
+    <div id="printArea" style="display: none"></div>
 
     <!-- شاشة تسجيل الدخول الرئيسية -->
     <div id="mainLoginScreen">
@@ -1064,8 +1100,11 @@
             margin-top: 10px;
           "
         >
-          <button class="btn-download-pdf" onclick="downloadMonthlyPDFReport()">
-            📥 تحميل التقرير الشهري الشامل (PDF Document)
+          <button
+            class="btn-download-pdf"
+            onclick="downloadArabicMonthlyPDFReport()"
+          >
+            📄 طباعة وتحميل التقرير الشهري الشامل (PDF بالعربي)
           </button>
           <button
             class="btn-reset"
@@ -1949,44 +1988,11 @@
         }
       }
 
-      /* تحميل التقرير الشهري الشامل كمستند PDF متكامل للمدير */
-      function downloadMonthlyPDFReport() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({
-          orientation: "portrait",
-          unit: "mm",
-          format: "a4",
-        });
-
+      /* تحميل التقرير الشهري الشامل باللغة العربية بالكامل مع تفاصيل المصاريف وكافة البنود */
+      function downloadArabicMonthlyPDFReport() {
         const now = new Date();
-        const printDate = now.toLocaleString("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        });
-
-        // هيدر الملف
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("HAROUN AL-RASHID SALON", 105, 18, { align: "center" });
-
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text("MONTHLY FINANCIAL & BARBERS AUDIT REPORT", 105, 25, {
-          align: "center",
-        });
-
-        doc.setFontSize(9);
-        doc.text(`Generated Date: ${printDate}`, 105, 30, { align: "center" });
-        doc.line(15, 33, 195, 33);
-
-        // 1. ملخص الأرقام المالية الشهرية
-        doc.setFontSize(11);
-        doc.setFont("helvetica", "bold");
-        doc.text("1. MONTHLY REVENUE & EXPENSES SUMMARY", 15, 40);
+        const dateStr = now.toLocaleDateString("ar-JO");
+        const timeStr = now.toLocaleTimeString("ar-JO");
 
         let mCash = 0,
           mVisa = 0,
@@ -2011,36 +2017,12 @@
         let mGrand = mCash + mVisa + mCliq;
         let mNetSalon = mSumSalonGross - monthlyExpensesSum;
 
-        const summaryData = [
-          ["Cash Total", `${mCash.toFixed(2)} JOD`],
-          ["Visa Total", `${mVisa.toFixed(2)} JOD`],
-          ["CliQ Total", `${mCliq.toFixed(2)} JOD`],
-          ["Grand Monthly Revenue", `${mGrand.toFixed(2)} JOD`],
-          ["Monthly Expenses Deducted", `${monthlyExpensesSum.toFixed(2)} JOD`],
-          ["NET SALON SHARE (AFTER EXPENSES)", `${mNetSalon.toFixed(2)} JOD`],
-        ];
-
-        doc.autoTable({
-          startY: 43,
-          head: [["Financial Item", "Amount (JOD)"]],
-          body: summaryData,
-          theme: "grid",
-          headStyles: { fillColor: [0, 180, 150], textColor: 255 },
-          styles: { fontStyle: "bold", fontSize: 9 },
-        });
-
-        // 2. جدول توزيع مبيعات وأرباح الحلاقين
-        let nextY = doc.lastAutoTable.finalY + 10;
-        doc.setFontSize(11);
-        doc.text("2. INDIVIDUAL BARBERS MONTHLY PERFORMANCE", 15, nextY);
-
-        let barbersTableRows = [];
-
+        let barbersHTML = "";
         barbers.forEach((b) => {
-          let bTotal = 0;
-          let bCount = 0;
-          let bShareSum = 0;
-          let sShareSum = 0;
+          let bTotal = 0,
+            bCount = 0,
+            bShareSum = 0,
+            sShareSum = 0;
 
           monthlyVaultRecords.forEach((tx) => {
             if (tx.barberId === b.id) {
@@ -2056,65 +2038,101 @@
           });
 
           if (bCount > 0) {
-            barbersTableRows.push([
-              b.id.toUpperCase(),
-              b.name,
-              `${b.rate}%`,
-              bCount,
-              `${bTotal.toFixed(2)} JOD`,
-              `${bShareSum.toFixed(2)} JOD`,
-              `${sShareSum.toFixed(2)} JOD`,
-            ]);
+            barbersHTML += `
+              <tr>
+                <td><b>${b.name}</b></td>
+                <td>${b.rate}%</td>
+                <td>${bCount}</td>
+                <td>${bTotal.toFixed(2)} د.أ</td>
+                <td><b>${bShareSum.toFixed(2)} د.أ</b></td>
+                <td>${sShareSum.toFixed(2)} د.أ</td>
+              </tr>
+            `;
           }
         });
 
-        doc.autoTable({
-          startY: nextY + 3,
-          head: [
-            [
-              "ID",
-              "Barber Name",
-              "Base Rate",
-              "Invoices",
-              "Total Sales",
-              "Barber Share",
-              "Salon Share",
-            ],
-          ],
-          body:
-            barbersTableRows.length > 0
-              ? barbersTableRows
-              : [
-                  [
-                    "-",
-                    "No transactions for this month",
-                    "-",
-                    "-",
-                    "-",
-                    "-",
-                    "-",
-                  ],
-                ],
-          theme: "striped",
-          headStyles: { fillColor: [40, 40, 40], textColor: 255 },
-          styles: { fontSize: 8, halign: "center" },
+        if (!barbersHTML) {
+          barbersHTML = `<tr><td colspan="6">لا توجد عمليات مسجلة للحلاقين خلال هذه الفترة.</td></tr>`;
+        }
+
+        let expensesHTML = "";
+        expensesList.forEach((exp) => {
+          expensesHTML += `
+            <tr>
+              <td>${exp.formattedDate}</td>
+              <td><b>${exp.note}</b></td>
+              <td><b>${exp.amount.toFixed(2)} د.أ</b></td>
+            </tr>
+          `;
         });
 
-        // فوتر الوثيقة
-        let footerY = doc.lastAutoTable.finalY + 15;
-        doc.setFontSize(8);
-        doc.setFont("helvetica", "italic");
-        doc.text(
-          "Crown Haroun Al-Rashid Saloon Management Cloud System",
-          105,
-          footerY,
-          { align: "center" },
-        );
+        if (!expensesHTML) {
+          expensesHTML = `<tr><td colspan="3">لا توجد مصاريف مسجلة خلال هذه الفترة.</td></tr>`;
+        }
 
-        // حفظ الملف على الجهاز
-        doc.save(
-          `Haroun_Salon_Monthly_Report_${now.getFullYear()}_${now.getMonth() + 1}.pdf`,
-        );
+        const printDiv = document.getElementById("printArea");
+        printDiv.innerHTML = `
+          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 24px;">👑 صالون هارون الرشيد</h1>
+            <h3 style="margin: 5px 0; font-size: 16px;">التقرير المالي والتفصيلي الشامل للشهر (حتى تاريخ التحميل)</h3>
+            <p style="margin: 0; font-size: 13px;">تاريخ استخراج التقرير: ${dateStr} - الساعة: ${timeStr}</p>
+          </div>
+
+          <h3 style="border-bottom: 1px solid #666; padding-bottom: 5px;">1. ملخص الإيرادات والمصاريف العامة للصالون</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>البند المالي</th>
+                <th>المبلغ بالدينار الأردني</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>مقبوضات الكاش (Cash)</td><td><b>${mCash.toFixed(2)} د.أ</b></td></tr>
+              <tr><td>مقبوضات الفيزا (Visa)</td><td><b>${mVisa.toFixed(2)} د.أ</b></td></tr>
+              <tr><td>مقبوضات كليك (CliQ)</td><td><b>${mCliq.toFixed(2)} د.أ</b></td></tr>
+              <tr style="background-color: #f0f0f0;"><td><b>إجمالي دخل المبيعات الكلي</b></td><td><b>${mGrand.toFixed(2)} د.أ</b></td></tr>
+              <tr><td>إجمالي مصاريف الصالون المستقطعة</td><td><b style="color: red;">${monthlyExpensesSum.toFixed(2)} د.أ</b></td></tr>
+              <tr style="background-color: #e6fffa;"><td><b>صافي ربح الصالون الفعلي (بعد المصاريف)</b></td><td><b style="font-size: 16px; color: green;">${mNetSalon.toFixed(2)} د.أ</b></td></tr>
+            </tbody>
+          </table>
+
+          <h3 style="border-bottom: 1px solid #666; padding-bottom: 5px; margin-top: 25px;">2. كشف حساب وأداء كادر الحلاقين</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>اسم الحلاق</th>
+                <th>النسبة</th>
+                <th>عدد الفواتير</th>
+                <th>إجمالي الدخل</th>
+                <th>حصة الحلاق</th>
+                <th>حصة الصالون</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${barbersHTML}
+            </tbody>
+          </table>
+
+          <h3 style="border-bottom: 1px solid #666; padding-bottom: 5px; margin-top: 25px;">3. سجل كافة مصاريف الصالون التفصيلية للفترة</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>التاريخ والوقت</th>
+                <th>بيان وتفاصيل المصروف</th>
+                <th>المبلغ المستقطع</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${expensesHTML}
+            </tbody>
+          </table>
+
+          <div style="margin-top: 30px; text-align: center; font-size: 12px; border-top: 1px dashed #999; padding-top: 10px;">
+            نظام صالون هارون الرشيد السحابي لندرة الإدارة والمحاسبة 👑
+          </div>
+        `;
+
+        window.print();
       }
 
       async function searchDailyHistoryByCalendar() {
