@@ -491,9 +491,9 @@
         background: #00cca3;
       }
 
-      .btn-download-pdf {
-        background: #00ffcc;
-        color: #000;
+      .btn-download-word {
+        background: #2b579a;
+        color: #fff;
         border: none;
         padding: 12px 24px;
         border-radius: 8px;
@@ -501,11 +501,11 @@
         font-weight: bold;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 0 12px rgba(0, 255, 204, 0.25);
+        box-shadow: 0 0 12px rgba(43, 87, 154, 0.3);
       }
 
-      .btn-download-pdf:hover {
-        background: #00cca3;
+      .btn-download-word:hover {
+        background: #204177;
       }
 
       .btn-add-expense {
@@ -755,54 +755,10 @@
         display: inline-block;
         font-family: monospace, monospace;
       }
-
-      /* تنسيق خاص للطباعة المباشرة لتوليد PDF بالعربي بالكامل بدون أي أخطاء */
-      @media print {
-        body * {
-          visibility: hidden !important;
-        }
-        #printableReportArea,
-        #printableReportArea * {
-          visibility: visible !important;
-        }
-        #printableReportArea {
-          position: fixed;
-          left: 0;
-          top: 0;
-          width: 100vw;
-          height: 100vh;
-          background: #ffffff !important;
-          color: #000000 !important;
-          padding: 20px;
-          z-index: 999999;
-          direction: rtl;
-          overflow-y: auto;
-        }
-        #printableReportArea table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 10px;
-          margin-bottom: 20px;
-        }
-        #printableReportArea th,
-        #printableReportArea td {
-          border: 1px solid #000 !important;
-          padding: 8px;
-          text-align: center;
-          color: #000 !important;
-          font-size: 13px;
-        }
-        #printableReportArea th {
-          background-color: #f2f2f2 !important;
-        }
-      }
     </style>
   </head>
   <body>
     <canvas id="bgCanvas"></canvas>
-
-    <!-- منطقة التقرير القابلة للطباعة المباشرة باللغة العربية -->
-    <div id="printableReportArea" style="display: none"></div>
 
     <!-- شاشة تسجيل الدخول الرئيسية -->
     <div id="mainLoginScreen">
@@ -1069,7 +1025,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 2. أرباح الشهر والمصاريف الشهرية التراكمية زر تنزيل الـ PDF -->
+        <!-- 2. أرباح الشهر والمصاريف الشهرية التراكمية زر تنزيل الـ Word -->
         <div class="section-title">
           📅 إجمالي أرباح الشهر التراكمية (الصافي بعد خصم مصاريف الشهر)
         </div>
@@ -1105,10 +1061,10 @@
           "
         >
           <button
-            class="btn-download-pdf"
-            onclick="printArabicMonthlyPDFReport()"
+            class="btn-download-word"
+            onclick="downloadMonthlyWordReport()"
           >
-            📄 طباعة وتحميل التقرير الشهري الشامل (PDF بالعربي)
+            📥 تحميل التقرير الشهري الشامل (ملف Word بالعربي)
           </button>
           <button
             class="btn-reset"
@@ -1992,8 +1948,8 @@
         }
       }
 
-      /* طباعة تقرير الشهر باللغة العربية بالكامل وبشكل مضمون 100% عبر نافذة الطباعة المباشرة */
-      function printArabicMonthlyPDFReport() {
+      /* تحميل التقرير الشهري الشامل كملف Word رسمي مدمج باللغة العربية بالكامل */
+      function downloadMonthlyWordReport() {
         const now = new Date();
         const dateStr = now.toLocaleDateString("ar-JO");
         const timeStr = now.toLocaleTimeString("ar-JO");
@@ -2021,7 +1977,7 @@
         let mGrand = mCash + mVisa + mCliq;
         let mNetSalon = mSumSalonGross - monthlyExpensesSum;
 
-        let barbersHTML = "";
+        let barbersRowsHTML = "";
         barbers.forEach((b) => {
           let bTotal = 0,
             bCount = 0,
@@ -2042,101 +1998,126 @@
           });
 
           if (bCount > 0) {
-            barbersHTML += `
+            barbersRowsHTML += `
               <tr>
-                <td><b>${b.name}</b></td>
-                <td>${b.rate}%</td>
-                <td>${bCount}</td>
-                <td>${bTotal.toFixed(2)} د.أ</td>
-                <td><b>${bShareSum.toFixed(2)} د.أ</b></td>
-                <td>${sShareSum.toFixed(2)} د.أ</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${b.name}</b></td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${b.rate}%</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${bCount}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${bTotal.toFixed(2)} د.أ</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${bShareSum.toFixed(2)} د.أ</b></td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${sShareSum.toFixed(2)} د.أ</td>
               </tr>
             `;
           }
         });
 
-        if (!barbersHTML) {
-          barbersHTML = `<tr><td colspan="6">لا توجد عمليات مسجلة للحلاقين خلال هذه الفترة.</td></tr>`;
+        if (!barbersRowsHTML) {
+          barbersRowsHTML = `<tr><td colspan="6" style="border: 1px solid #000; padding: 8px; text-align: center;">لا توجد عمليات مسجلة للحلاقين خلال هذه الفترة.</td></tr>`;
         }
 
-        let expensesHTML = "";
+        let expensesRowsHTML = "";
         expensesList.forEach((exp) => {
-          expensesHTML += `
+          expensesRowsHTML += `
             <tr>
-              <td>${exp.formattedDate}</td>
-              <td><b>${exp.note}</b></td>
-              <td><b>${exp.amount.toFixed(2)} د.أ</b></td>
+              <td style="border: 1px solid #000; padding: 8px; text-align: center;">${exp.formattedDate}</td>
+              <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${exp.note}</b></td>
+              <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${exp.amount.toFixed(2)} د.أ</b></td>
             </tr>
           `;
         });
 
-        if (!expensesHTML) {
-          expensesHTML = `<tr><td colspan="3">لا توجد مصاريف مسجلة خلال هذه الفترة.</td></tr>`;
+        if (!expensesRowsHTML) {
+          expensesRowsHTML = `<tr><td colspan="3" style="border: 1px solid #000; padding: 8px; text-align: center;">لا توجد مصاريف مسجلة خلال هذه الفترة.</td></tr>`;
         }
 
-        const area = document.getElementById("printableReportArea");
-        area.innerHTML = `
-          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px;">
-            <h2 style="margin: 0; font-size: 24px;">👑 صالون هارون الرشيد</h2>
-            <h3 style="margin: 5px 0; font-size: 16px;">التقرير المالي والتفصيلي الشامل للشهر (من بداية الفترة حتى لحظة التحميل)</h3>
-            <p style="margin: 0; font-size: 13px; color: #333;">تاريخ الإصدار: ${dateStr} - الوقت: ${timeStr}</p>
-          </div>
+        // هيكل ملف الـ Word بصيغة HTML متوافقة مع ميكروسوفت وورد
+        const htmlContent = `
+          <html lang="ar" dir="rtl">
+          <head>
+            <meta charset="UTF-8">
+            <style>
+              body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; direction: rtl; text-align: right; color: #000; }
+              h1, h2, h3 { text-align: center; color: #000; }
+              table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }
+              th, td { border: 1px solid #000; padding: 8px 12px; text-align: center; font-size: 14px; }
+              th { background-color: #f2f2f2; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <h1>👑 صالون هارون الرشيد</h1>
+            <h2>التقرير المالي والتفصيلي الشامل للشهر</h2>
+            <p style="text-align: center; font-size: 13px;">تاريخ استخراج التقرير: ${dateStr} - الوقت: ${timeStr}</p>
+            <hr style="border: 1px solid #000; margin-bottom: 20px;" />
 
-          <h3 style="border-bottom: 1px solid #444; padding-bottom: 5px; font-size: 15px; text-align: right;">1. ملخص الإيرادات والمصاريف العامة للصالون</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>البند المالي</th>
-                <th>المبلغ بالدينار الأردني</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>مقبوضات الكاش</td><td><b>${mCash.toFixed(2)} د.أ</b></td></tr>
-              <tr><td>مقبوضات الفيزا</td><td><b>${mVisa.toFixed(2)} د.أ</b></td></tr>
-              <tr><td>مقبوضات كليك</td><td><b>${mCliq.toFixed(2)} د.أ</b></td></tr>
-              <tr style="background-color: #f5f5f5;"><td><b>إجمالي دخل المبيعات الكلي</b></td><td><b>${mGrand.toFixed(2)} د.أ</b></td></tr>
-              <tr><td>إجمالي مصاريف الصالون المستقطعة</td><td><b style="color: #d9534f;">${monthlyExpensesSum.toFixed(2)} د.أ</b></td></tr>
-              <tr style="background-color: #e6fffa;"><td><b>صافي ربح الصالون الفعلي (بعد المصاريف)</b></td><td><b style="font-size: 16px; color: #2e8b57;">${mNetSalon.toFixed(2)} د.أ</b></td></tr>
-            </tbody>
-          </table>
+            <h3>1. ملخص الإيرادات والمصاريف العامة للصالون</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>البند المالي</th>
+                  <th>المبلغ بالدينار الأردني</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>مقبوضات الكاش</td><td><b>${mCash.toFixed(2)} د.أ</b></td></tr>
+                <tr><td>مقبوضات الفيزا</td><td><b>${mVisa.toFixed(2)} د.أ</b></td></tr>
+                <tr><td>مقبوضات كليك</td><td><b>${mCliq.toFixed(2)} د.أ</b></td></tr>
+                <tr style="background-color: #f9f9f9;"><td><b>إجمالي دخل المبيعات الكلي</b></td><td><b>${mGrand.toFixed(2)} د.أ</b></td></tr>
+                <tr><td>إجمالي مصاريف الصالون المستقطعة</td><td><b style="color: #c00;">${monthlyExpensesSum.toFixed(2)} د.أ</b></td></tr>
+                <tr style="background-color: #e6fffa;"><td><b>صافي ربح الصالون الفعلي (بعد المصاريف)</b></td><td><b style="font-size: 15px; color: #008000;">${mNetSalon.toFixed(2)} د.أ</b></td></tr>
+              </tbody>
+            </table>
 
-          <h3 style="border-bottom: 1px solid #444; padding-bottom: 5px; font-size: 15px; text-align: right; margin-top: 25px;">2. كشف حساب وأداء كادر الحلاقين</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>اسم الحلاق</th>
-                <th>النسبة</th>
-                <th>عدد الفواتير</th>
-                <th>إجمالي الدخل</th>
-                <th>حصة الحلاق</th>
-                <th>حصة الصالون</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${barbersHTML}
-            </tbody>
-          </table>
+            <h3>2. كشف حساب وأداء كادر الحلاقين</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم الحلاق</th>
+                  <th>النسبة</th>
+                  <th>عدد الفواتير</th>
+                  <th>إجمالي الدخل</th>
+                  <th>حصة الحلاق</th>
+                  <th>حصة الصالون</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${barbersRowsHTML}
+              </tbody>
+            </table>
 
-          <h3 style="border-bottom: 1px solid #444; padding-bottom: 5px; font-size: 15px; text-align: right; margin-top: 25px;">3. سجل كافة مصاريف الصالون التفصيلية للفترة</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>التاريخ والوقت</th>
-                <th>بيان وتفاصيل المصروف</th>
-                <th>المبلغ المستقطع</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${expensesHTML}
-            </tbody>
-          </table>
+            <h3>3. سجل كافة مصاريف الصالون التفصيلية للفترة</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>التاريخ والوقت</th>
+                  <th>بيان وتفاصيل المصروف</th>
+                  <th>المبلغ المستقطع</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${expensesRowsHTML}
+              </tbody>
+            </table>
 
-          <div style="margin-top: 30px; text-align: center; font-size: 12px; border-top: 1px dashed #777; padding-top: 10px;">
-            نظام صالون هارون الرشيد السحابي للإدارة والمحاسبة 👑
-          </div>
+            <div style="margin-top: 30px; text-align: center; font-size: 12px; border-top: 1px dashed #777; padding-top: 10px;">
+              نظام صالون هارون الرشيد السحابي للإدارة والمحاسبة 👑
+            </div>
+          </body>
+          </html>
         `;
 
-        window.print();
+        // تحويل وتنزيل الملف كـ Word (.doc)
+        const blob = new Blob(["\ufeff" + htmlContent], {
+          type: "application/msword;charset=utf-8",
+        });
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `تقرير_شهر_صالون_هارون_الرشيد_${now.getFullYear()}_${now.getMonth() + 1}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       }
 
       async function searchDailyHistoryByCalendar() {
@@ -3017,7 +2998,7 @@
         `;
         vaultFoot.appendChild(footRow);
 
-        // حسابات العداد الشهري والمصاريف الشهرية بصفحة المدير بالتكامل مع القواعد لكل خدمة
+        // حسابات العداد الشهري والمصاريف الشهرية بصفحة المدير
         let mCash = 0;
         let mVisa = 0;
         let mCliq = 0;
