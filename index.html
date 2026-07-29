@@ -250,9 +250,9 @@
         background: transparent;
         color: #888;
         border: none;
-        padding: 8px 18px;
+        padding: 8px 16px;
         border-radius: 8px;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -819,6 +819,14 @@
             >
               💳 فيزا
             </button>
+            <button
+              type="button"
+              class="pay-btn"
+              id="payCliqBtn"
+              onclick="setPayMethod('cliq')"
+            >
+              📱 كليك
+            </button>
           </div>
         </div>
       </div>
@@ -917,6 +925,9 @@
             دخل الفيزا اليومي: <span id="visaTotal">0</span> د.أ
           </div>
           <div class="total-item">
+            دخل كليك اليومي: <span id="cliqTotal">0</span> د.أ
+          </div>
+          <div class="total-item">
             الإجمالي الكلي اليومي: <span id="grandTotal">0</span> د.أ
           </div>
           <div class="total-item highlight-expense">
@@ -960,6 +971,9 @@
           </div>
           <div class="total-item">
             فيزا الشهر: <span id="monthlyVisaTotal">0</span> د.أ
+          </div>
+          <div class="total-item">
+            كليك الشهر: <span id="monthlyCliqTotal">0</span> د.أ
           </div>
           <div class="total-item">
             دخل الشهر الكلي: <span id="monthlyGrandTotal">0</span> د.أ
@@ -1008,7 +1022,7 @@
 
         <!-- 4. تعديل قائمة تسعيرة وتسمية الخدمات -->
         <div class="section-title">
-          🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (للمدير)
+          🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (ل للمدير)
         </div>
         <div class="table-responsive">
           <table class="report-table">
@@ -1286,7 +1300,7 @@
 
       let dailyTransactions = [];
       let monthlyVaultRecords = [];
-      let expensesList = []; // مصفوفة مصاريف الصالون
+      let expensesList = [];
       let activeUserId = null;
       let selectedPayMethod = "cash";
       let modalCallback = null;
@@ -1356,6 +1370,7 @@
         }
       }
 
+      /* إضافة الدعم لـ CliQ كطريقة دفع ثالثة */
       function setPayMethod(method) {
         selectedPayMethod = method;
         document
@@ -1364,6 +1379,9 @@
         document
           .getElementById("payVisaBtn")
           .classList.toggle("active", method === "visa");
+        document
+          .getElementById("payCliqBtn")
+          .classList.toggle("active", method === "cliq");
       }
 
       async function fetchCloudPasswords() {
@@ -1476,7 +1494,6 @@
         renderUI();
       });
 
-      // الاستماع لكولكشن المصاريف
       db.collection("expenses").onSnapshot((snapshot) => {
         expensesList = [];
         snapshot.forEach((doc) => {
@@ -1626,7 +1643,6 @@
         }
       }
 
-      /* وظائف البوب أب للمصاريف للمدير */
       function openExpenseModal() {
         document.getElementById("expenseNoteInput").value = "";
         document.getElementById("expenseAmountInput").value = "";
@@ -2030,13 +2046,17 @@
               })
               .join(" + ");
 
+            let payText = "💵 كاش";
+            if (data.payMethod === "visa") payText = "💳 فيزا";
+            if (data.payMethod === "cliq") payText = "📱 كليك";
+
             const row = document.createElement("tr");
             row.innerHTML = `
               <td class="en-date">${data.formattedDate}</td>
               <td><b>${data.customerName}</b></td>
               <td dir="ltr"><b>${data.customerPhone}</b></td>
               <td>${data.barberName}</td>
-              <td>${data.payMethod === "cash" ? "💵 كاش" : "💳 فيزا"}</td>
+              <td>${payText}</td>
               <td style="color: #00ffcc;">${servicesListText}</td>
               <td style="font-weight: bold; color: #00ffcc;">${Number(data.totalPrice).toFixed(2)} د.أ</td>
             `;
@@ -2145,9 +2165,10 @@
           }
         }
 
-        // حسابات اليوم والمصاريف اليومية
+        // حسابات اليوم والمصاريف اليومية الشاملة لكاش/فيزا/كليك
         let cashTotalDay = 0;
         let visaTotalDay = 0;
+        let cliqTotalDay = 0;
 
         let allBarbersDayStats = {};
         barbers.forEach((b) => {
@@ -2157,6 +2178,7 @@
         dailyTransactions.forEach((tx) => {
           if (tx.payMethod === "cash") cashTotalDay += tx.totalPrice;
           if (tx.payMethod === "visa") visaTotalDay += tx.totalPrice;
+          if (tx.payMethod === "cliq") cliqTotalDay += tx.totalPrice;
 
           if (allBarbersDayStats[tx.barberId]) {
             allBarbersDayStats[tx.barberId].count += 1;
@@ -2164,20 +2186,21 @@
           }
         });
 
-        // حساب إجمالي مصاريف اليوم
         let dailyExpensesSum = expensesList.reduce(
           (acc, curr) => acc + curr.amount,
           0,
         );
 
-        const grandTotalSumDay = cashTotalDay + visaTotalDay;
+        const grandTotalSumDay = cashTotalDay + visaTotalDay + cliqTotalDay;
         const grossSalonShareDay = grandTotalSumDay * 0.5;
-        const netSalonShareDay = grossSalonShareDay - dailyExpensesSum; // الصافي الفعلي بعد خصم المصروف
+        const netSalonShareDay = grossSalonShareDay - dailyExpensesSum;
 
         document.getElementById("cashTotal").innerText =
           cashTotalDay.toFixed(2);
         document.getElementById("visaTotal").innerText =
           visaTotalDay.toFixed(2);
+        document.getElementById("cliqTotal").innerText =
+          cliqTotalDay.toFixed(2);
         document.getElementById("grandTotal").innerText =
           grandTotalSumDay.toFixed(2);
         document.getElementById("dailyExpenseTotal").innerText =
@@ -2227,12 +2250,14 @@
         `;
         vaultFoot.appendChild(footRow);
 
-        // حسابات العداد الشهري والمصاريف الشهرية
+        // حسابات العداد الشهري والمصاريف الشهرية الشاملة لكاش/فيزا/كليك
         let mCash = 0;
         let mVisa = 0;
+        let mCliq = 0;
         monthlyVaultRecords.forEach((data) => {
           if (data.payMethod === "cash") mCash += data.totalPrice;
           if (data.payMethod === "visa") mVisa += data.totalPrice;
+          if (data.payMethod === "cliq") mCliq += data.totalPrice;
         });
 
         let monthlyExpensesSum = expensesList.reduce(
@@ -2240,7 +2265,7 @@
           0,
         );
 
-        const mGrand = mCash + mVisa;
+        const mGrand = mCash + mVisa + mCliq;
         const mGrossSalon = mGrand * 0.5;
         const mNetSalon = mGrossSalon - monthlyExpensesSum;
 
@@ -2248,6 +2273,8 @@
           mCash.toFixed(2);
         document.getElementById("monthlyVisaTotal").innerText =
           mVisa.toFixed(2);
+        document.getElementById("monthlyCliqTotal").innerText =
+          mCliq.toFixed(2);
         document.getElementById("monthlyGrandTotal").innerText =
           mGrand.toFixed(2);
         document.getElementById("monthlyExpenseTotal").innerText =
