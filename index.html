@@ -1052,7 +1052,7 @@
             class="select-barber-admin"
             onchange="renderAdminBarberMonthlyStats()"
           >
-            <!-- القائمة التلقائية -->
+            <!-- القائمة التلقائية الديناميكية من الفايربيس -->
           </select>
           <div class="totals-row" style="margin-top: 10px">
             <div class="total-item">
@@ -1364,7 +1364,6 @@
         { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
       ];
 
-      // إضافة النسبة (rate) الافتراضية 50% لكل حلاق
       let barbers = [
         { id: "b1", name: "زيد", rate: 50 },
         { id: "b2", name: "محمد", rate: 50 },
@@ -1392,7 +1391,6 @@
         services: [],
       };
 
-      // الاستماع السحابي لأسماء ونسب الحلاقين الـ 10
       function listenBarberNames() {
         db.collection("settings")
           .doc("barbers")
@@ -1441,6 +1439,9 @@
         const select = document.getElementById("mainBarberSelect");
         const adminSelect = document.getElementById("adminBarberMonthlySelect");
 
+        const currentAdminVal = adminSelect ? adminSelect.value : "";
+        const currentMainVal = select ? select.value : "";
+
         let html = `
           <option value="">-- اختر الحساب --</option>
           <option value="admin" style="color: #00ffcc; font-weight: bold;">👑 المدير (إدارة الصالون)</option>
@@ -1453,9 +1454,19 @@
           adminHtml += `<option value="${b.id}">${b.name} (${b.rate}%)</option>`;
         });
 
-        if (select) select.innerHTML = html;
-        if (adminSelect && adminSelect.children.length === 0)
+        if (select) {
+          select.innerHTML = html;
+          if (currentMainVal) select.value = currentMainVal;
+        }
+        if (adminSelect) {
           adminSelect.innerHTML = adminHtml;
+          if (
+            currentAdminVal &&
+            barbers.some((b) => b.id === currentAdminVal)
+          ) {
+            adminSelect.value = currentAdminVal;
+          }
+        }
       }
 
       function onAccountSelected() {
@@ -2047,7 +2058,7 @@
         });
       }
 
-      /* حاسبة شغل الحلاق المختار من أول الشهر لبوكس المدير */
+      /* حاسبة شغل الحلاق المختار من أول الشهر لبوكس المدير مع تحديث العنوان والنسب بشكل متزامن دقيق */
       function renderAdminBarberMonthlyStats() {
         const select = document.getElementById("adminBarberMonthlySelect");
         if (!select) return;
@@ -2456,7 +2467,6 @@
           if (data.payMethod === "visa") mVisa += data.totalPrice;
           if (data.payMethod === "cliq") mCliq += data.totalPrice;
 
-          // احتساب حصة الصالون الشهرية بحسب نسبة كل حلاق
           const bObj = barbers.find((b) => b.id === data.barberId);
           const rate = bObj ? bObj.rate : 50;
           mSumSalonGross += data.totalPrice * ((100 - rate) / 100);
