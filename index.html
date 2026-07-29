@@ -585,6 +585,19 @@
         font-weight: bold;
       }
 
+      .select-barber-admin {
+        background: #2a2a2a;
+        border: 1px solid #00ffcc;
+        color: #00ffcc;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        outline: none;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -835,6 +848,7 @@
 
       <div class="summary-box">
         <div id="barberPersonalSection">
+          <!-- 1. ملخص أرباح الحلاق اليومي -->
           <div class="section-title" id="barberSummaryTitle">
             📊 ملخص أرباح الحلاق (اليومي)
           </div>
@@ -844,15 +858,39 @@
                 <tr>
                   <th>الحلاق</th>
                   <th>إجمالي العمليات اليومية</th>
-                  <th>المبلغ الإجمالي</th>
-                  <th>حصة الحلاق (50%)</th>
-                  <th>حصة الصالون (50%)</th>
+                  <th>المبلغ الإجمالي اليومي</th>
+                  <th>حصة الحلاق اليومية</th>
+                  <th>حصة الصالون اليومية</th>
                 </tr>
               </thead>
               <tbody id="barbersSummaryBody"></tbody>
             </table>
           </div>
 
+          <!-- 2. ملخص أرباح الحلاق الشهري التراكمي -->
+          <div
+            class="section-title"
+            id="barberMonthlySummaryTitle"
+            style="margin-top: 20px"
+          >
+            📅 ملخص أرباح الحلاق (الشهري التراكمي)
+          </div>
+          <div class="table-responsive">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>الحلاق</th>
+                  <th>إجمالي فواتير الشهر</th>
+                  <th>المبلغ الإجمالي الشهري</th>
+                  <th>حصة الحلاق الشهرية</th>
+                  <th>حصة الصالون الشهرية</th>
+                </tr>
+              </thead>
+              <tbody id="barbersMonthlySummaryBody"></tbody>
+            </table>
+          </div>
+
+          <!-- 3. تفاصيل خدمات الزبون الحالي -->
           <div
             class="section-title"
             id="barberDetailsTitle"
@@ -944,10 +982,11 @@
             <thead>
               <tr>
                 <th>الحلاق</th>
+                <th>نسبته</th>
                 <th>العمليات اليومية</th>
                 <th>المبلغ الإجمالي</th>
-                <th>حصة الحلاقين (50%)</th>
-                <th>حصة الصالون قبل الخصم (50%)</th>
+                <th>حصة الحلاق</th>
+                <th>حصة الصالون قبل الخصم</th>
               </tr>
             </thead>
             <tbody id="allBarbersVaultBody"></tbody>
@@ -996,7 +1035,46 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 3. جدول المصاريف المسجلة -->
+        <!-- 3. كشف حساب شغل الحلاق من أول الشهر للمدير -->
+        <div class="section-title">
+          💈 كشف حساب مجموع شغل الحلاق من أول الشهر
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+          "
+        >
+          <select
+            id="adminBarberMonthlySelect"
+            class="select-barber-admin"
+            onchange="renderAdminBarberMonthlyStats()"
+          >
+            <!-- القائمة التلقائية -->
+          </select>
+          <div class="totals-row" style="margin-top: 10px">
+            <div class="total-item">
+              فواتير الشهر للحلاق: <span id="admBCount">0</span> فاتورة
+            </div>
+            <div class="total-item">
+              مجموع الدخل الكلي: <span id="admBTotal">0</span> د.أ
+            </div>
+            <div class="total-item">
+              حصة الحلاق (<span id="admBRateLbl">50%</span>):
+              <span id="admBShare">0</span> د.أ
+            </div>
+            <div class="total-item highlight-salon">
+              حصة الصالون (<span id="admSalonRateLbl">50%</span>):
+              <span id="admSalonShare">0</span> د.أ
+            </div>
+          </div>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 4. جدول المصاريف المسجلة -->
         <div class="section-title">🧾 سجل مصاريف الصالون المسجلة</div>
         <div class="table-responsive">
           <table class="report-table">
@@ -1020,9 +1098,9 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 4. تعديل قائمة تسعيرة وتسمية الخدمات -->
+        <!-- 5. تعديل قائمة تسعيرة وتسمية الخدمات -->
         <div class="section-title">
-          🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (ل للمدير)
+          🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (للمدير)
         </div>
         <div class="table-responsive">
           <table class="report-table">
@@ -1042,9 +1120,9 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 5. تعديل أسماء الحلاقين (10 حلاقين) -->
+        <!-- 6. تعديل أسماء ونسب الحلاقين (10 حلاقين) -->
         <div class="section-title">
-          ✏️ إدارة وتعديل أسماء كادر الحلاقين (10 حلاقين)
+          ✏️ إدارة وتعديل أسماء ونسب كادر الحلاقين (10 حلاقين)
         </div>
         <div class="table-responsive">
           <table class="report-table">
@@ -1053,6 +1131,7 @@
                 <th>معرف الحلاق</th>
                 <th>الاسم الحالي بالنظام</th>
                 <th>تعديل الاسم الجديد</th>
+                <th>النسبة (%)</th>
                 <th>إجراء الحفظ</th>
               </tr>
             </thead>
@@ -1062,7 +1141,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 6. سجل الزبائن المباشر برقم الهاتف (مصفر تلقائياً) -->
+        <!-- 7. سجل الزبائن المباشر برقم الهاتف (مصفر تلقائياً) -->
         <div class="section-title">
           🔍 الاستعلام عن تاريخ وسجل الزبون برقم الهاتف
         </div>
@@ -1285,17 +1364,18 @@
         { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
       ];
 
+      // إضافة النسبة (rate) الافتراضية 50% لكل حلاق
       let barbers = [
-        { id: "b1", name: "زيد" },
-        { id: "b2", name: "محمد" },
-        { id: "b3", name: "أبو صبرة" },
-        { id: "b4", name: "عبد الله" },
-        { id: "b5", name: "أحمد" },
-        { id: "b6", name: "حلاق 6" },
-        { id: "b7", name: "حلاق 7" },
-        { id: "b8", name: "حلاق 8" },
-        { id: "b9", name: "حلاق 9" },
-        { id: "b10", name: "حلاق 10" },
+        { id: "b1", name: "زيد", rate: 50 },
+        { id: "b2", name: "محمد", rate: 50 },
+        { id: "b3", name: "أبو صبرة", rate: 50 },
+        { id: "b4", name: "عبد الله", rate: 50 },
+        { id: "b5", name: "أحمد", rate: 50 },
+        { id: "b6", name: "حلاق 6", rate: 50 },
+        { id: "b7", name: "حلاق 7", rate: 50 },
+        { id: "b8", name: "حلاق 8", rate: 50 },
+        { id: "b9", name: "حلاق 9", rate: 50 },
+        { id: "b10", name: "حلاق 10", rate: 50 },
       ];
 
       let dailyTransactions = [];
@@ -1312,6 +1392,7 @@
         services: [],
       };
 
+      // الاستماع السحابي لأسماء ونسب الحلاقين الـ 10
       function listenBarberNames() {
         db.collection("settings")
           .doc("barbers")
@@ -1319,12 +1400,21 @@
             if (doc.exists) {
               const data = doc.data();
               barbers.forEach((b) => {
-                if (data[b.id]) b.name = data[b.id];
+                if (data[b.id]) {
+                  if (typeof data[b.id] === "string") {
+                    b.name = data[b.id];
+                  } else {
+                    if (data[b.id].name) b.name = data[b.id].name;
+                    if (data[b.id].rate !== undefined)
+                      b.rate = Number(data[b.id].rate);
+                  }
+                }
               });
             }
             populateBarberSelectOptions();
             renderUI();
             renderBarbersManagementTable();
+            renderAdminBarberMonthlyStats();
           });
       }
 
@@ -1349,18 +1439,23 @@
 
       function populateBarberSelectOptions() {
         const select = document.getElementById("mainBarberSelect");
-        if (!select) return;
+        const adminSelect = document.getElementById("adminBarberMonthlySelect");
 
         let html = `
           <option value="">-- اختر الحساب --</option>
           <option value="admin" style="color: #00ffcc; font-weight: bold;">👑 المدير (إدارة الصالون)</option>
         `;
 
+        let adminHtml = ``;
+
         barbers.forEach((b) => {
           html += `<option value="${b.id}">${b.name}</option>`;
+          adminHtml += `<option value="${b.id}">${b.name} (${b.rate}%)</option>`;
         });
 
-        select.innerHTML = html;
+        if (select) select.innerHTML = html;
+        if (adminSelect && adminSelect.children.length === 0)
+          adminSelect.innerHTML = adminHtml;
       }
 
       function onAccountSelected() {
@@ -1370,7 +1465,6 @@
         }
       }
 
-      /* إضافة الدعم لـ CliQ كطريقة دفع ثالثة */
       function setPayMethod(method) {
         selectedPayMethod = method;
         document
@@ -1456,6 +1550,7 @@
             document.getElementById("adminContainer").style.display = "flex";
             document.getElementById("appContainer").style.display = "none";
             clearSearchHistoryDisplay();
+            renderAdminBarberMonthlyStats();
           } else {
             document.getElementById("appContainer").style.display = "flex";
             document.getElementById("adminContainer").style.display = "none";
@@ -1492,6 +1587,7 @@
           monthlyVaultRecords.push({ docId: doc.id, ...doc.data() });
         });
         renderUI();
+        renderAdminBarberMonthlyStats();
       });
 
       db.collection("expenses").onSnapshot((snapshot) => {
@@ -1884,13 +1980,22 @@
         );
       }
 
-      async function saveBarberName(barberId) {
-        const input = document.getElementById(`barber_input_${barberId}`);
-        if (!input) return;
+      /* حفظ اسم ونسبة الحلاق للمدير في الفايربيس */
+      async function saveBarberSetting(barberId) {
+        const inputName = document.getElementById(`barber_input_${barberId}`);
+        const inputRate = document.getElementById(`barber_rate_${barberId}`);
+        if (!inputName || !inputRate) return;
 
-        const newName = input.value.trim();
+        const newName = inputName.value.trim();
+        const newRate = parseFloat(inputRate.value);
+
         if (!newName) {
           customAlert("⚠️ تنبيه", "يرجى كتابة اسم صحيح للحلاق!");
+          return;
+        }
+
+        if (isNaN(newRate) || newRate < 0 || newRate > 100) {
+          customAlert("⚠️ تنبيه", "يرجى تحديد نسبة مئوية صحيحة بين 0 و 100!");
           return;
         }
 
@@ -1900,18 +2005,21 @@
             .doc("barbers")
             .set(
               {
-                [barberId]: newName,
+                [barberId]: {
+                  name: newName,
+                  rate: newRate,
+                },
               },
               { merge: true },
             );
 
           customAlert(
             "✅ تم الحفظ",
-            `تم تعديل اسم الحلاق إلى (${newName}) بنجاح على جميع الأجهزة!`,
+            `تم تعديل بيانات الحلاق (${newName}) بنسبة (${newRate}%) بنجاح على جميع الأجهزة!`,
           );
         } catch (e) {
-          console.error("خطأ بتعديل اسم الحلاق:", e);
-          customAlert("⚠️ خطأ", "حدث خطأ أثناء تعديل الاسم بالسحابة!");
+          console.error("خطأ بتعديل بيانات الحلاق:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء تعديل البيانات بالسحابة!");
         }
       }
 
@@ -1929,11 +2037,45 @@
               <input type="text" class="edit-input-field" id="barber_input_${b.id}" value="${b.name}" autocomplete="off" />
             </td>
             <td>
-              <button class="btn-action-save" onclick="saveBarberName('${b.id}')">حفظ الاسم 💾</button>
+              <input type="number" class="edit-input-field" style="max-width: 80px;" id="barber_rate_${b.id}" value="${b.rate}" min="0" max="100" autocomplete="off" /> %
+            </td>
+            <td>
+              <button class="btn-action-save" onclick="saveBarberSetting('${b.id}')">حفظ 💾</button>
             </td>
           `;
           tbody.appendChild(row);
         });
+      }
+
+      /* حاسبة شغل الحلاق المختار من أول الشهر لبوكس المدير */
+      function renderAdminBarberMonthlyStats() {
+        const select = document.getElementById("adminBarberMonthlySelect");
+        if (!select) return;
+
+        const barberId = select.value || (barbers[0] ? barbers[0].id : "b1");
+        const selectedBarberObj = barbers.find((b) => b.id === barberId);
+
+        let totalAmount = 0;
+        let invoiceCount = 0;
+
+        monthlyVaultRecords.forEach((tx) => {
+          if (tx.barberId === barberId) {
+            totalAmount += tx.totalPrice;
+            invoiceCount += 1;
+          }
+        });
+
+        const rate = selectedBarberObj ? selectedBarberObj.rate : 50;
+        const barberShare = totalAmount * (rate / 100);
+        const salonShare = totalAmount * ((100 - rate) / 100);
+
+        document.getElementById("admBCount").innerText = invoiceCount;
+        document.getElementById("admBTotal").innerText = totalAmount.toFixed(2);
+        document.getElementById("admBRateLbl").innerText = rate + "%";
+        document.getElementById("admBShare").innerText = barberShare.toFixed(2);
+        document.getElementById("admSalonRateLbl").innerText = 100 - rate + "%";
+        document.getElementById("admSalonShare").innerText =
+          salonShare.toFixed(2);
       }
 
       async function saveServiceSetting(serviceId) {
@@ -2110,6 +2252,7 @@
             container.appendChild(card);
           });
 
+          // 1. حساب أرباح الحلاق اليومية بحسب نسبته الخاصة
           let currentBarberDailyTotal = 0;
           let currentBarberDailyCount = 0;
 
@@ -2125,22 +2268,72 @@
           summaryBody.innerHTML = "";
 
           if (currentBarberObj) {
+            const rate = currentBarberObj.rate || 50;
             document.getElementById("barberSummaryTitle").innerText =
-              `📊 ملخص أرباح الحلاق اليومي (${currentBarberObj.name})`;
-            const barberShare = (currentBarberDailyTotal * 0.5).toFixed(2);
-            const salonShare = (currentBarberDailyTotal * 0.5).toFixed(2);
+              `📊 ملخص أرباح الحلاق اليومي (${currentBarberObj.name} - نسبتك ${rate}%)`;
+
+            const barberShare = (
+              currentBarberDailyTotal *
+              (rate / 100)
+            ).toFixed(2);
+            const salonShare = (
+              currentBarberDailyTotal *
+              ((100 - rate) / 100)
+            ).toFixed(2);
 
             const summaryRow = document.createElement("tr");
             summaryRow.innerHTML = `
               <td><b>${currentBarberObj.name}</b></td>
               <td>${currentBarberDailyCount} فاتورة</td>
               <td>${currentBarberDailyTotal.toFixed(2)} د.أ</td>
-              <td style="color: #00ffcc;"><b>${barberShare} د.أ</b></td>
-              <td style="color: #c0c0c0;">${salonShare} د.أ</td>
+              <td style="color: #00ffcc;"><b>${barberShare} د.أ (${rate}%)</b></td>
+              <td style="color: #c0c0c0;">${salonShare} د.أ (${100 - rate}%)</td>
             `;
             summaryBody.appendChild(summaryRow);
           }
 
+          // 2. حساب أرباح الحلاق الشهرية التراكمية بحسب نسبته الخاصة
+          let currentBarberMonthlyTotal = 0;
+          let currentBarberMonthlyCount = 0;
+
+          monthlyVaultRecords.forEach((tx) => {
+            if (tx.barberId === activeUserId) {
+              currentBarberMonthlyTotal += tx.totalPrice;
+              currentBarberMonthlyCount += 1;
+            }
+          });
+
+          const monthlySummaryBody = document.getElementById(
+            "barbersMonthlySummaryBody",
+          );
+          monthlySummaryBody.innerHTML = "";
+
+          if (currentBarberObj) {
+            const rate = currentBarberObj.rate || 50;
+            document.getElementById("barberMonthlySummaryTitle").innerText =
+              `📅 ملخص أرباح الحلاق الشهري التراكمي (${currentBarberObj.name} - نسبتك ${rate}%)`;
+
+            const barberMonthlyShare = (
+              currentBarberMonthlyTotal *
+              (rate / 100)
+            ).toFixed(2);
+            const salonMonthlyShare = (
+              currentBarberMonthlyTotal *
+              ((100 - rate) / 100)
+            ).toFixed(2);
+
+            const mRow = document.createElement("tr");
+            mRow.innerHTML = `
+              <td><b>${currentBarberObj.name}</b></td>
+              <td>${currentBarberMonthlyCount} فاتورة</td>
+              <td>${currentBarberMonthlyTotal.toFixed(2)} د.أ</td>
+              <td style="color: #00ffcc;"><b>${barberMonthlyShare} د.أ (${rate}%)</b></td>
+              <td style="color: #c0c0c0;">${salonMonthlyShare} د.أ (${100 - rate}%)</td>
+            `;
+            monthlySummaryBody.appendChild(mRow);
+          }
+
+          // 3. تفاصيل خدمات الزبون الحالي
           const detailsBody = document.getElementById("barbersDetailsBody");
           detailsBody.innerHTML = "";
 
@@ -2165,14 +2358,14 @@
           }
         }
 
-        // حسابات اليوم والمصاريف اليومية الشاملة لكاش/فيزا/كليك
+        // حسابات لوحة تحكم المدير
         let cashTotalDay = 0;
         let visaTotalDay = 0;
         let cliqTotalDay = 0;
 
         let allBarbersDayStats = {};
         barbers.forEach((b) => {
-          allBarbersDayStats[b.id] = { count: 0, total: 0 };
+          allBarbersDayStats[b.id] = { count: 0, total: 0, rate: b.rate || 50 };
         });
 
         dailyTransactions.forEach((tx) => {
@@ -2192,8 +2385,41 @@
         );
 
         const grandTotalSumDay = cashTotalDay + visaTotalDay + cliqTotalDay;
-        const grossSalonShareDay = grandTotalSumDay * 0.5;
-        const netSalonShareDay = grossSalonShareDay - dailyExpensesSum;
+
+        const vaultBody = document.getElementById("allBarbersVaultBody");
+        const vaultFoot = document.getElementById("vaultTableFoot");
+        vaultBody.innerHTML = "";
+        vaultFoot.innerHTML = "";
+
+        let sumTxCountDay = 0;
+        let sumTotalMoneyDay = 0;
+        let sumBarbersShareDay = 0;
+        let sumSalonShareDay = 0;
+
+        barbers.forEach((b) => {
+          const stats = allBarbersDayStats[b.id];
+          const rate = stats.rate;
+          const barberShare = stats.total * (rate / 100);
+          const salonShare = stats.total * ((100 - rate) / 100);
+
+          sumTxCountDay += stats.count;
+          sumTotalMoneyDay += stats.total;
+          sumBarbersShareDay += barberShare;
+          sumSalonShareDay += salonShare;
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><b>${b.name}</b></td>
+            <td><span class="badge">${rate}%</span></td>
+            <td>${stats.count}</td>
+            <td>${stats.total.toFixed(2)} د.أ</td>
+            <td style="color: #00ffcc;">${barberShare.toFixed(2)} د.أ</td>
+            <td style="color: #c0c0c0;">${salonShare.toFixed(2)} د.أ</td>
+          `;
+          vaultBody.appendChild(row);
+        });
+
+        const netSalonShareDay = sumSalonShareDay - dailyExpensesSum;
 
         document.getElementById("cashTotal").innerText =
           cashTotalDay.toFixed(2);
@@ -2208,41 +2434,10 @@
         document.getElementById("totalSalonShareCard").innerText =
           netSalonShareDay.toFixed(2);
 
-        const vaultBody = document.getElementById("allBarbersVaultBody");
-        const vaultFoot = document.getElementById("vaultTableFoot");
-        vaultBody.innerHTML = "";
-        vaultFoot.innerHTML = "";
-
-        let sumTxCountDay = 0;
-        let sumTotalMoneyDay = 0;
-        let sumBarbersShareDay = 0;
-        let sumSalonShareDay = 0;
-
-        barbers.forEach((b) => {
-          const stats = allBarbersDayStats[b.id];
-          const barberShare = stats.total * 0.5;
-          const salonShare = stats.total * 0.5;
-
-          sumTxCountDay += stats.count;
-          sumTotalMoneyDay += stats.total;
-          sumBarbersShareDay += barberShare;
-          sumSalonShareDay += salonShare;
-
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td><b>${b.name}</b></td>
-            <td>${stats.count}</td>
-            <td>${stats.total.toFixed(2)} د.أ</td>
-            <td style="color: #00ffcc;">${barberShare.toFixed(2)} د.أ</td>
-            <td style="color: #c0c0c0;">${salonShare.toFixed(2)} د.أ</td>
-          `;
-          vaultBody.appendChild(row);
-        });
-
         const footRow = document.createElement("tr");
         footRow.className = "total-summary-row";
         footRow.innerHTML = `
-          <td><b>إجمالي اليوم الكلي</b></td>
+          <td colspan="2"><b>إجمالي اليوم الكلي</b></td>
           <td><b>${sumTxCountDay}</b></td>
           <td><b>${sumTotalMoneyDay.toFixed(2)} د.أ</b></td>
           <td style="color: #00ffcc;"><b>${sumBarbersShareDay.toFixed(2)} د.أ</b></td>
@@ -2250,14 +2445,21 @@
         `;
         vaultFoot.appendChild(footRow);
 
-        // حسابات العداد الشهري والمصاريف الشهرية الشاملة لكاش/فيزا/كليك
+        // حسابات العداد الشهري والمصاريف الشهرية بصفحة المدير
         let mCash = 0;
         let mVisa = 0;
         let mCliq = 0;
+        let mSumSalonGross = 0;
+
         monthlyVaultRecords.forEach((data) => {
           if (data.payMethod === "cash") mCash += data.totalPrice;
           if (data.payMethod === "visa") mVisa += data.totalPrice;
           if (data.payMethod === "cliq") mCliq += data.totalPrice;
+
+          // احتساب حصة الصالون الشهرية بحسب نسبة كل حلاق
+          const bObj = barbers.find((b) => b.id === data.barberId);
+          const rate = bObj ? bObj.rate : 50;
+          mSumSalonGross += data.totalPrice * ((100 - rate) / 100);
         });
 
         let monthlyExpensesSum = expensesList.reduce(
@@ -2266,8 +2468,7 @@
         );
 
         const mGrand = mCash + mVisa + mCliq;
-        const mGrossSalon = mGrand * 0.5;
-        const mNetSalon = mGrossSalon - monthlyExpensesSum;
+        const mNetSalon = mSumSalonGross - monthlyExpensesSum;
 
         document.getElementById("monthlyCashTotal").innerText =
           mCash.toFixed(2);
