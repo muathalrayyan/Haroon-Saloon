@@ -527,8 +527,9 @@
         display: flex;
         gap: 10px;
         width: 100%;
-        max-width: 500px;
+        max-width: 550px;
         margin: 10px auto;
+        justify-content: center;
       }
 
       .search-box-container input {
@@ -1042,7 +1043,88 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 3. كشف حساب شغل الحلاق من أول الشهر للمدير -->
+        <!-- 3. كشف حساب واستعلام الأرشيف بالرزنامة (Calendar History Search) -->
+        <div class="section-title">
+          📆 استعلام السجل المالي والأرشيف حسب تاريخ اليوم (الرزنامة)
+        </div>
+        <div class="search-box-container">
+          <input
+            type="date"
+            id="calendarDateInput"
+            class="edit-input-field"
+            style="max-width: 220px; font-size: 16px"
+          />
+          <button onclick="searchDailyHistoryByCalendar()">
+            عرض تقرير هذا اليوم 📅
+          </button>
+        </div>
+
+        <div
+          id="calendarReportContainer"
+          style="display: none; width: 100%; margin-top: 15px"
+        >
+          <div class="totals-row" style="margin-bottom: 15px">
+            <div class="total-item">
+              كاش اليوم: <span id="calCash">0</span> د.أ
+            </div>
+            <div class="total-item">
+              فيزا اليوم: <span id="calVisa">0</span> د.أ
+            </div>
+            <div class="total-item">
+              كليك اليوم: <span id="calCliq">0</span> د.أ
+            </div>
+            <div class="total-item">
+              الإجمالي الكلي: <span id="calGrand">0</span> د.أ
+            </div>
+            <div class="total-item highlight-salon">
+              صافي الصالون المفترض: <span id="calSalonShare">0</span> د.أ
+            </div>
+          </div>
+
+          <!-- أرباح الحلاقين لليوم المحدد -->
+          <div class="section-title" style="font-size: 15px">
+            📊 توزيع أرباح الحلاقين لليوم المحدد
+          </div>
+          <div class="table-responsive">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>الحلاق</th>
+                  <th>عدد الفواتير</th>
+                  <th>إجمالي المبيعات</th>
+                  <th>حصة الحلاق</th>
+                  <th>حصة الصالون</th>
+                </tr>
+              </thead>
+              <tbody id="calBarbersReportBody"></tbody>
+            </table>
+          </div>
+
+          <!-- تفاصيل الفواتير والمعاملات لليوم المحدد -->
+          <div class="section-title" style="font-size: 15px; margin-top: 15px">
+            📝 تفاصيل كافة الفواتير والزيارات لليوم المحدد
+          </div>
+          <div class="table-responsive">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>الوقت</th>
+                  <th>اسم الزبون</th>
+                  <th>رقم الهاتف</th>
+                  <th>الحلاق</th>
+                  <th>طريقة الدفع</th>
+                  <th>الخدمات المقدمة</th>
+                  <th>المبلغ الإجمالي</th>
+                </tr>
+              </thead>
+              <tbody id="calTransactionsReportBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 4. كشف حساب شغل الحلاق من أول الشهر للمدير -->
         <div class="section-title">
           💈 كشف حساب مجموع شغل الحلاق من أول الشهر
         </div>
@@ -1081,7 +1163,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 4. جدول المصاريف المسجلة -->
+        <!-- 5. جدول المصاريف المسجلة -->
         <div class="section-title">🧾 سجل مصاريف الصالون المسجلة</div>
         <div class="table-responsive">
           <table class="report-table">
@@ -1105,7 +1187,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 5. تعديل قائمة تسعيرة وتسمية الخدمات -->
+        <!-- 6. تعديل قائمة تسعيرة وتسمية الخدمات -->
         <div class="section-title">
           🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (للمدير)
         </div>
@@ -1127,7 +1209,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 6. تعديل أسماء ونسب الحلاقين (10 حلاقين) -->
+        <!-- 7. تعديل أسماء ونسب الحلاقين (10 حلاقين) -->
         <div class="section-title">
           ✏️ إدارة وتعديل أسماء ونسب كادر الحلاقين (10 حلاقين)
         </div>
@@ -1148,7 +1230,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 7. سجل الزبائن المباشر برقم الهاتف (مصفر تلقائياً) -->
+        <!-- 8. سجل الزبائن المباشر برقم الهاتف (مصفر تلقائياً) -->
         <div class="section-title">
           🔍 الاستعلام عن تاريخ وسجل الزبون برقم الهاتف
         </div>
@@ -1397,7 +1479,7 @@
       let selectedPayMethod = "cash";
       let modalCallback = null;
       let cloudPasswords = null;
-      let alertCustomCallback = null; // وظيفة رد التنبيه الخضراء
+      let alertCustomCallback = null;
 
       let currentCustomer = {
         name: "",
@@ -1525,6 +1607,11 @@
         fetchCloudPasswords();
         listenBarberNames();
         listenServicesSettings();
+
+        // وضع تاريخ اليوم افتراضياً للرزنامة
+        const todayStr = new Date().toISOString().split("T")[0];
+        const calInput = document.getElementById("calendarDateInput");
+        if (calInput) calInput.value = todayStr;
       };
 
       document
@@ -1709,7 +1796,7 @@
         renderUI();
       }
 
-      /* حفظ الفاتورة وإظهار Pop-up بالتوتال النهائي وزر تم الدفع الذي يعود للوج إن */
+      /* حفظ الفاتورة بالسحابة مع التوثيق المزدوج لجميع الحسابات والسجل المحفوظ دائماً */
       async function saveCustomerVisit() {
         if (!currentCustomer.name || !currentCustomer.phone) {
           customAlert("⚠️ تنبيه", "يرجى تحديد بيانات الزبون ورقم هاتفه أولاً!");
@@ -1732,7 +1819,8 @@
           0,
         );
 
-        const englishDateTime = new Date().toLocaleString("en-US", {
+        const now = new Date();
+        const englishDateTime = now.toLocaleString("en-US", {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
@@ -1741,6 +1829,12 @@
           second: "2-digit",
           hour12: true,
         });
+
+        // توثيق صيغة التاريخ البسيطة للبحث بالرزنامة (YYYY-MM-DD)
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const dateKey = `${year}-${month}-${day}`;
 
         let visitRecord = {
           customerName: currentCustomer.name,
@@ -1752,7 +1846,8 @@
           totalPrice: totalVal,
           services: currentCustomer.services,
           formattedDate: englishDateTime,
-          timestamp: new Date().getTime(),
+          dateKey: dateKey, // مفتاح يوم الرزنامة (مثال: 2026-07-22)
+          timestamp: now.getTime(),
         };
 
         try {
@@ -1760,18 +1855,145 @@
           await db.collection("daily_transactions").add(visitRecord);
           await db.collection("monthly_vault").add(visitRecord);
 
-          // إظهار نافذة التوتال الكلي مع زر تم الدفع المباشر
           customAlert(
             "💳 إجمالي الفاتورة النهائي",
             `السعر الإجمالي المطلوبة جابيته من الزبون (${currentCustomer.name}): \n\n ${totalVal.toFixed(2)} دينار أردني`,
             "تم الدفع",
             function () {
-              logoutUser(); // العودة لشاشة تسجيل الدخول بعد الكبس على تم الدفع
+              logoutUser();
             },
           );
         } catch (e) {
           console.error("خطأ بالحفظ:", e);
           customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الفاتورة بالسحابة!");
+        }
+      }
+
+      /* البحث بالأرشيف والرزنامة لليوم المحدد بصفحة المدير */
+      async function searchDailyHistoryByCalendar() {
+        const dateVal = document.getElementById("calendarDateInput").value;
+        const container = document.getElementById("calendarReportContainer");
+        const calBarbersBody = document.getElementById("calBarbersReportBody");
+        const calTxsBody = document.getElementById("calTransactionsReportBody");
+
+        if (!dateVal) {
+          customAlert("⚠️ تنبيه", "يرجى اختيار تاريخ من الرزنامة أولاً!");
+          return;
+        }
+
+        calTxsBody.innerHTML = `<tr><td colspan="7" class="no-data-msg">جاري تحميل سجلات التاريخ (${dateVal})...</td></tr>`;
+        calBarbersBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">جاري الحساب...</td></tr>`;
+        container.style.display = "block";
+
+        try {
+          // جلب المعاملات الخاصة بهذا التاريخ بالتحديد من السجل الدائم الذي لا يتأثر بأي تصفير
+          const snapshot = await db
+            .collection("customer_history")
+            .where("dateKey", "==", dateVal)
+            .get();
+
+          if (snapshot.empty) {
+            document.getElementById("calCash").innerText = "0.00";
+            document.getElementById("calVisa").innerText = "0.00";
+            document.getElementById("calCliq").innerText = "0.00";
+            document.getElementById("calGrand").innerText = "0.00";
+            document.getElementById("calSalonShare").innerText = "0.00";
+
+            calBarbersBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">لا توجد أي معاملات أو زيارات مسجلة بتاريخ (${dateVal}).</td></tr>`;
+            calTxsBody.innerHTML = `<tr><td colspan="7" class="no-data-msg">لا توجد تفاصيل لهذا اليوم.</td></tr>`;
+            return;
+          }
+
+          let cash = 0,
+            visa = 0,
+            cliq = 0;
+          let barbersDayStats = {};
+
+          barbers.forEach((b) => {
+            barbersDayStats[b.id] = {
+              name: b.name,
+              count: 0,
+              total: 0,
+              rate: b.rate || 50,
+            };
+          });
+
+          calTxsBody.innerHTML = "";
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+
+            if (data.payMethod === "cash") cash += data.totalPrice;
+            if (data.payMethod === "visa") visa += data.totalPrice;
+            if (data.payMethod === "cliq") cliq += data.totalPrice;
+
+            if (barbersDayStats[data.barberId]) {
+              barbersDayStats[data.barberId].count += 1;
+              barbersDayStats[data.barberId].total += data.totalPrice;
+            }
+
+            let servicesListText = data.services
+              .map((s) => {
+                return s.serviceName
+                  ? s.serviceId === "custom"
+                    ? `✍️ ${s.note}`
+                    : s.serviceName
+                  : s.serviceId;
+              })
+              .join(" + ");
+
+            let payText = "💵 كاش";
+            if (data.payMethod === "visa") payText = "💳 فيزا";
+            if (data.payMethod === "cliq") payText = "📱 كليك";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td class="en-date">${data.formattedDate.split(",")[1] || data.formattedDate}</td>
+              <td><b>${data.customerName}</b></td>
+              <td dir="ltr"><b>${data.customerPhone}</b></td>
+              <td>${data.barberName}</td>
+              <td>${payText}</td>
+              <td style="color: #00ffcc;">${servicesListText}</td>
+              <td style="font-weight: bold; color: #00ffcc;">${Number(data.totalPrice).toFixed(2)} د.أ</td>
+            `;
+            calTxsBody.appendChild(row);
+          });
+
+          const grand = cash + visa + cliq;
+          document.getElementById("calCash").innerText = cash.toFixed(2);
+          document.getElementById("calVisa").innerText = visa.toFixed(2);
+          document.getElementById("calCliq").innerText = cliq.toFixed(2);
+          document.getElementById("calGrand").innerText = grand.toFixed(2);
+
+          // حساب الجدول المالي للحلاقين في هذا اليوم بالتحديد
+          calBarbersBody.innerHTML = "";
+          let totalDaySalonShare = 0;
+
+          barbers.forEach((b) => {
+            const st = barbersDayStats[b.id];
+            if (st && st.count > 0) {
+              const rate = st.rate;
+              const bShare = st.total * (rate / 100);
+              const sShare = st.total * ((100 - rate) / 100);
+              totalDaySalonShare += sShare;
+
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td><b>${st.name}</b></td>
+                <td>${st.count} فاتورة</td>
+                <td>${st.total.toFixed(2)} د.أ</td>
+                <td style="color: #00ffcc;">${bShare.toFixed(2)} د.أ (${rate}%)</td>
+                <td style="color: #c0c0c0;">${sShare.toFixed(2)} د.أ (${100 - rate}%)</td>
+              `;
+              calBarbersBody.appendChild(row);
+            }
+          });
+
+          document.getElementById("calSalonShare").innerText =
+            totalDaySalonShare.toFixed(2);
+        } catch (e) {
+          console.error("خطأ بجلَب الأرشيف بالرزنامة:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء جلب أرشيف اليوم من السحابة!");
         }
       }
 
@@ -1963,6 +2185,8 @@
         document.getElementById("mainPassInput").value = "";
         document.getElementById("mainBarberSelect").value = "";
         document.getElementById("customerModal").classList.remove("active");
+        document.getElementById("calendarReportContainer").style.display =
+          "none";
         clearSearchHistoryDisplay();
       }
 
@@ -1972,7 +2196,7 @@
 
         openModal(
           "تصفير العداد اليومي",
-          "أدخل كلمة المرور لتصفير العداد اليومي ومصاريف اليوم (لن يتأثر سجل الزبائن الدائم):",
+          "أدخل كلمة المرور لتصفير العداد اليومي ومصاريف اليوم (لن يتأثر سجل الزبائن الدائم والأرشيف):",
           function (enteredPass) {
             const p = enteredPass.trim();
             if (resetPass && p === resetPass) {
@@ -1983,7 +2207,7 @@
                 });
               customAlert(
                 "✅ تم التصفير اليومي",
-                "تم تصفير العداد اليومي بنجاح، وظل سجل الزبائن محفوظاً بالكامل.",
+                "تم تصفير العداد اليومي بنجاح، وظل سجل الزبائن والأرشيف محفوظاً بالكامل.",
               );
             } else {
               customAlert(
@@ -2001,7 +2225,7 @@
 
         openModal(
           "تصفير أرباح الشهر",
-          "أدخل كلمة المرور لتصفير العداد المالي ومصاريف الشهر (لن يتأثر سجل الزبائن الدائم):",
+          "أدخل كلمة المرور لتصفير العداد المالي ومصاريف الشهر (لن يتأثر سجل الزبائن الدائم والأرشيف):",
           function (enteredPass) {
             const p = enteredPass.trim();
             if (resetPass && p === resetPass) {
@@ -2017,7 +2241,7 @@
                 });
               customAlert(
                 "✅ تم التصفير الشهري",
-                "تم تصفير العداد المالي والمصاريف للشهر بنجاح.",
+                "تم تصفير العداد المالي والمصاريف للشهر بنجاح، وظل السجل الدائم محفوظاً.",
               );
             } else {
               customAlert("⚠️ كلمة المرور خاطئة", "كلمة المرور غير صحيحة!");
@@ -2372,7 +2596,7 @@
             monthlySummaryBody.appendChild(mRow);
           }
 
-          // 3. تفاصيل خدمات الزبون الحالي + إضافة صف التوتال السفلي
+          // 3. تفاصيل خدمات الزبون الحالي + صف الإجمالي السفلي للتوتال
           const detailsBody = document.getElementById("barbersDetailsBody");
           const detailsFoot = document.getElementById("barbersDetailsFoot");
           detailsBody.innerHTML = "";
@@ -2395,7 +2619,6 @@
               detailsBody.appendChild(row);
             });
 
-            // إضافة صف التوتال الشامل للزبون
             const totalRow = document.createElement("tr");
             totalRow.className = "total-summary-row";
             totalRow.innerHTML = `
