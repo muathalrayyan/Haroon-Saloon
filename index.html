@@ -11,6 +11,10 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+    <!-- مكتبة jsPDF لتوليد ملفات الـ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
     <style>
       * {
         box-sizing: border-box;
@@ -491,6 +495,23 @@
         background: #00cca3;
       }
 
+      .btn-download-pdf {
+        background: #00ffcc;
+        color: #000;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 0 12px rgba(0, 255, 204, 0.25);
+      }
+
+      .btn-download-pdf:hover {
+        background: #00cca3;
+      }
+
       .btn-add-expense {
         background: #ffaa00;
         color: #000;
@@ -903,7 +924,7 @@
             id="barberDetailsTitle"
             style="margin-top: 20px"
           >
-            📝 خدمات الزبون الحالي
+            📝 تفاصيل خدمات الزبون الحالي
           </div>
           <div class="table-responsive">
             <table class="report-table">
@@ -1008,7 +1029,7 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 2. أرباح الشهر والمصاريف الشهرية التراكمية -->
+        <!-- 2. أرباح الشهر والمصاريف الشهرية التراكمية زر تنزيل الـ PDF -->
         <div class="section-title">
           📅 إجمالي أرباح الشهر التراكمية (الصافي بعد خصم مصاريف الشهر)
         </div>
@@ -1033,13 +1054,27 @@
             <span id="monthlySalonShareCard">0</span> د.أ
           </div>
         </div>
-        <button
-          class="btn-reset"
-          style="background: #660000"
-          onclick="promptResetMonth()"
+
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+          "
         >
-          🗓️ تصفير عداد أرباح الشهر
-        </button>
+          <button class="btn-download-pdf" onclick="downloadMonthlyPDFReport()">
+            📥 تحميل التقرير الشهري الشامل (PDF Document)
+          </button>
+          <button
+            class="btn-reset"
+            style="background: #660000"
+            onclick="promptResetMonth()"
+          >
+            🗓️ تصفير عداد أرباح الشهر
+          </button>
+        </div>
 
         <hr style="border-color: #333; margin: 20px 0" />
 
@@ -1483,7 +1518,6 @@
         services: [],
       };
 
-      /* دالة تقريب مخصصة: الكسر <= 0.50 يتقرب للأسفل، الكسر > 0.50 يتقرب للأعلى */
       function customRounding(value) {
         let integerPart = Math.floor(value);
         let decimalPart = value - integerPart;
@@ -1495,29 +1529,24 @@
         }
       }
 
-      /* المحرّك المحاسبي لحساب حصة الحلاق لكل خدمة بالدقة المطلوبة */
       function calculateServiceBarberShare(
         serviceId,
         servicePrice,
         barberRate,
       ) {
-        // 1. خدمات ثابتة 50% للحلاق والصالون
         const fixed50Services = ["s11", "s15", "s16", "s18", "s19", "s20"];
         if (fixed50Services.includes(serviceId)) {
           return servicePrice * 0.5;
         }
 
-        // 2. خدمات 100% للصالون (0% للحلاق)
         const salon100Services = ["s21", "custom"];
         if (salon100Services.includes(serviceId)) {
           return 0;
         }
 
-        // 3. باقي الخدمات تُحسب بناءً على نسبة الحلاق المخصصة
         return servicePrice * (barberRate / 100);
       }
 
-      /* حاسبة الفاتورة الشاملة */
       function calculateTransactionShares(txServices, barberRate) {
         let bShareRaw = 0;
         let total = 0;
@@ -1918,6 +1947,174 @@
           console.error("خطأ بالحفظ:", e);
           customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الفاتورة بالسحابة!");
         }
+      }
+
+      /* تحميل التقرير الشهري الشامل كمستند PDF متكامل للمدير */
+      function downloadMonthlyPDFReport() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+        });
+
+        const now = new Date();
+        const printDate = now.toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+
+        // هيدر الملف
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text("HAROUN AL-RASHID SALON", 105, 18, { align: "center" });
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text("MONTHLY FINANCIAL & BARBERS AUDIT REPORT", 105, 25, {
+          align: "center",
+        });
+
+        doc.setFontSize(9);
+        doc.text(`Generated Date: ${printDate}`, 105, 30, { align: "center" });
+        doc.line(15, 33, 195, 33);
+
+        // 1. ملخص الأرقام المالية الشهرية
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("1. MONTHLY REVENUE & EXPENSES SUMMARY", 15, 40);
+
+        let mCash = 0,
+          mVisa = 0,
+          mCliq = 0,
+          mSumSalonGross = 0;
+
+        monthlyVaultRecords.forEach((data) => {
+          if (data.payMethod === "cash") mCash += data.totalPrice;
+          if (data.payMethod === "visa") mVisa += data.totalPrice;
+          if (data.payMethod === "cliq") mCliq += data.totalPrice;
+
+          const bObj = barbers.find((b) => b.id === data.barberId);
+          const rate = bObj ? bObj.rate || 50 : 50;
+          const calcRes = calculateTransactionShares(data.services || [], rate);
+          mSumSalonGross += calcRes.salonShare;
+        });
+
+        let monthlyExpensesSum = expensesList.reduce(
+          (acc, curr) => acc + curr.amount,
+          0,
+        );
+        let mGrand = mCash + mVisa + mCliq;
+        let mNetSalon = mSumSalonGross - monthlyExpensesSum;
+
+        const summaryData = [
+          ["Cash Total", `${mCash.toFixed(2)} JOD`],
+          ["Visa Total", `${mVisa.toFixed(2)} JOD`],
+          ["CliQ Total", `${mCliq.toFixed(2)} JOD`],
+          ["Grand Monthly Revenue", `${mGrand.toFixed(2)} JOD`],
+          ["Monthly Expenses Deducted", `${monthlyExpensesSum.toFixed(2)} JOD`],
+          ["NET SALON SHARE (AFTER EXPENSES)", `${mNetSalon.toFixed(2)} JOD`],
+        ];
+
+        doc.autoTable({
+          startY: 43,
+          head: [["Financial Item", "Amount (JOD)"]],
+          body: summaryData,
+          theme: "grid",
+          headStyles: { fillColor: [0, 180, 150], textColor: 255 },
+          styles: { fontStyle: "bold", fontSize: 9 },
+        });
+
+        // 2. جدول توزيع مبيعات وأرباح الحلاقين
+        let nextY = doc.lastAutoTable.finalY + 10;
+        doc.setFontSize(11);
+        doc.text("2. INDIVIDUAL BARBERS MONTHLY PERFORMANCE", 15, nextY);
+
+        let barbersTableRows = [];
+
+        barbers.forEach((b) => {
+          let bTotal = 0;
+          let bCount = 0;
+          let bShareSum = 0;
+          let sShareSum = 0;
+
+          monthlyVaultRecords.forEach((tx) => {
+            if (tx.barberId === b.id) {
+              bTotal += tx.totalPrice;
+              bCount += 1;
+              const calcRes = calculateTransactionShares(
+                tx.services || [],
+                b.rate || 50,
+              );
+              bShareSum += calcRes.barberShare;
+              sShareSum += calcRes.salonShare;
+            }
+          });
+
+          if (bCount > 0) {
+            barbersTableRows.push([
+              b.id.toUpperCase(),
+              b.name,
+              `${b.rate}%`,
+              bCount,
+              `${bTotal.toFixed(2)} JOD`,
+              `${bShareSum.toFixed(2)} JOD`,
+              `${sShareSum.toFixed(2)} JOD`,
+            ]);
+          }
+        });
+
+        doc.autoTable({
+          startY: nextY + 3,
+          head: [
+            [
+              "ID",
+              "Barber Name",
+              "Base Rate",
+              "Invoices",
+              "Total Sales",
+              "Barber Share",
+              "Salon Share",
+            ],
+          ],
+          body:
+            barbersTableRows.length > 0
+              ? barbersTableRows
+              : [
+                  [
+                    "-",
+                    "No transactions for this month",
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                  ],
+                ],
+          theme: "striped",
+          headStyles: { fillColor: [40, 40, 40], textColor: 255 },
+          styles: { fontSize: 8, halign: "center" },
+        });
+
+        // فوتر الوثيقة
+        let footerY = doc.lastAutoTable.finalY + 15;
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "italic");
+        doc.text(
+          "Crown Haroun Al-Rashid Saloon Management Cloud System",
+          105,
+          footerY,
+          { align: "center" },
+        );
+
+        // حفظ الملف على الجهاز
+        doc.save(
+          `Haroun_Salon_Monthly_Report_${now.getFullYear()}_${now.getMonth() + 1}.pdf`,
+        );
       }
 
       async function searchDailyHistoryByCalendar() {
@@ -2373,7 +2570,6 @@
         });
       }
 
-      /* حاسبة شغل الحلاق المختار من أول الشهر لبوكس المدير مع المحرك الجديد */
       function renderAdminBarberMonthlyStats() {
         const select = document.getElementById("adminBarberMonthlySelect");
         if (!select) return;
