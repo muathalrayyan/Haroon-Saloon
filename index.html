@@ -421,6 +421,15 @@
         font-size: 18px;
       }
 
+      .total-item.highlight-expense {
+        border-color: #ff4444;
+        background: rgba(255, 68, 68, 0.08);
+      }
+
+      .total-item.highlight-expense span {
+        color: #ff5555;
+      }
+
       .section-title {
         color: #ffffff;
         font-size: 17px;
@@ -444,7 +453,7 @@
       .report-table th,
       .report-table td {
         border: 1px solid #333;
-        padding: 12px;
+        padding: 10px;
         text-align: center;
         font-size: 14px;
       }
@@ -480,6 +489,23 @@
 
       .btn-save-customer:hover {
         background: #00cca3;
+      }
+
+      .btn-add-expense {
+        background: #ffaa00;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        align-self: center;
+        transition: all 0.2s ease;
+      }
+
+      .btn-add-expense:hover {
+        background: #e69900;
       }
 
       .btn-reset {
@@ -525,6 +551,38 @@
         border-radius: 8px;
         font-weight: bold;
         cursor: pointer;
+      }
+
+      .edit-input-field {
+        background: #2a2a2a;
+        border: 1px solid #444;
+        color: #00ffcc;
+        padding: 6px 10px;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: bold;
+        width: 100%;
+        max-width: 150px;
+      }
+
+      .btn-action-save {
+        background: #00ffcc;
+        color: #000;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .btn-delete-small {
+        background: rgba(255, 68, 68, 0.2);
+        color: #ff4444;
+        border: 1px solid #ff4444;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
       }
 
       .modal-overlay {
@@ -622,7 +680,6 @@
         color: #ccc;
       }
 
-      /* تحويل نافذة التنبيهات والنجاح إلى اللون الأخضر الأنيق (#00ffcc) */
       .alert-modal-card {
         background: #1a1a1a;
         border: 1px solid #00ffcc;
@@ -666,7 +723,7 @@
   <body>
     <canvas id="bgCanvas"></canvas>
 
-    <!-- شاشة تسجيل الدخول الرئيسية (منع الإكمال التلقائي كلياً) -->
+    <!-- شاشة تسجيل الدخول الرئيسية -->
     <div id="mainLoginScreen">
       <div class="login-box">
         <img src="logo.jpeg" alt="Haroun Logo" class="logo-login" />
@@ -676,15 +733,7 @@
         </p>
 
         <select id="mainBarberSelect" onchange="onAccountSelected()">
-          <option value="">-- اختر الحساب --</option>
-          <option value="admin" style="color: #00ffcc; font-weight: bold">
-            👑 المدير (إدارة الصالون)
-          </option>
-          <option value="b1">زيد</option>
-          <option value="b2">محمد</option>
-          <option value="b3">أبو صبرة</option>
-          <option value="b4">عبد الله</option>
-          <option value="b5">أحمد</option>
+          <!-- التوليد التلقائي لخيارات 10 حلاقين + المدير -->
         </select>
 
         <input
@@ -847,8 +896,19 @@
       </div>
 
       <div class="summary-box">
-        <!-- 1. أرباح اليوم -->
-        <div class="section-title">📊 التقرير المالي اليومي (50% / 50%)</div>
+        <!-- زر إضافة المصروف للمدير -->
+        <div
+          style="display: flex; justify-content: center; margin-bottom: 10px"
+        >
+          <button class="btn-add-expense" onclick="openExpenseModal()">
+            💸 إضافة مصروف جديد للصالون
+          </button>
+        </div>
+
+        <!-- 1. أرباح اليوم والمصاريف اليومية -->
+        <div class="section-title">
+          📊 التقرير المالي والربح الصافي اليومي (بعد خصم المصاريف)
+        </div>
         <div class="totals-row">
           <div class="total-item">
             دخل الكاش اليومي: <span id="cashTotal">0</span> د.أ
@@ -859,8 +919,11 @@
           <div class="total-item">
             الإجمالي الكلي اليومي: <span id="grandTotal">0</span> د.أ
           </div>
+          <div class="total-item highlight-expense">
+            💸 مصاريف اليوم: <span id="dailyExpenseTotal">0</span> د.أ
+          </div>
           <div class="total-item highlight-salon">
-            👑 صافي أرباح الصالون اليومي (50%):
+            👑 صافي الصالون اليومي الفعلي:
             <span id="totalSalonShareCard">0</span> د.أ
           </div>
         </div>
@@ -873,7 +936,7 @@
                 <th>العمليات اليومية</th>
                 <th>المبلغ الإجمالي</th>
                 <th>حصة الحلاقين (50%)</th>
-                <th>حصة الصالون (50%)</th>
+                <th>حصة الصالون قبل الخصم (50%)</th>
               </tr>
             </thead>
             <tbody id="allBarbersVaultBody"></tbody>
@@ -887,9 +950,9 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 2. أرباح الشهر (الشهرية التراكمية) -->
+        <!-- 2. أرباح الشهر والمصاريف الشهرية التراكمية -->
         <div class="section-title">
-          📅 إجمالي أرباح الشهر التراكمية (50% للصالون)
+          📅 إجمالي أرباح الشهر التراكمية (الصافي بعد خصم مصاريف الشهر)
         </div>
         <div class="totals-row">
           <div class="total-item">
@@ -901,8 +964,11 @@
           <div class="total-item">
             دخل الشهر الكلي: <span id="monthlyGrandTotal">0</span> د.أ
           </div>
+          <div class="total-item highlight-expense">
+            💸 مصاريف الشهر: <span id="monthlyExpenseTotal">0</span> د.أ
+          </div>
           <div class="total-item highlight-salon">
-            👑 صافي أرباح الصالون الشهرية (50%):
+            👑 صافي الصالون الشهري الفعلي:
             <span id="monthlySalonShareCard">0</span> د.أ
           </div>
         </div>
@@ -916,7 +982,73 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 3. سجل الزبائن المباشر برقم الهاتف (لا يتأثر بالتصفير) -->
+        <!-- 3. جدول المصاريف المسجلة -->
+        <div class="section-title">🧾 سجل مصاريف الصالون المسجلة</div>
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>التاريخ والوقت</th>
+                <th>تفاصيل المصروف</th>
+                <th>المبلغ المستقطع</th>
+                <th>حذف</th>
+              </tr>
+            </thead>
+            <tbody id="expensesLogBody">
+              <tr>
+                <td colspan="4" class="no-data-msg">
+                  لا توجد مصاريف مسجلة حتى الآن.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 4. تعديل قائمة تسعيرة وتسمية الخدمات -->
+        <div class="section-title">
+          🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (للمدير)
+        </div>
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>الرمز</th>
+                <th>اسم الخدمة الحالي</th>
+                <th>السعر الحالي</th>
+                <th>اسم الخدمة الجديد</th>
+                <th>السعر الجديد (د.أ)</th>
+                <th>حفظ</th>
+              </tr>
+            </thead>
+            <tbody id="servicesManagementBody"></tbody>
+          </table>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 5. تعديل أسماء الحلاقين (10 حلاقين) -->
+        <div class="section-title">
+          ✏️ إدارة وتعديل أسماء كادر الحلاقين (10 حلاقين)
+        </div>
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>معرف الحلاق</th>
+                <th>الاسم الحالي بالنظام</th>
+                <th>تعديل الاسم الجديد</th>
+                <th>إجراء الحفظ</th>
+              </tr>
+            </thead>
+            <tbody id="barbersManagementBody"></tbody>
+          </table>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0" />
+
+        <!-- 6. سجل الزبائن المباشر برقم الهاتف (مصفر تلقائياً) -->
         <div class="section-title">
           🔍 الاستعلام عن تاريخ وسجل الزبون برقم الهاتف
         </div>
@@ -993,6 +1125,39 @@
       </div>
     </div>
 
+    <!-- نافذة بوب أب إضافة مصروف جديد -->
+    <div class="modal-overlay" id="expenseModal">
+      <div class="modal-card">
+        <h3>💸 إضافة مصروف جديد للصالون</h3>
+        <p>يرجى كتابة تفاصيل المصروف والمبلغ المستقطع:</p>
+        <input
+          type="text"
+          id="expenseNoteInput"
+          placeholder="التفاصيل (مثال: ضيافة قهوة، فاتورة...)"
+          autocomplete="off"
+        />
+        <input
+          type="number"
+          step="any"
+          inputmode="decimal"
+          id="expenseAmountInput"
+          placeholder="المبلغ بالدينار (مثال: 5)"
+          autocomplete="off"
+        />
+        <div class="modal-btns">
+          <button class="modal-btn modal-btn-confirm" onclick="submitExpense()">
+            حفظ المصروف
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeExpenseModal()"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- نافذة بوب أب إضافة خدمة مخصصة -->
     <div class="modal-overlay" id="customServiceModal">
       <div class="modal-card">
@@ -1029,7 +1194,7 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال الباسورد (بدون اقتراحات) -->
+    <!-- نافذة بوب أب إدخال الباسورد -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
         <h3 id="modalTitle">إدخال كلمة المرور</h3>
@@ -1081,7 +1246,7 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
 
-      const services = [
+      let services = [
         { id: "s1", name: "باقة الطالب", price: 8 },
         { id: "s2", name: "باقة الخريج", price: 10 },
         { id: "s3", name: "باقة هارون الرشيد", price: 15 },
@@ -1106,16 +1271,22 @@
         { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
       ];
 
-      const barbers = [
+      let barbers = [
         { id: "b1", name: "زيد" },
         { id: "b2", name: "محمد" },
         { id: "b3", name: "أبو صبرة" },
         { id: "b4", name: "عبد الله" },
         { id: "b5", name: "أحمد" },
+        { id: "b6", name: "حلاق 6" },
+        { id: "b7", name: "حلاق 7" },
+        { id: "b8", name: "حلاق 8" },
+        { id: "b9", name: "حلاق 9" },
+        { id: "b10", name: "حلاق 10" },
       ];
 
       let dailyTransactions = [];
       let monthlyVaultRecords = [];
+      let expensesList = []; // مصفوفة مصاريف الصالون
       let activeUserId = null;
       let selectedPayMethod = "cash";
       let modalCallback = null;
@@ -1126,6 +1297,57 @@
         phone: "",
         services: [],
       };
+
+      function listenBarberNames() {
+        db.collection("settings")
+          .doc("barbers")
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              barbers.forEach((b) => {
+                if (data[b.id]) b.name = data[b.id];
+              });
+            }
+            populateBarberSelectOptions();
+            renderUI();
+            renderBarbersManagementTable();
+          });
+      }
+
+      function listenServicesSettings() {
+        db.collection("settings")
+          .doc("services")
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              services.forEach((s) => {
+                if (data[s.id]) {
+                  if (data[s.id].name) s.name = data[s.id].name;
+                  if (data[s.id].price !== undefined)
+                    s.price = Number(data[s.id].price);
+                }
+              });
+            }
+            renderUI();
+            renderServicesManagementTable();
+          });
+      }
+
+      function populateBarberSelectOptions() {
+        const select = document.getElementById("mainBarberSelect");
+        if (!select) return;
+
+        let html = `
+          <option value="">-- اختر الحساب --</option>
+          <option value="admin" style="color: #00ffcc; font-weight: bold;">👑 المدير (إدارة الصالون)</option>
+        `;
+
+        barbers.forEach((b) => {
+          html += `<option value="${b.id}">${b.name}</option>`;
+        });
+
+        select.innerHTML = html;
+      }
 
       function onAccountSelected() {
         const val = document.getElementById("mainBarberSelect").value;
@@ -1164,6 +1386,8 @@
         document.getElementById("appContainer").style.display = "none";
         document.getElementById("adminContainer").style.display = "none";
         fetchCloudPasswords();
+        listenBarberNames();
+        listenServicesSettings();
       };
 
       document
@@ -1213,6 +1437,7 @@
           if (userId === "admin") {
             document.getElementById("adminContainer").style.display = "flex";
             document.getElementById("appContainer").style.display = "none";
+            clearSearchHistoryDisplay();
           } else {
             document.getElementById("appContainer").style.display = "flex";
             document.getElementById("adminContainer").style.display = "none";
@@ -1228,7 +1453,13 @@
         }
       }
 
-      // الاستماع لعداد اليوم
+      function clearSearchHistoryDisplay() {
+        document.getElementById("searchPhoneInput").value = "";
+        document.getElementById("customerHistoryBody").innerHTML = `
+          <tr><td colspan="7" class="no-data-msg">أدخل رقم هاتف الزبون أعلاه (المكون من 10 أرقام ويبدأ بـ 07) لعرض جميع زياراته من البداية.</td></tr>
+        `;
+      }
+
       db.collection("daily_transactions").onSnapshot((snapshot) => {
         dailyTransactions = [];
         snapshot.forEach((doc) => {
@@ -1237,13 +1468,22 @@
         renderUI();
       });
 
-      // الاستماع لعداد الشهر التراكمي
       db.collection("monthly_vault").onSnapshot((snapshot) => {
         monthlyVaultRecords = [];
         snapshot.forEach((doc) => {
           monthlyVaultRecords.push({ docId: doc.id, ...doc.data() });
         });
         renderUI();
+      });
+
+      // الاستماع لكولكشن المصاريف
+      db.collection("expenses").onSnapshot((snapshot) => {
+        expensesList = [];
+        snapshot.forEach((doc) => {
+          expensesList.push({ docId: doc.id, ...doc.data() });
+        });
+        renderUI();
+        renderExpensesLogTable();
       });
 
       function updateActiveBarberDisplay() {
@@ -1326,7 +1566,6 @@
         renderUI();
       }
 
-      /* حفظ الفاتورة بالسحابة مع التوثيق الكامل لجميع السجلات */
       async function saveCustomerVisit() {
         if (!currentCustomer.name || !currentCustomer.phone) {
           customAlert("⚠️ تنبيه", "يرجى تحديد بيانات الزبون ورقم هاتفه أولاً!");
@@ -1371,13 +1610,8 @@
         };
 
         try {
-          // 1. سجل الزبائن الدائم (لا يتم مسحه أبداً)
           await db.collection("customer_history").add(visitRecord);
-
-          // 2. سجل اليوم المالي
           await db.collection("daily_transactions").add(visitRecord);
-
-          // 3. سجل الشهر المالي التراكمي
           await db.collection("monthly_vault").add(visitRecord);
 
           customAlert(
@@ -1390,6 +1624,104 @@
           console.error("خطأ بالحفظ:", e);
           customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الفاتورة بالسحابة!");
         }
+      }
+
+      /* وظائف البوب أب للمصاريف للمدير */
+      function openExpenseModal() {
+        document.getElementById("expenseNoteInput").value = "";
+        document.getElementById("expenseAmountInput").value = "";
+        document.getElementById("expenseModal").classList.add("active");
+        setTimeout(
+          () => document.getElementById("expenseNoteInput").focus(),
+          100,
+        );
+      }
+
+      function closeExpenseModal() {
+        document.getElementById("expenseModal").classList.remove("active");
+      }
+
+      async function submitExpense() {
+        const note = document.getElementById("expenseNoteInput").value.trim();
+        const amount = parseFloat(
+          document.getElementById("expenseAmountInput").value,
+        );
+
+        if (!note) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال تفاصيل المصروف!");
+          return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال مبلغ مصروف صحيح!");
+          return;
+        }
+
+        const englishDateTime = new Date().toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        });
+
+        try {
+          await db.collection("expenses").add({
+            note: note,
+            amount: amount,
+            formattedDate: englishDateTime,
+            timestamp: new Date().getTime(),
+          });
+
+          customAlert(
+            "✅ تم تسجيل المصروف",
+            `تم تسجيل مصروف (${note}) بمبلغ (${amount} د.أ) وتم خصمه من أرباح الصالون.`,
+          );
+          closeExpenseModal();
+        } catch (e) {
+          console.error("خطأ بحفظ المصروف:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء تسجيل المصروف بالسحابة!");
+        }
+      }
+
+      async function deleteExpense(docId) {
+        try {
+          await db.collection("expenses").doc(docId).delete();
+          customAlert(
+            "✅ تم الحذف",
+            "تم حذف المصروف بنجاح وإعادة احتساب الأرباح.",
+          );
+        } catch (e) {
+          console.error("خطأ بالحذف:", e);
+        }
+      }
+
+      function renderExpensesLogTable() {
+        const tbody = document.getElementById("expensesLogBody");
+        if (!tbody) return;
+
+        if (expensesList.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="no-data-msg">لا توجد مصاريف مسجلة حتى الآن.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        expensesList
+          .slice()
+          .reverse()
+          .forEach((exp) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td class="en-date">${exp.formattedDate}</td>
+            <td><b>${exp.note}</b></td>
+            <td style="color: #ff5555; font-weight: bold;">${exp.amount.toFixed(2)} د.أ</td>
+            <td>
+              <button class="btn-delete-small" onclick="deleteExpense('${exp.docId}')">✕</button>
+            </td>
+          `;
+            tbody.appendChild(row);
+          });
       }
 
       function customAlert(title, msg) {
@@ -1473,16 +1805,16 @@
         document.getElementById("mainPassInput").value = "";
         document.getElementById("mainBarberSelect").value = "";
         document.getElementById("customerModal").classList.remove("active");
+        clearSearchHistoryDisplay();
       }
 
-      /* تصفير العداد اليومي فقط (لا يمس سجل الزبائن المباشر) */
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
 
         openModal(
           "تصفير العداد اليومي",
-          "أدخل كلمة المرور لتصفير العداد اليومي (لن يتأثر سجل الزبائن الدائم):",
+          "أدخل كلمة المرور لتصفير العداد اليومي ومصاريف اليوم (لن يتأثر سجل الزبائن الدائم):",
           function (enteredPass) {
             const p = enteredPass.trim();
             if (resetPass && p === resetPass) {
@@ -1505,14 +1837,13 @@
         );
       }
 
-      /* تصفير أرباح عداد الشهر التراكمي (لا يمس سجل الزبائن المباشر) */
       async function promptResetMonth() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
 
         openModal(
           "تصفير أرباح الشهر",
-          "أدخل كلمة المرور لتصفير العداد المالي للشهر (لن يتأثر سجل الزبائن الدائم):",
+          "أدخل كلمة المرور لتصفير العداد المالي ومصاريف الشهر (لن يتأثر سجل الزبائن الدائم):",
           function (enteredPass) {
             const p = enteredPass.trim();
             if (resetPass && p === resetPass) {
@@ -1521,9 +1852,14 @@
                 .then((snapshot) => {
                   snapshot.forEach((doc) => doc.ref.delete());
                 });
+              db.collection("expenses")
+                .get()
+                .then((snapshot) => {
+                  snapshot.forEach((doc) => doc.ref.delete());
+                });
               customAlert(
                 "✅ تم التصفير الشهري",
-                "تم تصفير العداد المالي للشهر بنجاح، وظل سجل الزبائن محفوظاً بالكامل.",
+                "تم تصفير العداد المالي والمصاريف للشهر بنجاح.",
               );
             } else {
               customAlert("⚠️ كلمة المرور خاطئة", "كلمة المرور غير صحيحة!");
@@ -1532,7 +1868,127 @@
         );
       }
 
-      /* البحث عن تاريخ وتفاصيل زبون من كولكشن الزبائن الدائم (customer_history) الذي لا يتأثر بأي تصفير */
+      async function saveBarberName(barberId) {
+        const input = document.getElementById(`barber_input_${barberId}`);
+        if (!input) return;
+
+        const newName = input.value.trim();
+        if (!newName) {
+          customAlert("⚠️ تنبيه", "يرجى كتابة اسم صحيح للحلاق!");
+          return;
+        }
+
+        try {
+          await db
+            .collection("settings")
+            .doc("barbers")
+            .set(
+              {
+                [barberId]: newName,
+              },
+              { merge: true },
+            );
+
+          customAlert(
+            "✅ تم الحفظ",
+            `تم تعديل اسم الحلاق إلى (${newName}) بنجاح على جميع الأجهزة!`,
+          );
+        } catch (e) {
+          console.error("خطأ بتعديل اسم الحلاق:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء تعديل الاسم بالسحابة!");
+        }
+      }
+
+      function renderBarbersManagementTable() {
+        const tbody = document.getElementById("barbersManagementBody");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+        barbers.forEach((b) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><b>${b.id.toUpperCase()}</b></td>
+            <td><b>${b.name}</b></td>
+            <td>
+              <input type="text" class="edit-input-field" id="barber_input_${b.id}" value="${b.name}" autocomplete="off" />
+            </td>
+            <td>
+              <button class="btn-action-save" onclick="saveBarberName('${b.id}')">حفظ الاسم 💾</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      async function saveServiceSetting(serviceId) {
+        const nameInput = document.getElementById(`srv_name_${serviceId}`);
+        const priceInput = document.getElementById(`srv_price_${serviceId}`);
+
+        if (!nameInput || !priceInput) return;
+
+        const newName = nameInput.value.trim();
+        const newPrice = parseFloat(priceInput.value);
+
+        if (!newName) {
+          customAlert("⚠️ تنبيه", "يرجى كتابة اسم صحيح للخدمة!");
+          return;
+        }
+        if (isNaN(newPrice) || newPrice < 0) {
+          customAlert("⚠️ تنبيه", "يرجى كتابة سعر صحيح للخدمة!");
+          return;
+        }
+
+        try {
+          await db
+            .collection("settings")
+            .doc("services")
+            .set(
+              {
+                [serviceId]: {
+                  name: newName,
+                  price: newPrice,
+                },
+              },
+              { merge: true },
+            );
+
+          customAlert(
+            "✅ تم تعديل الخدمة",
+            `تم تعديل (${newName}) بسعر (${newPrice} د.أ) بنجاح لكل الأجهزة!`,
+          );
+        } catch (e) {
+          console.error("خطأ بتعديل الخدمة:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ التسعيرة بالسحابة!");
+        }
+      }
+
+      function renderServicesManagementTable() {
+        const tbody = document.getElementById("servicesManagementBody");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+        services.forEach((s) => {
+          if (s.id === "custom") return;
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><b>${s.id.toUpperCase()}</b></td>
+            <td><b>${s.name}</b></td>
+            <td><b>${s.price} د.أ</b></td>
+            <td>
+              <input type="text" class="edit-input-field" style="max-width: 200px;" id="srv_name_${s.id}" value="${s.name}" autocomplete="off" />
+            </td>
+            <td>
+              <input type="number" step="any" class="edit-input-field" style="max-width: 90px;" id="srv_price_${s.id}" value="${s.price}" autocomplete="off" />
+            </td>
+            <td>
+              <button class="btn-action-save" onclick="saveServiceSetting('${s.id}')">حفظ 💾</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
       async function searchCustomerHistory() {
         const phone = document.getElementById("searchPhoneInput").value.trim();
         const tbody = document.getElementById("customerHistoryBody");
@@ -1689,6 +2145,7 @@
           }
         }
 
+        // حسابات اليوم والمصاريف اليومية
         let cashTotalDay = 0;
         let visaTotalDay = 0;
 
@@ -1707,13 +2164,26 @@
           }
         });
 
+        // حساب إجمالي مصاريف اليوم
+        let dailyExpensesSum = expensesList.reduce(
+          (acc, curr) => acc + curr.amount,
+          0,
+        );
+
         const grandTotalSumDay = cashTotalDay + visaTotalDay;
+        const grossSalonShareDay = grandTotalSumDay * 0.5;
+        const netSalonShareDay = grossSalonShareDay - dailyExpensesSum; // الصافي الفعلي بعد خصم المصروف
+
         document.getElementById("cashTotal").innerText =
           cashTotalDay.toFixed(2);
         document.getElementById("visaTotal").innerText =
           visaTotalDay.toFixed(2);
         document.getElementById("grandTotal").innerText =
           grandTotalSumDay.toFixed(2);
+        document.getElementById("dailyExpenseTotal").innerText =
+          dailyExpensesSum.toFixed(2);
+        document.getElementById("totalSalonShareCard").innerText =
+          netSalonShareDay.toFixed(2);
 
         const vaultBody = document.getElementById("allBarbersVaultBody");
         const vaultFoot = document.getElementById("vaultTableFoot");
@@ -1757,10 +2227,7 @@
         `;
         vaultFoot.appendChild(footRow);
 
-        document.getElementById("totalSalonShareCard").innerText =
-          sumSalonShareDay.toFixed(2);
-
-        // حسابات العداد الشهري من كولكشن monthly_vault
+        // حسابات العداد الشهري والمصاريف الشهرية
         let mCash = 0;
         let mVisa = 0;
         monthlyVaultRecords.forEach((data) => {
@@ -1768,8 +2235,14 @@
           if (data.payMethod === "visa") mVisa += data.totalPrice;
         });
 
+        let monthlyExpensesSum = expensesList.reduce(
+          (acc, curr) => acc + curr.amount,
+          0,
+        );
+
         const mGrand = mCash + mVisa;
-        const mSalon = mGrand * 0.5;
+        const mGrossSalon = mGrand * 0.5;
+        const mNetSalon = mGrossSalon - monthlyExpensesSum;
 
         document.getElementById("monthlyCashTotal").innerText =
           mCash.toFixed(2);
@@ -1777,8 +2250,10 @@
           mVisa.toFixed(2);
         document.getElementById("monthlyGrandTotal").innerText =
           mGrand.toFixed(2);
+        document.getElementById("monthlyExpenseTotal").innerText =
+          monthlyExpensesSum.toFixed(2);
         document.getElementById("monthlySalonShareCard").innerText =
-          mSalon.toFixed(2);
+          mNetSalon.toFixed(2);
       }
 
       const canvas = document.getElementById("bgCanvas");
