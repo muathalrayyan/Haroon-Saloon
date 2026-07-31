@@ -4,23 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>👑 صالون هارون الرشيد - النظام السحابي</title>
+    <title>صالون هارون الرشيد - النظام السحابي</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg" />
+
+    <!-- خطوط جوجل -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- مكتبات Firebase السحابية -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
+      :root {
+        --primary-gold: #c5a059;
+        --primary-gold-hover: #b38b42;
+        --primary-gold-glow: rgba(197, 160, 89, 0.3);
+      }
+
       * {
         box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Cairo", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         user-select: none;
       }
 
+      h1,
+      h2,
+      h3,
+      .section-title,
+      .login-title {
+        font-family: "Amiri", serif;
+      }
+
       body {
-        background-color: #0d0d0d;
-        color: #e0e0e0;
+        background:
+          linear-gradient(rgba(5, 5, 5, 0.93), rgba(5, 5, 5, 0.93)),
+          url("wallpaper.jpeg") no-repeat center center fixed;
+        background-size: cover;
+        color: #d0d0d0;
         margin: 0;
         padding: 20px;
         display: flex;
@@ -31,25 +56,20 @@
         overflow-x: hidden;
       }
 
-      #bgCanvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        pointer-events: none;
-      }
-
-      /* شاشة تسجيل الدخول الرئيسية */
+      /* ========================================= */
+      /* 1. شاشة تسجيل الدخول والقائمة المنسدلة */
+      /* ========================================= */
       #mainLoginScreen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(13, 13, 13, 0.95);
-        backdrop-filter: blur(12px);
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+          url("wallpaper.jpeg");
+        background-size: cover;
+        background-position: center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -57,69 +77,153 @@
       }
 
       .login-box {
-        background: #1a1a1a;
-        border: 1px solid #00ffcc;
-        border-radius: 20px;
-        padding: 35px 30px;
+        background: rgba(15, 15, 15, 0.95);
+        border: 15px solid #444;
+        border-image: url("wallpaper.jpeg") 60 round;
+        border-radius: 0;
+        padding: 30px 20px;
         width: 90%;
-        max-width: 400px;
+        max-width: 360px;
         text-align: center;
-        box-shadow: 0 10px 40px rgba(0, 255, 204, 0.2);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+
+      .settings-dropdown {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+      }
+
+      .settings-btn {
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 26px;
+        cursor: pointer;
+        padding: 0 5px;
+        line-height: 1;
+        transition: color 0.2s;
+      }
+
+      .settings-btn:hover {
+        color: #c5a059;
+      }
+
+      .settings-menu {
+        display: none;
+        position: absolute;
+        top: 35px;
+        left: 0;
+        background: #111;
+        border: 1px solid #c5a059;
+        min-width: 160px;
+        text-align: right;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+        z-index: 10001;
+      }
+
+      .settings-menu.active {
+        display: block;
+      }
+
+      .settings-menu button {
+        width: 100%;
+        text-align: right;
+        background: none;
+        border: none;
+        color: #ccc;
+        padding: 12px 15px;
+        font-size: 15px;
+        font-family: "Cairo";
+        cursor: pointer;
+        border-bottom: 1px solid #333;
+        transition: 0.2s;
+      }
+
+      .settings-menu button:hover {
+        background: #222;
+        color: #c5a059;
+      }
+      .settings-menu button:last-child {
+        border-bottom: none;
       }
 
       .login-box .logo-login {
-        width: 110px;
-        height: 110px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        border: 3px solid #00ffcc;
+        border: 3px solid #777;
         margin: 0 auto 15px auto;
         display: block;
         object-fit: cover;
       }
 
+      .login-title {
+        color: #e0e0e0;
+        margin: 0 auto 25px auto;
+        font-size: 32px;
+        width: 80%;
+        line-height: 1.3;
+      }
+
       .login-box select,
       .login-box input {
-        width: 100%;
-        background: #2a2a2a;
-        border: 1px solid #444;
-        color: #fff;
-        padding: 12px;
+        width: 85%;
+        height: 46px;
+        background: #1a1a1a;
+        border: 1px solid #555;
+        color: #e0e0e0;
+        padding: 0 10px;
         font-size: 16px;
-        border-radius: 8px;
+        border-radius: 0;
         outline: none;
-        margin-bottom: 15px;
+        margin: 0 auto 15px auto;
         text-align: center;
       }
 
       .login-box select {
-        color: #00ffcc;
+        color: #ccc;
         font-weight: bold;
+        /* إخفاء السهم الخاص بقائمة الاختيار */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none;
+        text-align-last: center;
       }
 
       .login-box input {
         letter-spacing: 4px;
-        font-size: 22px;
+        font-size: 20px;
         -webkit-text-security: disc;
       }
 
       .btn-login-submit {
-        width: 100%;
-        background: #00ffcc;
-        color: #000;
-        border: none;
-        padding: 12px;
-        border-radius: 8px;
-        font-size: 16px;
+        width: auto;
+        min-width: 120px;
+        background: #333;
+        color: #fff;
+        border: 1px solid #666;
+        padding: 8px 30px;
+        border-radius: 0;
+        font-size: 14px;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.2s ease;
+        margin-top: 5px;
       }
 
       .btn-login-submit:hover {
-        background: #00cca3;
+        background: #555;
       }
 
-      /* حاويات النظام */
+      /* ========================================= */
+      /* 2. حاويات النظام الداخلية */
+      /* ========================================= */
       .app-container,
       .admin-container {
         width: 100%;
@@ -145,60 +249,54 @@
         position: absolute;
         top: 0;
         left: 0;
-        background: rgba(255, 68, 68, 0.12);
-        color: #ff5555;
-        border: 1px solid rgba(255, 68, 68, 0.4);
+        background: rgba(40, 40, 40, 0.8);
+        color: #ccc;
+        border: 1px solid #666;
         padding: 8px 18px;
-        border-radius: 20px;
+        border-radius: 0;
         font-size: 14px;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.25s ease;
-        backdrop-filter: blur(8px);
-        display: flex;
-        align-items: center;
-        gap: 6px;
         z-index: 10;
       }
 
-      .top-logout-btn:hover,
-      .top-logout-btn:active {
-        background: #ff4444;
-        color: #ffffff;
-        box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+      .top-logout-btn:hover {
+        background: #660000;
+        color: #fff;
+        border-color: #ff4444;
       }
 
       .logo {
         width: 130px;
         height: 130px;
         border-radius: 50%;
-        border: 3px solid #c0c0c0;
-        box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+        border: 3px solid #666;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         margin: 0 auto 10px auto;
         display: block;
         object-fit: cover;
-        object-position: 45% center;
         transform: scale(1.1);
       }
 
       h1 {
         margin: 5px 0;
-        color: #ffffff;
-        font-size: 26px;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        color: #e0e0e0;
+        font-size: 32px;
       }
-
       .subtitle {
-        color: #aaa;
+        color: #888;
         font-size: 14px;
       }
 
-      .controls-panel {
-        background: rgba(26, 26, 26, 0.85);
-        backdrop-filter: blur(10px);
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 18px 25px;
+      .controls-panel,
+      .summary-box {
+        background: rgba(15, 15, 15, 0.85);
+        backdrop-filter: blur(8px);
+        border: 10px solid #444;
+        border-image: url("wallpaper.jpeg") 45 round;
+        border-radius: 0;
+        padding: 20px 25px;
         width: 100%;
         margin-bottom: 20px;
         display: flex;
@@ -206,7 +304,11 @@
         gap: 20px;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+      }
+
+      .summary-box {
+        flex-direction: column;
       }
 
       .control-group {
@@ -215,45 +317,40 @@
         align-items: center;
         gap: 6px;
       }
-
       .control-group label {
         font-size: 14px;
-        color: #c0c0c0;
+        color: #aaa;
         font-weight: bold;
       }
 
       .active-barber-badge,
       .active-customer-badge {
-        background: #1f2a28;
-        color: #00ffcc;
-        border: 1px solid #00ffcc;
+        background: #111;
+        color: #c5a059;
+        border: 1px solid #c5a059;
         padding: 8px 18px;
-        border-radius: 8px;
+        border-radius: 0;
         font-size: 15px;
         font-weight: bold;
         text-align: center;
         min-width: 140px;
-        box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
-        cursor: pointer;
       }
 
       .pay-toggle-container {
         display: flex;
         gap: 6px;
-        background: #1a1a1a;
+        background: #111;
         padding: 4px;
-        border-radius: 10px;
-        border: 1px solid #333;
-        flex-wrap: wrap;
-        justify-content: center;
+        border-radius: 0;
+        border: 1px solid #444;
       }
 
       .pay-btn {
         background: transparent;
-        color: #888;
+        color: #777;
         border: none;
         padding: 8px 12px;
-        border-radius: 8px;
+        border-radius: 0;
         font-size: 13px;
         font-weight: bold;
         cursor: pointer;
@@ -261,31 +358,14 @@
       }
 
       .pay-btn.active {
-        background: #00ffcc;
-        color: #000;
-        box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+        background: #555;
+        color: #fff;
+        border: 1px solid #888;
       }
-
       .pay-btn.debt-btn.active {
-        background: #ffaa00;
-        color: #000;
-        box-shadow: 0 0 12px rgba(255, 170, 0, 0.3);
-      }
-
-      .btn-new-customer {
-        background: rgba(0, 255, 204, 0.15);
-        color: #00ffcc;
-        border: 1px solid #00ffcc;
-        padding: 9px 18px;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .btn-new-customer:hover {
-        background: #00ffcc;
-        color: #000;
+        background: #660000;
+        color: #fff;
+        border: 1px solid #ff4444;
       }
 
       .grid-container {
@@ -298,60 +378,51 @@
       }
 
       .card {
-        background: rgba(30, 30, 30, 0.9);
-        border: 1px solid #333;
-        border-radius: 12px;
+        background: #151515;
+        border: 1px solid #444;
+        border-radius: 0;
         padding: 18px 15px;
         text-align: center;
         cursor: pointer;
-        transition:
-          transform 0.12s ease,
-          box-shadow 0.12s ease,
-          border-color 0.12s ease;
+        transition: all 0.15s ease;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        position: relative;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         min-height: 125px;
         flex: 0 1 calc(25% - 18px);
         min-width: 230px;
         max-width: 270px;
-        touch-action: manipulation;
       }
 
       .card.custom-service-card {
-        border-color: #00ffcc88;
-        background: rgba(25, 40, 38, 0.85);
+        border-color: #666;
+        background: #1a1a1a;
       }
-
       .card:hover {
-        border-color: #00ffcc;
+        border-color: #c5a059;
         transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 255, 204, 0.15);
+        background: #222;
       }
 
       .card:active,
       .card.card-tap-feedback {
-        transform: scale(0.92) !important;
-        border-color: #00ffcc !important;
-        box-shadow: 0 0 20px rgba(0, 255, 204, 0.5) !important;
-        background: #252525 !important;
+        transform: scale(0.95) !important;
+        border-color: #c5a059 !important;
+        background: #333 !important;
       }
 
       .card-title {
         font-size: 16px;
         font-weight: bold;
-        color: #fff;
+        color: #e0e0e0;
         margin-bottom: 8px;
       }
-
       .card-price {
-        color: #c0c0c0;
+        color: #999;
         font-size: 14px;
         margin-bottom: 10px;
       }
-
       .card-footer-row {
         display: flex;
         align-items: center;
@@ -360,13 +431,13 @@
       }
 
       .btn-undo-small {
-        background: rgba(255, 68, 68, 0.2);
-        color: #ff4444;
-        border: 1px solid #ff444477;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
+        background: rgba(255, 68, 68, 0.1);
+        color: #ff5555;
+        border: 1px solid #ff5555;
+        border-radius: 0;
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
         font-weight: bold;
         display: flex;
         align-items: center;
@@ -376,26 +447,12 @@
 
       .badge {
         background: #222;
-        color: #00ffcc;
+        color: #c5a059;
         padding: 6px 12px;
-        border-radius: 20px;
+        border-radius: 0;
         font-weight: bold;
         font-size: 13px;
-        border: 1px solid #00ffcc33;
-      }
-
-      .summary-box {
-        width: 100%;
-        background: rgba(26, 26, 26, 0.9);
-        backdrop-filter: blur(10px);
-        border: 1px solid #444;
-        border-radius: 12px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(197, 160, 89, 0.3);
       }
 
       .totals-row {
@@ -405,54 +462,47 @@
         gap: 15px;
         width: 100%;
       }
-
       .total-item {
         font-size: 15px;
         font-weight: bold;
-        background: #1e1e1e;
+        background: #111;
         padding: 12px 18px;
-        border-radius: 8px;
-        border: 1px solid #333;
+        border-radius: 0;
+        border: 1px solid #444;
       }
 
       .total-item span {
-        color: #00ffcc;
+        color: #c5a059;
       }
-
       .total-item.highlight-salon {
-        border-color: #00ffcc;
-        background: rgba(0, 255, 204, 0.08);
+        border-color: #777;
+        background: #1a1a1a;
       }
-
       .total-item.highlight-salon span {
-        color: #00ffcc;
+        color: #fff;
         font-size: 18px;
       }
 
       .total-item.highlight-expense {
-        border-color: #ff4444;
-        background: rgba(255, 68, 68, 0.08);
+        border-color: #660000;
       }
-
       .total-item.highlight-expense span {
         color: #ff5555;
       }
 
       .total-item.highlight-debt {
-        border-color: #ffaa00;
-        background: rgba(255, 170, 0, 0.08);
+        border-color: #886600;
       }
-
       .total-item.highlight-debt span {
-        color: #ffaa00;
+        color: #ffcc00;
       }
 
       .section-title {
-        color: #ffffff;
-        font-size: 17px;
+        color: #ccc;
+        font-size: 20px;
         margin: 5px 0 10px 0;
         text-align: center;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px dashed #555;
         padding-bottom: 5px;
       }
 
@@ -460,115 +510,78 @@
         width: 100%;
         overflow-x: auto;
       }
-
       .report-table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 5px;
       }
-
       .report-table th,
       .report-table td {
-        border: 1px solid #333;
+        border: 1px solid #444;
         padding: 10px;
         text-align: center;
         font-size: 14px;
       }
-
       .report-table th {
-        background-color: #222;
-        color: #00ffcc;
-      }
-
-      .report-table td {
         background-color: #1a1a1a;
+        color: #ccc;
+        font-weight: bold;
       }
-
+      .report-table td {
+        background-color: #111;
+        color: #aaa;
+      }
       .report-table tr.total-summary-row td {
-        background-color: #252525;
+        background-color: #1f1f1f;
         font-size: 15px;
-        border-top: 2px solid #00ffcc;
-      }
-
-      .btn-save-customer {
-        background: #00ffcc;
-        color: #000;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        align-self: center;
-        transition: all 0.2s ease;
-        box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
-      }
-
-      .btn-save-customer:hover {
-        background: #00cca3;
-      }
-
-      .btn-download-word {
-        background: #2b579a;
+        border-top: 2px solid #666;
         color: #fff;
-        border: none;
+      }
+
+      .btn-save-customer,
+      .btn-download-word,
+      .btn-add-expense,
+      .btn-reset,
+      .search-box-container button {
+        background: #333;
+        color: #fff;
+        border: 1px solid #666;
         padding: 12px 24px;
-        border-radius: 8px;
+        border-radius: 0;
         font-size: 15px;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 0 12px rgba(43, 87, 154, 0.3);
       }
 
+      .btn-save-customer:hover,
+      .btn-add-expense:hover,
+      .search-box-container button:hover {
+        background: #555;
+        border-color: #888;
+      }
+      .btn-download-word {
+        background: #222;
+        border-color: #555;
+      }
       .btn-download-word:hover {
-        background: #204177;
+        background: #444;
       }
-
-      .btn-add-expense {
-        background: #ffaa00;
-        color: #000;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        align-self: center;
-        transition: all 0.2s ease;
-      }
-
-      .btn-add-expense:hover {
-        background: #e69900;
-      }
-
       .btn-reset {
-        background: #990000;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        align-self: center;
+        background: #660000;
+        border-color: #ff4444;
       }
-
       .btn-reset:hover {
-        background: #cc0000;
+        background: #880000;
       }
-
       .btn-pay-debt {
-        background: #ffaa00;
-        color: #000;
-        border: none;
+        background: #444;
+        color: #fff;
+        border: 1px solid #777;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 0;
         font-weight: bold;
         cursor: pointer;
-      }
-
-      .btn-pay-debt:hover {
-        background: #e69900;
       }
 
       .search-box-container {
@@ -579,67 +592,54 @@
         margin: 10px auto;
         justify-content: center;
       }
-
       .search-box-container input {
         flex: 1;
-        background: #2a2a2a;
-        border: 1px solid #00ffcc;
+        background: #111;
+        border: 1px solid #555;
         color: #fff;
         padding: 12px;
-        border-radius: 8px;
+        border-radius: 0;
         text-align: center;
         font-size: 16px;
         outline: none;
       }
 
-      .search-box-container button {
-        background: #00ffcc;
-        color: #000;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
       .edit-input-field {
-        background: #2a2a2a;
-        border: 1px solid #444;
-        color: #00ffcc;
+        background: #111;
+        border: 1px solid #555;
+        color: #c5a059;
         padding: 6px 10px;
-        border-radius: 6px;
+        border-radius: 0;
         text-align: center;
         font-weight: bold;
         width: 100%;
         max-width: 150px;
       }
-
       .btn-action-save {
-        background: #00ffcc;
-        color: #000;
-        border: none;
+        background: #333;
+        color: #fff;
+        border: 1px solid #666;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 0;
         font-weight: bold;
         cursor: pointer;
       }
-
       .btn-delete-small {
-        background: rgba(255, 68, 68, 0.2);
-        color: #ff4444;
+        background: rgba(255, 68, 68, 0.1);
+        color: #ff5555;
         border: 1px solid #ff4444;
-        padding: 4px 10px;
-        border-radius: 6px;
+        padding: 6px 12px;
+        border-radius: 0;
         cursor: pointer;
         font-weight: bold;
       }
 
       .select-barber-admin {
-        background: #2a2a2a;
-        border: 1px solid #00ffcc;
-        color: #00ffcc;
+        background: #111;
+        border: 1px solid #555;
+        color: #c5a059;
         padding: 10px 18px;
-        border-radius: 8px;
+        border-radius: 0;
         font-size: 16px;
         font-weight: bold;
         outline: none;
@@ -647,188 +647,151 @@
         margin-bottom: 10px;
       }
 
+      /* ========================================= */
+      /* 3. النوافذ المنبثقة (Modals) */
+      /* ========================================= */
       .modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(6px);
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 99999;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.25s ease;
+        transition: opacity 0.2s ease;
       }
-
       .modal-overlay.active {
         opacity: 1;
         pointer-events: auto;
       }
 
-      .modal-card {
-        background: #1a1a1a;
-        border: 1px solid #00ffcc;
-        border-radius: 16px;
-        padding: 25px 30px;
+      .modal-card,
+      .alert-modal-card {
+        background: #111;
+        border: 10px solid #444;
+        border-image: url("wallpaper.jpeg") 40 round;
+        border-radius: 0;
+        padding: 30px 25px;
         width: 90%;
-        max-width: 400px;
+        max-width: 420px;
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
         transform: translateY(-20px);
         transition: transform 0.25s ease;
       }
-
-      .modal-overlay.active .modal-card {
+      .modal-overlay.active .modal-card,
+      .modal-overlay.active .alert-modal-card {
         transform: translateY(0);
       }
 
-      .modal-card h3 {
-        margin: 0 0 10px 0;
-        color: #fff;
-        font-size: 20px;
+      .modal-card h3,
+      .alert-modal-card h3 {
+        margin: 0 0 12px 0;
+        color: #ccc;
+        font-size: 24px;
       }
-
-      .modal-card p {
-        color: #aaa;
-        font-size: 14px;
+      .modal-card p,
+      .alert-modal-card p {
+        color: #888;
+        font-size: 15px;
         margin-bottom: 15px;
       }
 
-      .modal-card input {
+      .modal-card input,
+      .modal-card select {
         width: 100%;
-        background: #2a2a2a;
-        border: 1px solid #444;
-        color: #00ffcc;
+        background: #1a1a1a;
+        border: 1px solid #555;
+        color: #fff;
         text-align: center;
         padding: 12px;
-        font-size: 18px;
-        border-radius: 8px;
+        font-size: 16px;
+        border-radius: 0;
         outline: none;
         margin-bottom: 15px;
       }
-
       .modal-card input.pass-style {
         font-size: 22px;
         letter-spacing: 4px;
         -webkit-text-security: disc;
       }
 
-      .checkbox-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 15px;
-        background: #222;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #444;
-        cursor: pointer;
-      }
-
-      .checkbox-container input {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        margin: 0;
-      }
-
-      .checkbox-container label {
-        color: #ffaa00;
-        font-weight: bold;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
       .modal-btns {
         display: flex;
         gap: 12px;
+        margin-top: 10px;
       }
-
-      .modal-btn {
+      .modal-btn,
+      .alert-btn {
         flex: 1;
         padding: 12px;
-        border-radius: 8px;
-        border: none;
+        border-radius: 0;
+        border: 1px solid #666;
         font-weight: bold;
         cursor: pointer;
-        font-size: 14px;
-      }
-
-      .modal-btn-confirm {
-        background: #00ffcc;
-        color: #000;
-      }
-
-      .modal-btn-cancel {
-        background: #333;
-        color: #ccc;
-      }
-
-      .alert-modal-card {
-        background: #1a1a1a;
-        border: 1px solid #00ffcc;
-        border-radius: 16px;
-        padding: 25px 30px;
-        width: 90%;
-        max-width: 380px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 255, 204, 0.25);
-      }
-
-      .alert-modal-card h3 {
-        color: #00ffcc;
-        margin: 0 0 10px 0;
-        font-size: 22px;
-      }
-
-      .alert-modal-card p {
-        color: #ddd;
-        font-size: 16px;
-        margin-bottom: 20px;
-      }
-
-      .alert-btn {
-        background: #00ffcc;
-        color: #000;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 16px;
-        cursor: pointer;
+        font-size: 15px;
         transition: all 0.2s ease;
       }
 
+      .modal-btn-confirm,
+      .alert-btn {
+        background: #333;
+        color: #fff;
+      }
+      .modal-btn-confirm:hover,
       .alert-btn:hover {
-        background: #00cca3;
+        background: #555;
+      }
+      .modal-btn-cancel {
+        background: #1a1a1a;
+        color: #888;
+        border-color: #444;
+      }
+      .modal-btn-cancel:hover {
+        background: #222;
+        color: #aaa;
       }
 
       .en-date {
         direction: ltr;
         display: inline-block;
-        font-family: monospace, monospace;
+        font-family: "Cairo", monospace;
       }
     </style>
   </head>
   <body>
-    <canvas id="bgCanvas"></canvas>
-
     <!-- شاشة تسجيل الدخول الرئيسية -->
     <div id="mainLoginScreen">
       <div class="login-box">
+        <!-- أيقونة وقائمة الإعدادات -->
+        <div class="settings-dropdown">
+          <button class="settings-btn" onclick="toggleSettingsMenu(event)">
+            ⋮
+          </button>
+          <div class="settings-menu" id="settingsMenu">
+            <button onclick="handleSettingsAction('report')">
+              🧾 جرد الصندوق
+            </button>
+            <button onclick="handleSettingsAction('reservations')">
+              📅 الحجوزات
+            </button>
+            <button onclick="handleSettingsAction('general')">
+              ⚙️ الإدارة
+            </button>
+          </div>
+        </div>
+
         <img src="logo.jpeg" alt="Haroun Logo" class="logo-login" />
-        <h2 style="color: #fff; margin-bottom: 5px">👑 صالون هارون الرشيد</h2>
-        <p style="color: #aaa; font-size: 13px; margin-bottom: 20px">
-          يرجى تسجيل الدخول للوصول للنظام
-        </p>
+        <h2 class="login-title">صالون هارون الرشيد</h2>
 
         <select id="mainBarberSelect" onchange="onAccountSelected()">
-          <!-- التوليد التلقائي لخيارات 10 حلاقين + المدير -->
+          <!-- التوليد التلقائي لخيارات 10 حلاقين -->
         </select>
 
         <input
@@ -838,7 +801,8 @@
           id="mainPassInput"
           placeholder="••••"
           maxlength="10"
-          autocomplete="new-password"
+          autocomplete="off"
+          name="no-autofill-pass"
         />
 
         <button
@@ -846,8 +810,113 @@
           id="loginBtn"
           onclick="executeMainLogin()"
         >
-          دخول النظام
+          تسجيل دخول
         </button>
+      </div>
+    </div>
+
+    <!-- حاوية جرد الصندوق المبسطة -->
+    <div class="app-container" id="dailyReportContainer">
+      <div class="header">
+        <button class="top-logout-btn" onclick="logoutUser()" title="العودة">
+          🚪 رجوع
+        </button>
+        <img
+          src="logo.jpeg"
+          alt="Haroun Logo"
+          class="logo"
+          onclick="logoutUser()"
+        />
+        <h1>جرد الصندوق (اليومي)</h1>
+        <div class="subtitle">تفاصيل مبيعات وتوزيع الحصص لهذا اليوم</div>
+      </div>
+
+      <div class="summary-box">
+        <div class="section-title">📊 ملخص الإيرادات والمصاريف اليومية</div>
+        <div class="totals-row" style="margin-bottom: 20px">
+          <div class="total-item">💵 كاش: <span id="drCash">0</span> د.أ</div>
+          <div class="total-item">💳 فيزا: <span id="drVisa">0</span> د.أ</div>
+          <div class="total-item">📱 كليك: <span id="drCliq">0</span> د.أ</div>
+          <div class="total-item highlight-debt">
+            📒 ذمم: <span id="drDebt">0</span> د.أ
+          </div>
+          <div class="total-item highlight-expense">
+            💸 مصاريف اليوم: <span id="drExpenses">0</span> د.أ
+          </div>
+        </div>
+
+        <div class="totals-row">
+          <div class="total-item" style="border-color: #c5a059">
+            💰 الدخل الإجمالي (المحصل):
+            <span id="drGrand" style="color: #fff">0</span> د.أ
+          </div>
+          <div class="total-item">
+            ✂️ إجمالي حصة الحلاقين: <span id="drBarbersShare">0</span> د.أ
+          </div>
+          <!-- تم تعديل المعادلة لخصم المصاريف والذمم -->
+          <div class="total-item highlight-salon">
+            👑 صافي ربح الصالون (بعد خصم المصاريف والذمم):
+            <span id="drSalonShare">0</span> د.أ
+          </div>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0; width: 100%" />
+
+        <div class="section-title">💈 تفصيل عمل كل حلاق اليوم</div>
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>الحلاق</th>
+                <th>عدد الفواتير</th>
+                <th>المبلغ الإجمالي</th>
+                <th>حصة الحلاق</th>
+                <th>حصة الصالون</th>
+              </tr>
+            </thead>
+            <tbody id="drBarbersBody"></tbody>
+          </table>
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0; width: 100%" />
+
+        <div class="section-title">💸 تفاصيل مصاريف اليوم</div>
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>رقم الفاتورة</th>
+                <th>تفاصيل المصروف</th>
+                <th>المبلغ المستقطع</th>
+              </tr>
+            </thead>
+            <tbody id="drExpensesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- حاوية الحجوزات الفارغة -->
+    <div class="app-container" id="reservationsContainer">
+      <div class="header">
+        <button class="top-logout-btn" onclick="logoutUser()" title="العودة">
+          🚪 رجوع
+        </button>
+        <img
+          src="logo.jpeg"
+          alt="Haroun Logo"
+          class="logo"
+          onclick="logoutUser()"
+        />
+        <h1>نظام الحجوزات</h1>
+        <div class="subtitle">قيد التطوير والبرمجة...</div>
+      </div>
+      <div
+        class="summary-box"
+        style="text-align: center; color: #888; padding: 50px"
+      >
+        <h2>📅 هذه الصفحة ستكون جاهزة مستقبلاً</h2>
+        <p>مخصصة لإدارة ومتابعة حجوزات الزبائن.</p>
       </div>
     </div>
 
@@ -868,7 +937,7 @@
           onclick="logoutUser()"
           title="اضغط هنا للخروج وقفل الحساب"
         />
-        <h1>👑 صالون هارون الرشيد</h1>
+        <h1>صالون هارون الرشيد</h1>
         <div class="subtitle">الجبيهة - عمان</div>
       </div>
 
@@ -876,23 +945,6 @@
         <div class="control-group">
           <label>الحلاق الحالي:</label>
           <div class="active-barber-badge" id="activeBarberDisplay">--</div>
-        </div>
-
-        <div class="control-group">
-          <label>الزبون الحالي:</label>
-          <div style="display: flex; gap: 8px; align-items: center">
-            <div
-              class="active-customer-badge"
-              id="activeCustomerDisplay"
-              onclick="openCustomerModal()"
-              title="اضغط للتعديل"
-            >
-              لم يحدد
-            </div>
-            <button class="btn-new-customer" onclick="openCustomerModal()">
-              👤 تعديل البيانات
-            </button>
-          </div>
         </div>
 
         <div class="control-group">
@@ -938,7 +990,6 @@
 
       <div class="summary-box">
         <div id="barberPersonalSection">
-          <!-- 1. ملخص أرباح الحلاق اليومي -->
           <div class="section-title" id="barberSummaryTitle">
             📊 ملخص أرباح الحلاق (اليومي)
           </div>
@@ -957,7 +1008,6 @@
             </table>
           </div>
 
-          <!-- 2. ملخص أرباح الحلاق الشهري التراكمي -->
           <div
             class="section-title"
             id="barberMonthlySummaryTitle"
@@ -980,13 +1030,12 @@
             </table>
           </div>
 
-          <!-- 3. تفاصيل خدمات الزبون الحالي مع الإجمالي للتوتال -->
           <div
             class="section-title"
             id="barberDetailsTitle"
             style="margin-top: 20px"
           >
-            📝 خدمات الزبون الحالي
+            📝 خدمات الفاتورة الحالية
           </div>
           <div class="table-responsive">
             <table class="report-table">
@@ -1003,8 +1052,8 @@
           </div>
 
           <div style="display: flex; justify-content: center; margin-top: 20px">
-            <button class="btn-save-customer" onclick="saveCustomerVisit()">
-              ✅ إنهاء الفاتورة وحفظ الزبون في قاعدة البيانات
+            <button class="btn-save-customer" onclick="initiateCheckout()">
+              ✅ إنهاء الفاتورة وحفظ الزبون
             </button>
           </div>
         </div>
@@ -1028,12 +1077,11 @@
           onclick="logoutUser()"
           title="اضغط هنا للخروج وقفل الحساب"
         />
-        <h1>👑 لوحة تحكم مدير الصالون</h1>
+        <h1>لوحة تحكم الإدارة</h1>
         <div class="subtitle">الجبيهة - عمان</div>
       </div>
 
       <div class="summary-box">
-        <!-- زر إضافة المصروف للمدير -->
         <div
           style="display: flex; justify-content: center; margin-bottom: 10px"
         >
@@ -1042,9 +1090,8 @@
           </button>
         </div>
 
-        <!-- 1. أرباح اليوم والمصاريف اليومية -->
         <div class="section-title">
-          📊 التقرير المالي والربح الصافي اليومي (بعد خصم المصاريف)
+          📊 التقرير المالي والربح الصافي اليومي (بعد خصم المصاريف والذمم)
         </div>
         <div class="totals-row">
           <div class="total-item">
@@ -1057,7 +1104,7 @@
             دخل كليك اليومي: <span id="cliqTotal">0</span> د.أ
           </div>
           <div class="total-item highlight-debt">
-            إجمالي الذمم المعلقة: <span id="debtTotal">0</span> د.أ
+            إجمالي ذمم اليوم: <span id="debtTotal">0</span> د.أ
           </div>
           <div class="total-item">
             الإجمالي الكلي اليومي: <span id="grandTotal">0</span> د.أ
@@ -1066,7 +1113,7 @@
             💸 مصاريف اليوم: <span id="dailyExpenseTotal">0</span> د.أ
           </div>
           <div class="total-item highlight-salon">
-            👑 صافي الصالون اليومي الفعلي:
+            👑 صافي ربح الصالون اليومي:
             <span id="totalSalonShareCard">0</span> د.أ
           </div>
         </div>
@@ -1080,7 +1127,7 @@
                 <th>العمليات اليومية</th>
                 <th>المبلغ الإجمالي</th>
                 <th>حصة الحلاق</th>
-                <th>حصة الصالون قبل الخصم</th>
+                <th>حصة الصالون</th>
               </tr>
             </thead>
             <tbody id="allBarbersVaultBody"></tbody>
@@ -1094,7 +1141,6 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- جدول متابعة وتسديد الذمم المعلقة -->
         <div class="section-title" style="color: #ffaa00">
           📒 قائمة ومتابعة الذمم المعلقة (غير المدفوعة) وتسديدها
         </div>
@@ -1123,9 +1169,8 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 2. أرباح الشهر والمصاريف الشهرية التراكمية زر تنزيل الـ Word -->
         <div class="section-title">
-          📅 إجمالي أرباح الشهر التراكمية (الصافي بعد خصم مصاريف الشهر)
+          📅 إجمالي أرباح الشهر التراكمية (بعد خصم مصاريف وذمم الشهر)
         </div>
         <div class="totals-row">
           <div class="total-item">
@@ -1147,7 +1192,7 @@
             💸 مصاريف الشهر: <span id="monthlyExpenseTotal">0</span> د.أ
           </div>
           <div class="total-item highlight-salon">
-            👑 صافي الصالون الشهري الفعلي:
+            👑 صافي ربح الصالون الشهري:
             <span id="monthlySalonShareCard">0</span> د.أ
           </div>
         </div>
@@ -1178,9 +1223,8 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 3. كشف حساب واستعلام الأرشيف بالرزنامة -->
         <div class="section-title">
-          📆 استعلام السجل المالي والأرشيف حسب تاريخ اليوم (الرزنامة)
+          📆 استعلام وإدارة الفواتير حسب تاريخ اليوم (تعديل وحذف)
         </div>
         <div class="search-box-container">
           <input
@@ -1215,7 +1259,7 @@
               الإجمالي الكلي: <span id="calGrand">0</span> د.أ
             </div>
             <div class="total-item highlight-salon">
-              صافي الصالون المفترض: <span id="calSalonShare">0</span> د.أ
+              صافي ربح الصالون: <span id="calSalonShare">0</span> د.أ
             </div>
           </div>
 
@@ -1238,19 +1282,20 @@
           </div>
 
           <div class="section-title" style="font-size: 15px; margin-top: 15px">
-            📝 تفاصيل كافة الفواتير والزيارات لليوم المحدد
+            📝 إدارة وتفاصيل فواتير اليوم المحدد
           </div>
           <div class="table-responsive">
             <table class="report-table">
               <thead>
                 <tr>
+                  <th>رقم الفاتورة</th>
                   <th>الوقت</th>
-                  <th>اسم الزبون</th>
-                  <th>رقم الهاتف</th>
+                  <th>الزبون / الهاتف</th>
                   <th>الحلاق</th>
                   <th>طريقة الدفع</th>
-                  <th>الخدمات المقدمة</th>
-                  <th>المبلغ الإجمالي</th>
+                  <th>الخدمات</th>
+                  <th>الإجمالي</th>
+                  <th>إجراءات الإدارة</th>
                 </tr>
               </thead>
               <tbody id="calTransactionsReportBody"></tbody>
@@ -1260,7 +1305,6 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 4. كشف حساب شغل الحلاق من أول الشهر للمدير -->
         <div class="section-title">
           💈 كشف حساب مجموع شغل الحلاق من أول الشهر
         </div>
@@ -1277,7 +1321,7 @@
             class="select-barber-admin"
             onchange="renderAdminBarberMonthlyStats()"
           >
-            <!-- القائمة التلقائية الديناميكية من الفايربيس -->
+            <!-- القائمة التلقائية -->
           </select>
           <div class="totals-row" style="margin-top: 10px">
             <div class="total-item">
@@ -1297,12 +1341,12 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 5. جدول المصاريف المسجلة -->
         <div class="section-title">🧾 سجل مصاريف الصالون المسجلة</div>
         <div class="table-responsive">
           <table class="report-table">
             <thead>
               <tr>
+                <th>رقم الفاتورة</th>
                 <th>التاريخ والوقت</th>
                 <th>تفاصيل المصروف</th>
                 <th>المبلغ المستقطع</th>
@@ -1311,7 +1355,7 @@
             </thead>
             <tbody id="expensesLogBody">
               <tr>
-                <td colspan="4" class="no-data-msg">
+                <td colspan="5" class="no-data-msg">
                   لا توجد مصاريف مسجلة حتى الآن.
                 </td>
               </tr>
@@ -1321,7 +1365,6 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 6. تعديل قائمة تسعيرة وتسمية الخدمات -->
         <div class="section-title">
           🏷️ تعديل أسعار وتسعيرة الخدمات والباقات (للمدير)
         </div>
@@ -1343,7 +1386,6 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 7. تعديل أسماء ونسب الحلاقين (10 حلاقين) -->
         <div class="section-title">
           ✏️ إدارة وتعديل أسماء ونسب كادر الحلاقين (10 حلاقين)
         </div>
@@ -1364,7 +1406,6 @@
 
         <hr style="border-color: #333; margin: 20px 0" />
 
-        <!-- 8. سجل الزبائن المباشر برقم الهاتف (مصفر تلقائياً) -->
         <div class="section-title">
           🔍 الاستعلام عن تاريخ وسجل الزبون برقم الهاتف
         </div>
@@ -1383,9 +1424,10 @@
           <table class="report-table">
             <thead>
               <tr>
-                <th>التاريخ والوقت (Date & Time)</th>
+                <th>رقم الفاتورة</th>
+                <th>التاريخ والوقت</th>
                 <th>اسم الزبون</th>
-                <th>رقم الهاتف (المعرف الرئيسي)</th>
+                <th>رقم الهاتف</th>
                 <th>الحلاق</th>
                 <th>طريقة الدفع</th>
                 <th>الخدمات والزيارة</th>
@@ -1394,7 +1436,7 @@
             </thead>
             <tbody id="customerHistoryBody">
               <tr>
-                <td colspan="7" class="no-data-msg">
+                <td colspan="8" class="no-data-msg">
                   أدخل رقم هاتف الزبون أعلاه (المكون من 10 أرقام ويبدأ بـ 07)
                   لعرض جميع زياراته من البداية.
                 </td>
@@ -1405,11 +1447,23 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال وتعديل اسم ورقم الزبون الطبيعي -->
+    <!-- نافذة بوب أب إدخال اسم ورقم الزبون -->
     <div class="modal-overlay" id="customerModal">
       <div class="modal-card">
-        <h3>👤 تسجيل بيانات الزبون</h3>
-        <p>الاسم ورقم الهاتف (المكون من 10 أرقام ويبدأ بـ 07) مطلوبان:</p>
+        <h3 style="color: var(--primary-gold)">💳 السعر الإجمالي المطلوب</h3>
+        <p style="color: #aaa; margin-bottom: 5px">المبلغ المطلوب من الزبون:</p>
+        <div
+          id="modalTotalPriceDisplay"
+          style="
+            color: var(--primary-gold);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+          "
+        >
+          0.00 د.أ
+        </div>
+
         <input
           type="text"
           id="custNameInput"
@@ -1424,12 +1478,13 @@
           maxlength="10"
           autocomplete="off"
         />
+
         <div class="modal-btns">
           <button
             class="modal-btn modal-btn-confirm"
             onclick="submitCustomerData()"
           >
-            حفظ المتابعة
+            تم
           </button>
           <button
             class="modal-btn modal-btn-cancel"
@@ -1441,10 +1496,83 @@
       </div>
     </div>
 
+    <!-- نافذة تعديل الفاتورة الشاملة للمدير -->
+    <div class="modal-overlay" id="editInvoiceModal">
+      <div class="modal-card" style="max-width: 500px">
+        <h3 style="color: var(--primary-gold)">
+          ✏️ تعديل تفاصيل الفاتورة بالكامل
+        </h3>
+        <p id="editInvoiceInfo" style="color: #aaa; margin-bottom: 15px">
+          تعديل بيانات الفاتورة والخدمات
+        </p>
+
+        <input
+          type="text"
+          id="editCustName"
+          placeholder="اسم الزبون"
+          autocomplete="off"
+        />
+        <input
+          type="tel"
+          id="editCustPhone"
+          placeholder="رقم الهاتف (10 أرقام)"
+          maxlength="10"
+          autocomplete="off"
+        />
+
+        <select id="editInvoicePayMethod">
+          <option value="cash">💵 كاش</option>
+          <option value="visa">💳 فيزا</option>
+          <option value="cliq">📱 كليك</option>
+          <option value="debt">📒 ذمم معلقة</option>
+        </select>
+
+        <div
+          style="
+            text-align: right;
+            color: #aaa;
+            font-size: 13px;
+            margin: 10px 0 5px 0;
+          "
+        >
+          الخدمات الحالية للفاتورة:
+        </div>
+        <div
+          id="editInvoiceServicesContainer"
+          style="
+            max-height: 150px;
+            overflow-y: auto;
+            background: #151515;
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 15px;
+            text-align: right;
+          "
+        >
+          <!-- يتم تعبئتها ديناميكياً -->
+        </div>
+
+        <div class="modal-btns">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="submitEditInvoice()"
+          >
+            حفظ التعديلات بالسحابة
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeEditInvoiceModal()"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- نافذة اختيار طريقة السداد عند تسديد الذمة -->
     <div class="modal-overlay" id="payDebtModal">
       <div class="modal-card">
-        <h3>💵 تسديد الذمة المالية</h3>
+        <h3 style="color: var(--primary-gold)">💵 تسديد الذمة المالية</h3>
         <p id="payDebtCustomerInfo">اختر طريقة الدفع لتسجيل المبلغ:</p>
         <div
           style="
@@ -1458,7 +1586,7 @@
             class="pay-btn active"
             id="debtPayCash"
             onclick="setDebtPayMethod('cash')"
-            style="border: 1px solid #00ffcc; padding: 10px 20px"
+            style="border: 1px solid var(--primary-gold); padding: 10px 20px"
           >
             💵 كاش
           </button>
@@ -1466,7 +1594,7 @@
             class="pay-btn"
             id="debtPayVisa"
             onclick="setDebtPayMethod('visa')"
-            style="border: 1px solid #00ffcc; padding: 10px 20px"
+            style="border: 1px solid var(--primary-gold); padding: 10px 20px"
           >
             💳 فيزا
           </button>
@@ -1474,7 +1602,7 @@
             class="pay-btn"
             id="debtPayCliq"
             onclick="setDebtPayMethod('cliq')"
-            style="border: 1px solid #00ffcc; padding: 10px 20px"
+            style="border: 1px solid var(--primary-gold); padding: 10px 20px"
           >
             📱 كليك
           </button>
@@ -1496,10 +1624,10 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إضافة مصروف جديد -->
+    <!-- نافذة إضافة مصروف جديد -->
     <div class="modal-overlay" id="expenseModal">
       <div class="modal-card">
-        <h3>💸 إضافة مصروف جديد للصالون</h3>
+        <h3 style="color: var(--primary-gold)">💸 إضافة مصروف جديد للصالون</h3>
         <p>يرجى كتابة تفاصيل المصروف والمبلغ المستقطع:</p>
         <input
           type="text"
@@ -1529,10 +1657,10 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إضافة خدمة مخصصة -->
+    <!-- نافذة إضافة خدمة مخصصة -->
     <div class="modal-overlay" id="customServiceModal">
       <div class="modal-card">
-        <h3>✍️ خدمة مخصصة / خصم</h3>
+        <h3 style="color: var(--primary-gold)">✍️ خدمة مخصصة / خصم</h3>
         <p>يرجى كتابة تفاصيل الخدمة والمبلغ المستلم:</p>
         <input
           type="text"
@@ -1565,11 +1693,11 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال الباسورد -->
+    <!-- نافذة إدخال الباسورد (عامة) -->
     <div class="modal-overlay" id="passwordModal">
       <div class="modal-card" id="modalCard">
-        <h3 id="modalTitle">إدخال كلمة المرور</h3>
-        <p id="modalDesc">يرجى إدخال كلمة السر للمتابعة</p>
+        <h3 id="modalTitle" style="color: var(--primary-gold)"></h3>
+        <p id="modalDesc"></p>
         <input
           type="tel"
           inputmode="numeric"
@@ -1578,7 +1706,8 @@
           class="pass-style"
           placeholder="••••"
           maxlength="10"
-          autocomplete="new-password"
+          autocomplete="off"
+          name="no-autofill-pass"
         />
         <div class="modal-btns">
           <button
@@ -1594,17 +1723,19 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب التنبيه والإنهاء الخضراء -->
+    <!-- نافذة التنبيهات -->
     <div class="modal-overlay" id="alertModal">
       <div class="alert-modal-card">
-        <h3 id="alertTitle">✅ تم الدفع</h3>
+        <h3 id="alertTitle" style="color: var(--primary-gold)">
+          ✅ تم الحفظ بنجاح
+        </h3>
         <p id="alertMsg">تمت العملية بنجاح</p>
         <button
           class="alert-btn"
           id="alertModalBtn"
           onclick="closeAlertModal()"
         >
-          تم الدفع
+          تم
         </button>
       </div>
     </div>
@@ -1669,6 +1800,7 @@
       let selectedPayMethod = "cash";
       let selectedDebtPayMethod = "cash";
       let activeTargetDebtId = null;
+      let activeEditInvoiceObj = null;
       let modalCallback = null;
       let cloudPasswords = null;
       let alertCustomCallback = null;
@@ -1679,15 +1811,180 @@
         services: [],
       };
 
+      // التحكم بالقائمة المنسدلة للإعدادات
+      function toggleSettingsMenu(e) {
+        e.stopPropagation();
+        document.getElementById("settingsMenu").classList.toggle("active");
+      }
+
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("settingsMenu");
+        if (menu && menu.classList.contains("active")) {
+          menu.classList.remove("active");
+        }
+      });
+
+      function handleSettingsAction(action) {
+        document.getElementById("settingsMenu").classList.remove("active");
+
+        if (action === "report") {
+          openModal("جرد الصندوق", "يرجى إدخال كلمة المرور:", function (pass) {
+            if (pass === "1111") {
+              showDailyReportPage();
+            } else {
+              customAlert("⚠️ خطأ", "كلمة المرور غير صحيحة!");
+            }
+          });
+        } else if (action === "reservations") {
+          showReservationsPage();
+        } else if (action === "general") {
+          openModal(
+            "لوحة تحكم الإدارة",
+            "يرجى إدخال كلمة المرور:",
+            function (pass) {
+              if (pass === "4729") {
+                activeUserId = "admin";
+                document.getElementById("mainLoginScreen").style.display =
+                  "none";
+                document.getElementById("adminContainer").style.display =
+                  "flex";
+                clearSearchHistoryDisplay();
+                renderAdminBarberMonthlyStats();
+                renderUI();
+              } else {
+                customAlert("⚠️ خطأ", "كلمة المرور غير صحيحة!");
+              }
+            },
+          );
+        }
+      }
+
+      function showDailyReportPage() {
+        document.getElementById("mainLoginScreen").style.display = "none";
+        document.getElementById("dailyReportContainer").style.display = "flex";
+        renderDailyReportOnly();
+      }
+
+      function showReservationsPage() {
+        document.getElementById("mainLoginScreen").style.display = "none";
+        document.getElementById("reservationsContainer").style.display = "flex";
+      }
+
+      function renderDailyReportOnly() {
+        let cash = 0,
+          visa = 0,
+          cliq = 0,
+          debt = 0;
+        let barbersStats = {};
+        const todayStr = new Date().toISOString().split("T")[0];
+
+        barbers.forEach((b) => {
+          barbersStats[b.id] = {
+            count: 0,
+            total: 0,
+            bShare: 0,
+            sShare: 0,
+            name: b.name,
+            rate: b.rate || 50,
+          };
+        });
+
+        dailyTransactions.forEach((tx) => {
+          if (tx.payMethod === "cash") cash += tx.totalPrice;
+          if (tx.payMethod === "visa") visa += tx.totalPrice;
+          if (tx.payMethod === "cliq") cliq += tx.totalPrice;
+
+          if (barbersStats[tx.barberId]) {
+            barbersStats[tx.barberId].count++;
+            barbersStats[tx.barberId].total += tx.totalPrice;
+            let calc = calculateTransactionShares(
+              tx.services || [],
+              barbersStats[tx.barberId].rate,
+            );
+            barbersStats[tx.barberId].bShare += calc.barberShare;
+            barbersStats[tx.barberId].sShare += calc.salonShare;
+          }
+        });
+
+        debtsList.forEach((d) => {
+          if (d.dateKey === todayStr) debt += d.totalPrice;
+        });
+
+        let todayExpensesSum = 0;
+        let todayExpensesArr = [];
+        expensesList.forEach((e) => {
+          if (e.dateKey === todayStr) {
+            todayExpensesSum += e.amount;
+            todayExpensesArr.push(e);
+          }
+        });
+
+        const grand = cash + visa + cliq;
+        document.getElementById("drCash").innerText = cash.toFixed(2);
+        document.getElementById("drVisa").innerText = visa.toFixed(2);
+        document.getElementById("drCliq").innerText = cliq.toFixed(2);
+        document.getElementById("drDebt").innerText = debt.toFixed(2);
+        document.getElementById("drExpenses").innerText =
+          todayExpensesSum.toFixed(2);
+        document.getElementById("drGrand").innerText = grand.toFixed(2);
+
+        const tbody = document.getElementById("drBarbersBody");
+        tbody.innerHTML = "";
+
+        let sumBarbers = 0;
+        let sumSalonGross = 0;
+
+        barbers.forEach((b) => {
+          const st = barbersStats[b.id];
+          if (st.count > 0) {
+            sumBarbers += st.bShare;
+            sumSalonGross += st.sShare;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><b>${st.name}</b></td>
+              <td>${st.count}</td>
+              <td style="color: var(--primary-gold);">${st.total.toFixed(2)} د.أ</td>
+              <td style="color: var(--primary-gold); font-weight:bold;">${st.bShare.toFixed(2)} د.أ</td>
+              <td style="color: #ccc;">${st.sShare.toFixed(2)} د.أ</td>
+            `;
+            tbody.appendChild(row);
+          }
+        });
+
+        if (tbody.innerHTML === "") {
+          tbody.innerHTML = `<tr><td colspan="5" class="no-data-msg">لا يوجد عمليات مسجلة لهذا اليوم.</td></tr>`;
+        }
+
+        // تم تطبيق المعادلة بالضبط: الخصم للمصاريف وللذمم من إجمالي حصة الصالون لليوم
+        let netSalonProfit = sumSalonGross - todayExpensesSum - debt;
+
+        document.getElementById("drBarbersShare").innerText =
+          sumBarbers.toFixed(2);
+        document.getElementById("drSalonShare").innerText =
+          netSalonProfit.toFixed(2);
+
+        const expBody = document.getElementById("drExpensesBody");
+        expBody.innerHTML = "";
+        if (todayExpensesArr.length === 0) {
+          expBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لا توجد مصاريف مسجلة لهذا اليوم.</td></tr>`;
+        } else {
+          todayExpensesArr.forEach((exp) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><span class="badge"># ${exp.invoiceNumber || "-"}</span></td>
+              <td><b>${exp.note}</b></td>
+              <td style="color: #ff5555; font-weight: bold;">${exp.amount.toFixed(2)} د.أ</td>
+            `;
+            expBody.appendChild(row);
+          });
+        }
+      }
+
       function customRounding(value) {
         let integerPart = Math.floor(value);
         let decimalPart = value - integerPart;
-
-        if (decimalPart <= 0.500001) {
-          return integerPart;
-        } else {
-          return integerPart + 1;
-        }
+        if (decimalPart <= 0.500001) return integerPart;
+        else return integerPart + 1;
       }
 
       function calculateServiceBarberShare(
@@ -1696,22 +1993,15 @@
         barberRate,
       ) {
         const fixed50Services = ["s11", "s15", "s16", "s18", "s19", "s20"];
-        if (fixed50Services.includes(serviceId)) {
-          return servicePrice * 0.5;
-        }
-
+        if (fixed50Services.includes(serviceId)) return servicePrice * 0.5;
         const salon100Services = ["s21", "custom"];
-        if (salon100Services.includes(serviceId)) {
-          return 0;
-        }
-
+        if (salon100Services.includes(serviceId)) return 0;
         return servicePrice * (barberRate / 100);
       }
 
       function calculateTransactionShares(txServices, barberRate) {
-        let bShareRaw = 0;
-        let total = 0;
-
+        let bShareRaw = 0,
+          total = 0;
         txServices.forEach((s) => {
           total += s.price;
           bShareRaw += calculateServiceBarberShare(
@@ -1720,15 +2010,9 @@
             barberRate,
           );
         });
-
         let bShareRounded = customRounding(bShareRaw);
         let sShare = total - bShareRounded;
-
-        return {
-          total: total,
-          barberShare: bShareRounded,
-          salonShare: sShare,
-        };
+        return { total: total, barberShare: bShareRounded, salonShare: sShare };
       }
 
       function listenBarberNames() {
@@ -1739,9 +2023,8 @@
               const data = doc.data();
               barbers.forEach((b) => {
                 if (data[b.id]) {
-                  if (typeof data[b.id] === "string") {
-                    b.name = data[b.id];
-                  } else {
+                  if (typeof data[b.id] === "string") b.name = data[b.id];
+                  else {
                     if (data[b.id].name) b.name = data[b.id].name;
                     if (data[b.id].rate !== undefined)
                       b.rate = Number(data[b.id].rate);
@@ -1778,15 +2061,10 @@
       function populateBarberSelectOptions() {
         const select = document.getElementById("mainBarberSelect");
         const adminSelect = document.getElementById("adminBarberMonthlySelect");
-
         const currentAdminVal = adminSelect ? adminSelect.value : "";
         const currentMainVal = select ? select.value : "";
 
-        let html = `
-          <option value="">-- اختر الحساب --</option>
-          <option value="admin" style="color: #00ffcc; font-weight: bold;">👑 المدير (إدارة الصالون)</option>
-        `;
-
+        let html = `<option value="">-- اختر الحساب --</option>`;
         let adminHtml = ``;
 
         barbers.forEach((b) => {
@@ -1800,20 +2078,14 @@
         }
         if (adminSelect) {
           adminSelect.innerHTML = adminHtml;
-          if (
-            currentAdminVal &&
-            barbers.some((b) => b.id === currentAdminVal)
-          ) {
+          if (currentAdminVal && barbers.some((b) => b.id === currentAdminVal))
             adminSelect.value = currentAdminVal;
-          }
         }
       }
 
       function onAccountSelected() {
         const val = document.getElementById("mainBarberSelect").value;
-        if (val) {
-          document.getElementById("mainPassInput").focus();
-        }
+        if (val) document.getElementById("mainPassInput").focus();
       }
 
       function setPayMethod(method) {
@@ -1849,13 +2121,33 @@
         if (cloudPasswords) return cloudPasswords;
         try {
           const doc = await db.collection("settings").doc("passwords").get();
-          if (doc.exists) {
-            cloudPasswords = doc.data();
-          }
+          if (doc.exists) cloudPasswords = doc.data();
         } catch (e) {
           console.error("خطأ بجلَب البيانات:", e);
         }
         return cloudPasswords;
+      }
+
+      async function getNextInvoiceNumber() {
+        const counterRef = db.collection("settings").doc("invoiceCounter");
+        return db.runTransaction(async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+          let nextNum = 1;
+          if (counterDoc.exists) nextNum = (counterDoc.data().count || 0) + 1;
+          transaction.set(counterRef, { count: nextNum }, { merge: true });
+          return nextNum;
+        });
+      }
+
+      async function getNextExpenseInvoiceNumber() {
+        const counterRef = db.collection("settings").doc("expenseCounter");
+        return db.runTransaction(async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+          let nextNum = 1;
+          if (counterDoc.exists) nextNum = (counterDoc.data().count || 0) + 1;
+          transaction.set(counterRef, { count: nextNum }, { merge: true });
+          return nextNum;
+        });
       }
 
       window.onload = function () {
@@ -1864,6 +2156,8 @@
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("appContainer").style.display = "none";
         document.getElementById("adminContainer").style.display = "none";
+        document.getElementById("dailyReportContainer").style.display = "none";
+        document.getElementById("reservationsContainer").style.display = "none";
         fetchCloudPasswords();
         listenBarberNames();
         listenServicesSettings();
@@ -1897,37 +2191,20 @@
         loginBtn.disabled = true;
 
         const passes = await fetchCloudPasswords();
-
-        loginBtn.innerText = "دخول النظام";
+        loginBtn.innerText = "تسجيل دخول";
         loginBtn.disabled = false;
 
         let isAccessGranted = false;
-
-        if (userId === "admin") {
-          const adminPass = passes ? passes["ADMIN_VAULT_KEY"] : null;
-          if (pass === adminPass) isAccessGranted = true;
-        } else {
-          const barberPass = passes ? passes[userId] : null;
-          const masterPass = passes ? passes["MASTER_KEY"] : null;
-          if (pass === barberPass || pass === masterPass)
-            isAccessGranted = true;
-        }
+        const barberPass = passes ? passes[userId] : null;
+        const masterPass = passes ? passes["MASTER_KEY"] : null;
+        if (pass === barberPass || pass === masterPass) isAccessGranted = true;
 
         if (isAccessGranted) {
           activeUserId = userId;
           document.getElementById("mainLoginScreen").style.display = "none";
-
-          if (userId === "admin") {
-            document.getElementById("adminContainer").style.display = "flex";
-            document.getElementById("appContainer").style.display = "none";
-            clearSearchHistoryDisplay();
-            renderAdminBarberMonthlyStats();
-          } else {
-            document.getElementById("appContainer").style.display = "flex";
-            document.getElementById("adminContainer").style.display = "none";
-            updateActiveBarberDisplay();
-            openCustomerModal();
-          }
+          document.getElementById("appContainer").style.display = "flex";
+          currentCustomer = { name: "", phone: "", services: [] };
+          updateActiveBarberDisplay();
           renderUI();
         } else {
           customAlert(
@@ -1940,7 +2217,7 @@
       function clearSearchHistoryDisplay() {
         document.getElementById("searchPhoneInput").value = "";
         document.getElementById("customerHistoryBody").innerHTML = `
-          <tr><td colspan="7" class="no-data-msg">أدخل رقم هاتف الزبون أعلاه (المكون من 10 أرقام ويبدأ بـ 07) لعرض جميع زياراته من البداية.</td></tr>
+          <tr><td colspan="8" class="no-data-msg">أدخل رقم هاتف الزبون أعلاه (المكون من 10 أرقام ويبدأ بـ 07) لعرض جميع زياراته من البداية.</td></tr>
         `;
       }
 
@@ -1950,6 +2227,12 @@
           dailyTransactions.push({ docId: doc.id, ...doc.data() });
         });
         renderUI();
+        if (
+          document.getElementById("dailyReportContainer").style.display ===
+          "flex"
+        ) {
+          renderDailyReportOnly();
+        }
       });
 
       db.collection("monthly_vault").onSnapshot((snapshot) => {
@@ -1977,17 +2260,35 @@
         });
         renderUI();
         renderExpensesLogTable();
+        if (
+          document.getElementById("dailyReportContainer").style.display ===
+          "flex"
+        ) {
+          renderDailyReportOnly();
+        }
       });
 
       function updateActiveBarberDisplay() {
         const display = document.getElementById("activeBarberDisplay");
         const currentBarberObj = barbers.find((b) => b.id === activeUserId);
-        if (display && currentBarberObj) {
+        if (display && currentBarberObj)
           display.innerText = currentBarberObj.name;
-        }
       }
 
-      function openCustomerModal() {
+      function initiateCheckout() {
+        if (currentCustomer.services.length === 0) {
+          customAlert(
+            "⚠️ تنبيه",
+            "يرجى اختيار خدمة واحدة على الأقل قبل إنهاء الفاتورة!",
+          );
+          return;
+        }
+        let totalVal = currentCustomer.services.reduce(
+          (acc, curr) => acc + curr.price,
+          0,
+        );
+        document.getElementById("modalTotalPriceDisplay").innerText =
+          `${totalVal.toFixed(2)} د.أ`;
         document.getElementById("custNameInput").value =
           currentCustomer.name || "";
         document.getElementById("custPhoneInput").value =
@@ -1997,58 +2298,42 @@
       }
 
       function closeCustomerModal() {
-        if (currentCustomer.name && currentCustomer.phone) {
-          document.getElementById("customerModal").classList.remove("active");
-        } else {
-          customAlert("⚠️ تنبيه", "يرجى تعبئة بيانات الزبون أولاً للبدء!");
-        }
+        document.getElementById("customerModal").classList.remove("active");
       }
 
       function submitCustomerData() {
         const name = document.getElementById("custNameInput").value.trim();
         const phone = document.getElementById("custPhoneInput").value.trim();
-
         if (!name) {
           customAlert("⚠️ تنبيه", "يرجى كتابة اسم الزبون!");
           return;
         }
-
         const phoneRegex = /^07\d{8}$/;
         if (!phoneRegex.test(phone)) {
           customAlert(
             "⚠️ رقم هاتف غير صحيح",
-            "يجب أن يكون رقم الهاتف مكوناً من 10 أرقام ويبدأ بـ 07 (مثال: 0791234567).",
+            "يجب أن يكون مكون من 10 أرقام ويبدأ بـ 07.",
           );
           return;
         }
 
         currentCustomer.name = name;
         currentCustomer.phone = phone;
-
-        document.getElementById("activeCustomerDisplay").innerText =
-          `${name} (${phone})`;
         document.getElementById("customerModal").classList.remove("active");
-        renderUI();
+        executeSaveVisit();
       }
 
       function addServiceToCurrentCustomer(serviceId, price, note = "") {
-        if (!currentCustomer.name || !currentCustomer.phone) {
-          openCustomerModal();
-          return;
-        }
-
         const sObj = services.find((s) => s.id === serviceId);
         const serviceName =
           serviceId === "custom" ? note : sObj ? sObj.name : serviceId;
-
         currentCustomer.services.push({
-          serviceId: serviceId,
-          serviceName: serviceName,
-          price: price,
-          note: note,
+          serviceId,
+          serviceName,
+          price,
+          note,
           timestamp: new Date().getTime(),
         });
-
         renderUI();
       }
 
@@ -2064,21 +2349,7 @@
         renderUI();
       }
 
-      async function saveCustomerVisit() {
-        if (!currentCustomer.name || !currentCustomer.phone) {
-          customAlert("⚠️ تنبيه", "يرجى تحديد بيانات الزبون ورقم هاتفه أولاً!");
-          openCustomerModal();
-          return;
-        }
-
-        if (currentCustomer.services.length === 0) {
-          customAlert(
-            "⚠️ تنبيه",
-            "يرجى اختيار خدمة واحدة على الأقل للزبون قبل الحفظ!",
-          );
-          return;
-        }
-
+      async function executeSaveVisit() {
         const currentBarberObj = barbers.find((b) => b.id === activeUserId);
         const currentRate = currentBarberObj ? currentBarberObj.rate || 50 : 50;
         let totalVal = currentCustomer.services.reduce(
@@ -2096,48 +2367,58 @@
           second: "2-digit",
           hour12: true,
         });
-
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, "0");
         const day = String(now.getDate()).padStart(2, "0");
         const dateKey = `${year}-${month}-${day}`;
 
-        let visitRecord = {
-          customerName: currentCustomer.name,
-          customerPhone: currentCustomer.phone,
-          barberId: activeUserId,
-          barberName: currentBarberObj ? currentBarberObj.name : activeUserId,
-          barberRate: currentRate,
-          payMethod: selectedPayMethod,
-          totalPrice: totalVal,
-          services: currentCustomer.services,
-          formattedDate: englishDateTime,
-          dateKey: dateKey,
-          timestamp: now.getTime(),
-        };
-
         try {
-          // إذا كانت الحالة "ذمم" (لم يتم الدفع)، تُحفظ في جدول الذمم المستقل ولا تدخل الصندوق اليومي مباشرة
+          const invNum = await getNextInvoiceNumber();
+          const sharedDocRef = db.collection("daily_transactions").doc();
+          const sharedId = sharedDocRef.id;
+
+          let visitRecord = {
+            invoiceId: sharedId,
+            invoiceNumber: invNum,
+            customerName: currentCustomer.name,
+            customerPhone: currentCustomer.phone,
+            barberId: activeUserId,
+            barberName: currentBarberObj ? currentBarberObj.name : activeUserId,
+            barberRate: currentRate,
+            payMethod: selectedPayMethod,
+            totalPrice: totalVal,
+            services: currentCustomer.services,
+            formattedDate: englishDateTime,
+            dateKey: dateKey,
+            timestamp: now.getTime(),
+          };
+
           if (selectedPayMethod === "debt") {
-            await db.collection("debts").add(visitRecord);
-            await db.collection("customer_history").add(visitRecord);
+            await db.collection("debts").doc(sharedId).set(visitRecord);
+            await db
+              .collection("customer_history")
+              .doc(sharedId)
+              .set(visitRecord);
           } else {
-            // الحالة الطبيعية (كاش، فيزا، كليك)
-            await db.collection("customer_history").add(visitRecord);
-            await db.collection("daily_transactions").add(visitRecord);
-            await db.collection("monthly_vault").add(visitRecord);
+            await db
+              .collection("customer_history")
+              .doc(sharedId)
+              .set(visitRecord);
+            await db
+              .collection("daily_transactions")
+              .doc(sharedId)
+              .set(visitRecord);
+            await db.collection("monthly_vault").doc(sharedId).set(visitRecord);
           }
 
-          customAlert(
+          const successMsg =
             selectedPayMethod === "debt"
-              ? "📒 تم تسجيل الذمة (لم يتم الدفع)"
-              : "💳 السعر الإجمالي المطلوب",
-            `المبلغ المطلوب من الزبون (${currentCustomer.name}): \n\n ${totalVal.toFixed(2)} دينار أردني \n ${selectedPayMethod === "debt" ? "(تم إضافتها إلى الذمم المعلقة)" : ""}`,
-            "تم",
-            function () {
-              logoutUser();
-            },
-          );
+              ? `تم حفظ الفاتورة رقم (${invNum}) للزبون ( ${currentCustomer.name} ) بنجاح بمبلغ :\n${totalVal.toFixed(2)} د.أ\n(تم إضافتها إلى الذمم المعلقة)`
+              : `تم حفظ الفاتورة رقم (${invNum}) للزبون ( ${currentCustomer.name} ) بنجاح بمبلغ :\n${totalVal.toFixed(2)} د.أ`;
+
+          customAlert("✅ تم الحفظ بنجاح", successMsg, "تم", function () {
+            logoutUser();
+          });
         } catch (e) {
           console.error("خطأ بالحفظ:", e);
           customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الفاتورة بالسحابة!");
@@ -2160,8 +2441,11 @@
 
       async function confirmPayDebt() {
         if (!activeTargetDebtId) return;
-
-        const debtObj = debtsList.find((d) => d.docId === activeTargetDebtId);
+        const debtObj = debtsList.find(
+          (d) =>
+            d.docId === activeTargetDebtId ||
+            d.invoiceId === activeTargetDebtId,
+        );
         if (!debtObj) {
           closePayDebtModal();
           return;
@@ -2177,13 +2461,11 @@
           second: "2-digit",
           hour12: true,
         });
-
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, "0");
         const day = String(now.getDate()).padStart(2, "0");
         const dateKey = `${year}-${month}-${day}`;
 
-        // تعديل طريقة الدفع بناءً على ما اختاره المدير عند السداد (كاش، فيزا، كليك)
         let settledRecord = {
           ...debtObj,
           payMethod: selectedDebtPayMethod,
@@ -2192,15 +2474,19 @@
           timestamp: now.getTime(),
         };
         delete settledRecord.docId;
+        const sharedId = settledRecord.invoiceId || activeTargetDebtId;
 
         try {
-          // نقل السجل المالي المعلق إلى الصندوق اليومي والشهري ليتم احتسابه بالنسب والأرباح طبيعي 100%
-          await db.collection("daily_transactions").add(settledRecord);
-          await db.collection("monthly_vault").add(settledRecord);
-
-          // حذف المعاملة من جدول الذمم المعلقة
+          await db
+            .collection("daily_transactions")
+            .doc(sharedId)
+            .set(settledRecord);
+          await db.collection("monthly_vault").doc(sharedId).set(settledRecord);
+          await db
+            .collection("customer_history")
+            .doc(sharedId)
+            .set(settledRecord, { merge: true });
           await db.collection("debts").doc(activeTargetDebtId).delete();
-
           closePayDebtModal();
           customAlert(
             "✅ تم سداد الذمة بنجاح",
@@ -2215,7 +2501,6 @@
       function renderDebtsTable() {
         const tbody = document.getElementById("debtsTableBody");
         if (!tbody) return;
-
         if (debtsList.length === 0) {
           tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">لا توجد ذمم معلقة حالياً.</td></tr>`;
           return;
@@ -2235,24 +2520,20 @@
                   : s.serviceId,
               )
               .join(" + ");
-
             const row = document.createElement("tr");
             row.innerHTML = `
             <td class="en-date">${debt.formattedDate}</td>
             <td><b>${debt.customerName}</b></td>
             <td dir="ltr"><b>${debt.customerPhone}</b></td>
             <td>${debt.barberName}</td>
-            <td style="color: #00ffcc;">${servicesText}</td>
+            <td style="color: var(--primary-gold);">${servicesText}</td>
             <td style="color: #ffaa00; font-weight: bold;"><b>${debt.totalPrice.toFixed(2)} د.أ</b></td>
-            <td>
-              <button class="btn-pay-debt" onclick="openPayDebtModal('${debt.docId}', '${debt.customerName}', ${debt.totalPrice})">💵 سداد الذمة</button>
-            </td>
+            <td><button class="btn-pay-debt" onclick="openPayDebtModal('${debt.docId || debt.invoiceId}', '${debt.customerName}', ${debt.totalPrice})">💵 سداد الذمة</button></td>
           `;
             tbody.appendChild(row);
           });
       }
 
-      /* تحميل التقرير الشهري الشامل كملف Word يحتوي على الذمم المعلقة والتفاصيل */
       function downloadMonthlyWordReport() {
         const now = new Date();
         const dateStr = now.toLocaleDateString("ar-JO");
@@ -2262,7 +2543,6 @@
           mVisa = 0,
           mCliq = 0,
           mSumSalonGross = 0;
-
         monthlyVaultRecords.forEach((data) => {
           if (data.payMethod === "cash") mCash += data.totalPrice;
           if (data.payMethod === "visa") mVisa += data.totalPrice;
@@ -2283,7 +2563,9 @@
           0,
         );
         let mGrand = mCash + mVisa + mCliq;
-        let mNetSalon = mSumSalonGross - monthlyExpensesSum;
+
+        // الخصم المباشر للذمم أيضاً كما في اليومي
+        let mNetSalon = mSumSalonGross - monthlyExpensesSum - totalActiveDebts;
 
         let barbersRowsHTML = "";
         barbers.forEach((b) => {
@@ -2291,7 +2573,6 @@
             bCount = 0,
             bShareSum = 0,
             sShareSum = 0;
-
           monthlyVaultRecords.forEach((tx) => {
             if (tx.barberId === b.id) {
               bTotal += tx.totalPrice;
@@ -2304,39 +2585,30 @@
               sShareSum += calcRes.salonShare;
             }
           });
-
           if (bCount > 0) {
-            barbersRowsHTML += `
-              <tr>
+            barbersRowsHTML += `<tr>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${b.name}</b></td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${b.rate}%</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${bCount}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${bTotal.toFixed(2)} د.أ</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${bShareSum.toFixed(2)} د.أ</b></td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${sShareSum.toFixed(2)} د.أ</td>
-              </tr>
-            `;
+              </tr>`;
           }
         });
-
-        if (!barbersRowsHTML) {
+        if (!barbersRowsHTML)
           barbersRowsHTML = `<tr><td colspan="6" style="border: 1px solid #000; padding: 8px; text-align: center;">لا توجد عمليات مسجلة للحلاقين خلال هذه الفترة.</td></tr>`;
-        }
 
         let expensesRowsHTML = "";
         expensesList.forEach((exp) => {
-          expensesRowsHTML += `
-            <tr>
+          expensesRowsHTML += `<tr>
               <td style="border: 1px solid #000; padding: 8px; text-align: center;">${exp.formattedDate}</td>
               <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${exp.note}</b></td>
               <td style="border: 1px solid #000; padding: 8px; text-align: center;"><b>${exp.amount.toFixed(2)} د.أ</b></td>
-            </tr>
-          `;
+            </tr>`;
         });
-
-        if (!expensesRowsHTML) {
+        if (!expensesRowsHTML)
           expensesRowsHTML = `<tr><td colspan="3" style="border: 1px solid #000; padding: 8px; text-align: center;">لا توجد مصاريف مسجلة خلال هذه الفترة.</td></tr>`;
-        }
 
         let dailyDetailsRowsHTML = "";
         if (monthlyVaultRecords.length > 0) {
@@ -2353,12 +2625,14 @@
                   : s.serviceId,
               )
               .join(" + ");
-            let payMethodAr = "كاش";
-            if (tx.payMethod === "visa") payMethodAr = "فيزا";
-            if (tx.payMethod === "cliq") payMethodAr = "كليك";
-
-            dailyDetailsRowsHTML += `
-              <tr>
+            let payMethodAr =
+              tx.payMethod === "cash"
+                ? "كاش"
+                : tx.payMethod === "visa"
+                  ? "فيزا"
+                  : "كليك";
+            dailyDetailsRowsHTML += `<tr>
+                <td style="border: 1px solid #000; padding: 6px; text-align: center; font-size: 12px;">${tx.invoiceNumber || "-"}</td>
                 <td style="border: 1px solid #000; padding: 6px; text-align: center; font-size: 12px;">${tx.dateKey || "-"}</td>
                 <td style="border: 1px solid #000; padding: 6px; text-align: center; font-size: 12px;">${tx.formattedDate}</td>
                 <td style="border: 1px solid #000; padding: 6px; text-align: center;"><b>${tx.customerName}</b></td>
@@ -2367,11 +2641,10 @@
                 <td style="border: 1px solid #000; padding: 6px; text-align: center;">${payMethodAr}</td>
                 <td style="border: 1px solid #000; padding: 6px; text-align: center;">${servicesText}</td>
                 <td style="border: 1px solid #000; padding: 6px; text-align: center;"><b>${tx.totalPrice.toFixed(2)} د.أ</b></td>
-              </tr>
-            `;
+              </tr>`;
           });
         } else {
-          dailyDetailsRowsHTML = `<tr><td colspan="8" style="border: 1px solid #000; padding: 8px; text-align: center;">لا توجد تفاصيل فواتير مسجلة خلال هذه الفترة.</td></tr>`;
+          dailyDetailsRowsHTML = `<tr><td colspan="9" style="border: 1px solid #000; padding: 8px; text-align: center;">لا توجد تفاصيل فواتير مسجلة خلال هذه الفترة.</td></tr>`;
         }
 
         const htmlContent = `
@@ -2387,19 +2660,13 @@
             </style>
           </head>
           <body>
-            <h1>👑 صالون هارون الرشيد</h1>
+            <h1>صالون هارون الرشيد</h1>
             <h2>التقرير المالي والتفصيلي اليومي الشامل للشهر</h2>
             <p style="text-align: center; font-size: 13px;">تاريخ استخراج التقرير: ${dateStr} - الوقت: ${timeStr}</p>
             <hr style="border: 1px solid #000; margin-bottom: 20px;" />
-
             <h3>1. ملخص الإيرادات والمصاريف والذمم المعلقة للصالون</h3>
             <table>
-              <thead>
-                <tr>
-                  <th>البند المالي</th>
-                  <th>المبلغ بالدينار الأردني</th>
-                </tr>
-              </thead>
+              <thead><tr><th>البند المالي</th><th>المبلغ بالدينار الأردني</th></tr></thead>
               <tbody>
                 <tr><td>مقبوضات الكاش</td><td><b>${mCash.toFixed(2)} د.أ</b></td></tr>
                 <tr><td>مقبوضات الفيزا</td><td><b>${mVisa.toFixed(2)} د.أ</b></td></tr>
@@ -2407,62 +2674,26 @@
                 <tr><td>إجمالي الذمم المعلقة الحالية</td><td><b style="color: #ffaa00;">${totalActiveDebts.toFixed(2)} د.أ</b></td></tr>
                 <tr style="background-color: #f9f9f9;"><td><b>إجمالي دخل المبيعات المحصل</b></td><td><b>${mGrand.toFixed(2)} د.أ</b></td></tr>
                 <tr><td>إجمالي مصاريف الصالون المستقطعة</td><td><b style="color: #c00;">${monthlyExpensesSum.toFixed(2)} د.أ</b></td></tr>
-                <tr style="background-color: #e6fffa;"><td><b>صافي ربح الصالون الفعلي (بعد المصاريف)</b></td><td><b style="font-size: 15px; color: #008000;">${mNetSalon.toFixed(2)} د.أ</b></td></tr>
+                <tr style="background-color: #e6fffa;"><td><b>صافي ربح الصالون الفعلي (بعد الخصم)</b></td><td><b style="font-size: 15px; color: #008000;">${mNetSalon.toFixed(2)} د.أ</b></td></tr>
               </tbody>
             </table>
-
             <h3>2. كشف حساب وأداء كادر الحلاقين الإجمالي</h3>
             <table>
-              <thead>
-                <tr>
-                  <th>اسم الحلاق</th>
-                  <th>النسبة</th>
-                  <th>عدد الفواتير</th>
-                  <th>إجمالي الدخل</th>
-                  <th>حصة الحلاق</th>
-                  <th>حصة الصالون</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${barbersRowsHTML}
-              </tbody>
+              <thead><tr><th>اسم الحلاق</th><th>النسبة</th><th>عدد الفواتير</th><th>إجمالي الدخل</th><th>حصة الحلاق</th><th>حصة الصالون</th></tr></thead>
+              <tbody>${barbersRowsHTML}</tbody>
             </table>
-
             <h3>3. سجل كافة المعاملات والزيارات المحصلة بالتفصيل</h3>
             <table>
-              <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الوقت</th>
-                  <th>اسم الزبون</th>
-                  <th>رقم الهاتف</th>
-                  <th>الحلاق المنفذ</th>
-                  <th>طريقة الدفع</th>
-                  <th>تفاصيل الخدمات المقدمة</th>
-                  <th>الإجمالي</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${dailyDetailsRowsHTML}
-              </tbody>
+              <thead><tr><th>رقم الفاتورة</th><th>التاريخ</th><th>الوقت</th><th>اسم الزبون</th><th>رقم الهاتف</th><th>الحلاق المنفذ</th><th>طريقة الدفع</th><th>تفاصيل الخدمات المقدمة</th><th>الإجمالي</th></tr></thead>
+              <tbody>${dailyDetailsRowsHTML}</tbody>
             </table>
-
             <h3>4. سجل كافة مصاريف الصالون التفصيلية للفترة</h3>
             <table>
-              <thead>
-                <tr>
-                  <th>التاريخ والوقت</th>
-                  <th>بيان وتفاصيل المصروف</th>
-                  <th>المبلغ المستقطع</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${expensesRowsHTML}
-              </tbody>
+              <thead><tr><th>التاريخ والوقت</th><th>بيان وتفاصيل المصروف</th><th>المبلغ المستقطع</th></tr></thead>
+              <tbody>${expensesRowsHTML}</tbody>
             </table>
-
             <div style="margin-top: 30px; text-align: center; font-size: 12px; border-top: 1px dashed #777; padding-top: 10px;">
-              نظام صالون هارون الرشيد السحابي للإدارة والمحاسبة 👑
+              نظام صالون هارون الرشيد السحابي للإدارة والمحاسبة
             </div>
           </body>
           </html>
@@ -2471,7 +2702,6 @@
         const blob = new Blob(["\ufeff" + htmlContent], {
           type: "application/msword;charset=utf-8",
         });
-
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -2480,6 +2710,203 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+      }
+
+      async function deleteInvoice(invoiceId, dateVal) {
+        if (!confirm("هل أنت متأكد من حذف هذه الفاتورة نهائياً من النظام؟"))
+          return;
+        try {
+          await db.collection("daily_transactions").doc(invoiceId).delete();
+          await db.collection("monthly_vault").doc(invoiceId).delete();
+          await db.collection("debts").doc(invoiceId).delete();
+          await db.collection("customer_history").doc(invoiceId).delete();
+          customAlert(
+            "✅ تم الحذف",
+            "تم مسح الفاتورة بالكامل من السجلات وإعادة احتساب الأرباح.",
+          );
+          searchDailyHistoryByCalendar();
+        } catch (e) {
+          console.error("خطأ بالحذف:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء حذف الفاتورة!");
+        }
+      }
+
+      async function openEditInvoiceModal(invoiceId) {
+        try {
+          let docSnap = await db
+            .collection("customer_history")
+            .doc(invoiceId)
+            .get();
+          if (!docSnap.exists)
+            docSnap = await db
+              .collection("daily_transactions")
+              .doc(invoiceId)
+              .get();
+          if (!docSnap.exists)
+            docSnap = await db.collection("debts").doc(invoiceId).get();
+
+          if (!docSnap.exists) {
+            customAlert("⚠️ تنبيه", "لم يتم العثور على بيانات الفاتورة!");
+            return;
+          }
+
+          activeEditInvoiceObj = { id: invoiceId, ...docSnap.data() };
+          document.getElementById("editInvoiceInfo").innerText =
+            `تعديل الفاتورة رقم: #${activeEditInvoiceObj.invoiceNumber || "-"}`;
+          document.getElementById("editCustName").value =
+            activeEditInvoiceObj.customerName || "";
+          document.getElementById("editCustPhone").value =
+            activeEditInvoiceObj.customerPhone || "";
+          document.getElementById("editInvoicePayMethod").value =
+            activeEditInvoiceObj.payMethod || "cash";
+
+          renderEditServicesList();
+          document.getElementById("editInvoiceModal").classList.add("active");
+        } catch (e) {
+          console.error("خطأ بفتح نافذة التعديل:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء تحميل بيانات الفاتورة!");
+        }
+      }
+
+      function renderEditServicesList() {
+        const container = document.getElementById(
+          "editInvoiceServicesContainer",
+        );
+        container.innerHTML = "";
+        if (!activeEditInvoiceObj || !activeEditInvoiceObj.services) return;
+
+        activeEditInvoiceObj.services.forEach((srv, index) => {
+          const div = document.createElement("div");
+          div.style.cssText =
+            "display: flex; gap: 8px; margin-bottom: 8px; align-items: center;";
+          div.innerHTML = `
+            <input type="text" value="${srv.serviceName || ""}" id="edit_srv_name_${index}" style="flex: 2; padding: 6px; background:#222; border:1px solid #444; color:#fff;" placeholder="اسم الخدمة" autocomplete="off" />
+            <input type="number" step="any" value="${srv.price || 0}" id="edit_srv_price_${index}" style="flex: 1; padding: 6px; background:#222; border:1px solid #444; color:var(--primary-gold);" placeholder="السعر" autocomplete="off" />
+            <button type="button" class="btn-delete-small" onclick="removeServiceFromEdit(${index})">✕</button>
+          `;
+          container.appendChild(div);
+        });
+
+        const addBtn = document.createElement("button");
+        addBtn.type = "button";
+        addBtn.className = "btn-action-save";
+        addBtn.style.cssText =
+          "width: 100%; margin-top: 5px; background: #444;";
+        addBtn.innerText = "+ إضافة خدمة أخرى للفاتورة";
+        addBtn.onclick = function () {
+          activeEditInvoiceObj.services.push({
+            serviceId: "custom",
+            serviceName: "خدمة معدلة",
+            price: 0,
+          });
+          renderEditServicesList();
+        };
+        container.appendChild(addBtn);
+      }
+
+      function removeServiceFromEdit(index) {
+        if (activeEditInvoiceObj.services.length <= 1) {
+          customAlert(
+            "⚠️ تنبيه",
+            "يجب أن تحتوي الفاتورة على خدمة واحدة على الأقل!",
+          );
+          return;
+        }
+        activeEditInvoiceObj.services.splice(index, 1);
+        renderEditServicesList();
+      }
+
+      function closeEditInvoiceModal() {
+        document.getElementById("editInvoiceModal").classList.remove("active");
+        activeEditInvoiceObj = null;
+      }
+
+      async function submitEditInvoice() {
+        if (!activeEditInvoiceObj) return;
+
+        const newName = document.getElementById("editCustName").value.trim();
+        const newPhone = document.getElementById("editCustPhone").value.trim();
+        const newMethod = document.getElementById("editInvoicePayMethod").value;
+
+        if (!newName) {
+          customAlert("⚠️ تنبيه", "يرجى كتابة اسم الزبون!");
+          return;
+        }
+        const phoneRegex = /^07\d{8}$/;
+        if (!phoneRegex.test(newPhone)) {
+          customAlert(
+            "⚠️ رقم هاتف غير صحيح",
+            "يجب أن يكون رقم الهاتف مكوناً من 10 أرقام ويبدأ بـ 07.",
+          );
+          return;
+        }
+
+        let updatedServices = [];
+        let newTotal = 0;
+        for (let i = 0; i < activeEditInvoiceObj.services.length; i++) {
+          const nameInput = document.getElementById(`edit_srv_name_${i}`);
+          const priceInput = document.getElementById(`edit_srv_price_${i}`);
+          if (nameInput && priceInput) {
+            let p = parseFloat(priceInput.value) || 0;
+            updatedServices.push({
+              serviceId: activeEditInvoiceObj.services[i].serviceId || "custom",
+              serviceName: nameInput.value.trim() || "خدمة",
+              price: p,
+            });
+            newTotal += p;
+          }
+        }
+
+        const invoiceId = activeEditInvoiceObj.id;
+
+        try {
+          let updatePayload = {
+            customerName: newName,
+            customerPhone: newPhone,
+            payMethod: newMethod,
+            services: updatedServices,
+            totalPrice: newTotal,
+          };
+          await db
+            .collection("customer_history")
+            .doc(invoiceId)
+            .set(updatePayload, { merge: true });
+
+          if (newMethod === "debt") {
+            await db
+              .collection("debts")
+              .doc(invoiceId)
+              .set({ ...activeEditInvoiceObj, ...updatePayload });
+            await db.collection("daily_transactions").doc(invoiceId).delete();
+            await db.collection("monthly_vault").doc(invoiceId).delete();
+          } else {
+            await db
+              .collection("daily_transactions")
+              .doc(invoiceId)
+              .set(
+                { ...activeEditInvoiceObj, ...updatePayload },
+                { merge: true },
+              );
+            await db
+              .collection("monthly_vault")
+              .doc(invoiceId)
+              .set(
+                { ...activeEditInvoiceObj, ...updatePayload },
+                { merge: true },
+              );
+            await db.collection("debts").doc(invoiceId).delete();
+          }
+
+          closeEditInvoiceModal();
+          customAlert(
+            "✅ تم التعديل بنجاح",
+            "تم تحديث تفاصيل الفاتورة والخدمات والمبلغ في قاعدة البيانات.",
+          );
+          searchDailyHistoryByCalendar();
+        } catch (e) {
+          console.error("خطأ بتعديل الفاتورة:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ التعديلات بالسحابة!");
+        }
       }
 
       async function searchDailyHistoryByCalendar() {
@@ -2493,7 +2920,7 @@
           return;
         }
 
-        calTxsBody.innerHTML = `<tr><td colspan="7" class="no-data-msg">جاري تحميل سجلات التاريخ (${dateVal})...</td></tr>`;
+        calTxsBody.innerHTML = `<tr><td colspan="8" class="no-data-msg">جاري تحميل سجلات التاريخ (${dateVal})...</td></tr>`;
         calBarbersBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">جاري الحساب...</td></tr>`;
         container.style.display = "block";
 
@@ -2503,6 +2930,15 @@
             .where("dateKey", "==", dateVal)
             .get();
 
+          let dateExpensesSum = 0;
+          let dateExpensesArr = [];
+          expensesList.forEach((e) => {
+            if (e.dateKey === dateVal) {
+              dateExpensesSum += e.amount;
+              dateExpensesArr.push(e);
+            }
+          });
+
           if (snapshot.empty) {
             document.getElementById("calCash").innerText = "0.00";
             document.getElementById("calVisa").innerText = "0.00";
@@ -2510,9 +2946,8 @@
             document.getElementById("calDebt").innerText = "0.00";
             document.getElementById("calGrand").innerText = "0.00";
             document.getElementById("calSalonShare").innerText = "0.00";
-
             calBarbersBody.innerHTML = `<tr><td colspan="5" class="no-data-msg">لا توجد أي معاملات أو زيارات مسجلة بتاريخ (${dateVal}).</td></tr>`;
-            calTxsBody.innerHTML = `<tr><td colspan="7" class="no-data-msg">لا توجد تفاصيل لهذا اليوم.</td></tr>`;
+            calTxsBody.innerHTML = `<tr><td colspan="8" class="no-data-msg">لا توجد تفاصيل لهذا اليوم.</td></tr>`;
             return;
           }
 
@@ -2521,7 +2956,6 @@
             cliq = 0,
             debt = 0;
           let barbersDayStats = {};
-
           barbers.forEach((b) => {
             barbersDayStats[b.id] = {
               name: b.name,
@@ -2533,88 +2967,108 @@
             };
           });
 
+          let docsArray = [];
+          snapshot.forEach((doc) => {
+            docsArray.push({ id: doc.id, ...doc.data() });
+          });
+          docsArray.sort(
+            (a, b) => (a.invoiceNumber || 0) - (b.invoiceNumber || 0),
+          );
+
           calTxsBody.innerHTML = "";
 
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-
+          docsArray.forEach((data) => {
             if (data.payMethod === "cash") cash += data.totalPrice;
             if (data.payMethod === "visa") visa += data.totalPrice;
             if (data.payMethod === "cliq") cliq += data.totalPrice;
             if (data.payMethod === "debt") debt += data.totalPrice;
 
-            if (barbersDayStats[data.barberId]) {
-              barbersDayStats[data.barberId].count += 1;
-              barbersDayStats[data.barberId].total += data.totalPrice;
-
-              const bObj = barbers.find((b) => b.id === data.barberId);
-              const rate = bObj ? bObj.rate || 50 : 50;
-
-              const calcRes = calculateTransactionShares(
-                data.services || [],
-                rate,
-              );
-              barbersDayStats[data.barberId].bShareSum += calcRes.barberShare;
-              barbersDayStats[data.barberId].sShareSum += calcRes.salonShare;
+            // عدم احتساب الذمم في رصيد الحلاق والصالون للتقارير
+            if (data.payMethod !== "debt") {
+              if (barbersDayStats[data.barberId]) {
+                barbersDayStats[data.barberId].count += 1;
+                barbersDayStats[data.barberId].total += data.totalPrice;
+                const bObj = barbers.find((b) => b.id === data.barberId);
+                const calcRes = calculateTransactionShares(
+                  data.services || [],
+                  bObj ? bObj.rate || 50 : 50,
+                );
+                barbersDayStats[data.barberId].bShareSum += calcRes.barberShare;
+                barbersDayStats[data.barberId].sShareSum += calcRes.salonShare;
+              }
             }
 
             let servicesListText = data.services
-              .map((s) => {
-                return s.serviceName
+              .map((s) =>
+                s.serviceName
                   ? s.serviceId === "custom"
                     ? `✍️ ${s.note}`
                     : s.serviceName
-                  : s.serviceId;
-              })
+                  : s.serviceId,
+              )
               .join(" + ");
-
-            let payText = "💵 كاش";
-            if (data.payMethod === "visa") payText = "💳 فيزا";
-            if (data.payMethod === "cliq") payText = "📱 كليك";
-            if (data.payMethod === "debt") payText = "📒 ذمم (لم يُدفع)";
+            let payText =
+              data.payMethod === "cash"
+                ? "💵 كاش"
+                : data.payMethod === "visa"
+                  ? "💳 فيزا"
+                  : data.payMethod === "cliq"
+                    ? "📱 كليك"
+                    : "📒 ذمم (لم يُدفع)";
+            const invNumDisplay = data.invoiceNumber ? data.invoiceNumber : "-";
+            const realInvoiceId = data.invoiceId || data.id;
 
             const row = document.createElement("tr");
             row.innerHTML = `
+              <td><span class="badge"># ${invNumDisplay}</span></td>
               <td class="en-date">${data.formattedDate.split(",")[1] || data.formattedDate}</td>
-              <td><b>${data.customerName}</b></td>
-              <td dir="ltr"><b>${data.customerPhone}</b></td>
+              <td><b>${data.customerName}</b><br><span dir="ltr" style="font-size:11px; color:#aaa;">${data.customerPhone}</span></td>
               <td>${data.barberName}</td>
               <td style="${data.payMethod === "debt" ? "color: #ffaa00; font-weight: bold;" : ""}">${payText}</td>
-              <td style="color: #00ffcc;">${servicesListText}</td>
-              <td style="font-weight: bold; color: #00ffcc;">${Number(data.totalPrice).toFixed(2)} د.أ</td>
+              <td style="color: var(--primary-gold); font-size: 12px;">${servicesListText}</td>
+              <td style="font-weight: bold; color: var(--primary-gold);">${Number(data.totalPrice).toFixed(2)} د.أ</td>
+              <td>
+                <div style="display:flex; gap:5px; justify-content:center; flex-wrap: wrap;">
+                  <button class="btn-action-save" style="background:#555; padding: 4px 8px; font-size: 12px;" onclick="openEditInvoiceModal('${realInvoiceId}')">✏️</button>
+                  <button class="btn-delete-small" style="padding: 4px 8px; font-size: 12px;" onclick="deleteInvoice('${realInvoiceId}', '${dateVal}')">🗑️</button>
+                </div>
+              </td>
             `;
             calTxsBody.appendChild(row);
           });
 
-          const grand = cash + visa + cliq + debt;
           document.getElementById("calCash").innerText = cash.toFixed(2);
           document.getElementById("calVisa").innerText = visa.toFixed(2);
           document.getElementById("calCliq").innerText = cliq.toFixed(2);
           document.getElementById("calDebt").innerText = debt.toFixed(2);
-          document.getElementById("calGrand").innerText = grand.toFixed(2);
+          document.getElementById("calGrand").innerText = (
+            cash +
+            visa +
+            cliq
+          ).toFixed(2);
 
           calBarbersBody.innerHTML = "";
           let totalDaySalonShare = 0;
-
           barbers.forEach((b) => {
             const st = barbersDayStats[b.id];
             if (st && st.count > 0) {
               totalDaySalonShare += st.sShareSum;
-
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td><b>${st.name}</b></td>
                 <td>${st.count} فاتورة</td>
                 <td>${st.total.toFixed(2)} د.أ</td>
-                <td style="color: #00ffcc;">${st.bShareSum.toFixed(2)} د.أ</td>
+                <td style="color: var(--primary-gold);">${st.bShareSum.toFixed(2)} د.أ</td>
                 <td style="color: #c0c0c0;">${st.sShareSum.toFixed(2)} د.أ</td>
               `;
               calBarbersBody.appendChild(row);
             }
           });
 
+          // خصم الذمم والمصاريف من صافي البحث
+          let netSalon = totalDaySalonShare - dateExpensesSum - debt;
           document.getElementById("calSalonShare").innerText =
-            totalDaySalonShare.toFixed(2);
+            netSalon.toFixed(2);
         } catch (e) {
           console.error("خطأ بجلَب الأرشيف بالرزنامة:", e);
           customAlert("⚠️ خطأ", "حدث خطأ أثناء جلب أرشيف اليوم من السحابة!");
@@ -2640,7 +3094,6 @@
         const amount = parseFloat(
           document.getElementById("expenseAmountInput").value,
         );
-
         if (!note) {
           customAlert("⚠️ تنبيه", "يرجى إدخال تفاصيل المصروف!");
           return;
@@ -2650,7 +3103,8 @@
           return;
         }
 
-        const englishDateTime = new Date().toLocaleString("en-US", {
+        const now = new Date();
+        const englishDateTime = now.toLocaleString("en-US", {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
@@ -2659,15 +3113,21 @@
           second: "2-digit",
           hour12: true,
         });
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const dateKey = `${year}-${month}-${day}`;
 
         try {
+          const expNum = await getNextExpenseInvoiceNumber();
           await db.collection("expenses").add({
+            invoiceNumber: expNum,
             note: note,
             amount: amount,
             formattedDate: englishDateTime,
-            timestamp: new Date().getTime(),
+            dateKey: dateKey,
+            timestamp: now.getTime(),
           });
-
           customAlert(
             "✅ تم تسجيل المصروف",
             `تم تسجيل مصروف (${note}) بمبلغ (${amount} د.أ) وتم خصمه من أرباح الصالون.`,
@@ -2694,9 +3154,8 @@
       function renderExpensesLogTable() {
         const tbody = document.getElementById("expensesLogBody");
         if (!tbody) return;
-
         if (expensesList.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="no-data-msg">لا توجد مصاريف مسجلة حتى الآن.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="no-data-msg">لا توجد مصاريف مسجلة حتى الآن.</td></tr>`;
           return;
         }
 
@@ -2707,25 +3166,25 @@
           .forEach((exp) => {
             const row = document.createElement("tr");
             row.innerHTML = `
+            <td><span class="badge"># ${exp.invoiceNumber || "-"}</span></td>
             <td class="en-date">${exp.formattedDate}</td>
             <td><b>${exp.note}</b></td>
             <td style="color: #ff5555; font-weight: bold;">${exp.amount.toFixed(2)} د.أ</td>
-            <td>
-              <button class="btn-delete-small" onclick="deleteExpense('${exp.docId}')">✕</button>
-            </td>
+            <td><button class="btn-delete-small" onclick="deleteExpense('${exp.docId}')">✕</button></td>
           `;
             tbody.appendChild(row);
           });
       }
 
-      function customAlert(title, msg, btnText = "حسناً", callback = null) {
+      function customAlert(title, msg, btnText = "تم", callback = null) {
         document.getElementById("alertTitle").innerText = title;
-        document.getElementById("alertMsg").innerText = msg;
-
+        document.getElementById("alertMsg").innerHTML = msg.replace(
+          /\n/g,
+          "<br>",
+        );
         const btn = document.getElementById("alertModalBtn");
         btn.innerText = btnText;
         alertCustomCallback = callback;
-
         document.getElementById("alertModal").classList.add("active");
       }
 
@@ -2786,7 +3245,6 @@
         const priceVal = parseFloat(
           document.getElementById("customPriceInput").value,
         );
-
         if (!note) {
           customAlert("⚠️ تنبيه", "يرجى كتابة تفاصيل الملاحظة أو الخصم!");
           return;
@@ -2795,7 +3253,6 @@
           customAlert("⚠️ تنبيه", "يرجى إدخال مبلغ صحيح!");
           return;
         }
-
         addServiceToCurrentCustomer("custom", priceVal, note);
         closeCustomModal();
       }
@@ -2805,6 +3262,8 @@
         currentCustomer = { name: "", phone: "", services: [] };
         document.getElementById("appContainer").style.display = "none";
         document.getElementById("adminContainer").style.display = "none";
+        document.getElementById("dailyReportContainer").style.display = "none";
+        document.getElementById("reservationsContainer").style.display = "none";
         document.getElementById("mainLoginScreen").style.display = "flex";
         document.getElementById("mainPassInput").value = "";
         document.getElementById("mainBarberSelect").value = "";
@@ -2817,13 +3276,11 @@
       async function promptResetDay() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
-
         openModal(
           "تصفير العداد اليومي",
-          "أدخل كلمة المرور لتصفير العداد اليومي ومصاريف اليوم (لن يتأثر سجل الزبائن الدائم والأرشيف):",
+          "يرجى إدخال كلمة المرور:",
           function (enteredPass) {
-            const p = enteredPass.trim();
-            if (resetPass && p === resetPass) {
+            if (resetPass && enteredPass.trim() === resetPass) {
               db.collection("daily_transactions")
                 .get()
                 .then((snapshot) => {
@@ -2846,13 +3303,11 @@
       async function promptResetMonth() {
         const passes = await fetchCloudPasswords();
         const resetPass = passes ? passes["RESET_KEY"] : null;
-
         openModal(
           "تصفير أرباح الشهر",
-          "أدخل كلمة المرور لتصفير العداد المالي ومصاريف الشهر (لن يتأثر سجل الزبائن الدائم والأرشيف):",
+          "يرجى إدخال كلمة المرور:",
           function (enteredPass) {
-            const p = enteredPass.trim();
-            if (resetPass && p === resetPass) {
+            if (resetPass && enteredPass.trim() === resetPass) {
               db.collection("monthly_vault")
                 .get()
                 .then((snapshot) => {
@@ -2878,15 +3333,12 @@
         const inputName = document.getElementById(`barber_input_${barberId}`);
         const inputRate = document.getElementById(`barber_rate_${barberId}`);
         if (!inputName || !inputRate) return;
-
         const newName = inputName.value.trim();
         const newRate = parseFloat(inputRate.value);
-
         if (!newName) {
           customAlert("⚠️ تنبيه", "يرجى كتابة اسم صحيح للحلاق!");
           return;
         }
-
         if (isNaN(newRate) || newRate < 0 || newRate > 100) {
           customAlert("⚠️ تنبيه", "يرجى تحديد نسبة مئوية صحيحة بين 0 و 100!");
           return;
@@ -2897,15 +3349,9 @@
             .collection("settings")
             .doc("barbers")
             .set(
-              {
-                [barberId]: {
-                  name: newName,
-                  rate: newRate,
-                },
-              },
+              { [barberId]: { name: newName, rate: newRate } },
               { merge: true },
             );
-
           customAlert(
             "✅ تم الحفظ",
             `تم تعديل بيانات الحلاق (${newName}) بنسبة (${newRate}%) بنجاح على جميع الأجهزة!`,
@@ -2919,22 +3365,15 @@
       function renderBarbersManagementTable() {
         const tbody = document.getElementById("barbersManagementBody");
         if (!tbody) return;
-
         tbody.innerHTML = "";
         barbers.forEach((b) => {
           const row = document.createElement("tr");
           row.innerHTML = `
             <td><b>${b.id.toUpperCase()}</b></td>
             <td><b>${b.name}</b></td>
-            <td>
-              <input type="text" class="edit-input-field" id="barber_input_${b.id}" value="${b.name}" autocomplete="off" />
-            </td>
-            <td>
-              <input type="number" class="edit-input-field" style="max-width: 80px;" id="barber_rate_${b.id}" value="${b.rate}" min="0" max="100" autocomplete="off" /> %
-            </td>
-            <td>
-              <button class="btn-action-save" onclick="saveBarberSetting('${b.id}')">حفظ 💾</button>
-            </td>
+            <td><input type="text" class="edit-input-field" id="barber_input_${b.id}" value="${b.name}" autocomplete="off" /></td>
+            <td><input type="number" class="edit-input-field" style="max-width: 80px;" id="barber_rate_${b.id}" value="${b.rate}" min="0" max="100" autocomplete="off" /> %</td>
+            <td><button class="btn-action-save" onclick="saveBarberSetting('${b.id}')">حفظ 💾</button></td>
           `;
           tbody.appendChild(row);
         });
@@ -2943,22 +3382,18 @@
       function renderAdminBarberMonthlyStats() {
         const select = document.getElementById("adminBarberMonthlySelect");
         if (!select) return;
-
         const barberId = select.value || (barbers[0] ? barbers[0].id : "b1");
         const selectedBarberObj = barbers.find((b) => b.id === barberId);
-
-        let totalAmount = 0;
-        let invoiceCount = 0;
-        let barberShareSum = 0;
-        let salonShareSum = 0;
-
+        let totalAmount = 0,
+          invoiceCount = 0,
+          barberShareSum = 0,
+          salonShareSum = 0;
         const currentRate = selectedBarberObj ? selectedBarberObj.rate : 50;
 
         monthlyVaultRecords.forEach((tx) => {
           if (tx.barberId === barberId) {
             totalAmount += tx.totalPrice;
             invoiceCount += 1;
-
             const calcRes = calculateTransactionShares(
               tx.services || [],
               currentRate,
@@ -2979,12 +3414,9 @@
       async function saveServiceSetting(serviceId) {
         const nameInput = document.getElementById(`srv_name_${serviceId}`);
         const priceInput = document.getElementById(`srv_price_${serviceId}`);
-
         if (!nameInput || !priceInput) return;
-
         const newName = nameInput.value.trim();
         const newPrice = parseFloat(priceInput.value);
-
         if (!newName) {
           customAlert("⚠️ تنبيه", "يرجى كتابة اسم صحيح للخدمة!");
           return;
@@ -2999,15 +3431,9 @@
             .collection("settings")
             .doc("services")
             .set(
-              {
-                [serviceId]: {
-                  name: newName,
-                  price: newPrice,
-                },
-              },
+              { [serviceId]: { name: newName, price: newPrice } },
               { merge: true },
             );
-
           customAlert(
             "✅ تم تعديل الخدمة",
             `تم تعديل (${newName}) بسعر (${newPrice} د.أ) بنجاح لكل الأجهزة!`,
@@ -3021,25 +3447,17 @@
       function renderServicesManagementTable() {
         const tbody = document.getElementById("servicesManagementBody");
         if (!tbody) return;
-
         tbody.innerHTML = "";
         services.forEach((s) => {
           if (s.id === "custom") return;
-
           const row = document.createElement("tr");
           row.innerHTML = `
             <td><b>${s.id.toUpperCase()}</b></td>
             <td><b>${s.name}</b></td>
             <td><b>${s.price} د.أ</b></td>
-            <td>
-              <input type="text" class="edit-input-field" style="max-width: 200px;" id="srv_name_${s.id}" value="${s.name}" autocomplete="off" />
-            </td>
-            <td>
-              <input type="number" step="any" class="edit-input-field" style="max-width: 90px;" id="srv_price_${s.id}" value="${s.price}" autocomplete="off" />
-            </td>
-            <td>
-              <button class="btn-action-save" onclick="saveServiceSetting('${s.id}')">حفظ 💾</button>
-            </td>
+            <td><input type="text" class="edit-input-field" style="max-width: 200px;" id="srv_name_${s.id}" value="${s.name}" autocomplete="off" /></td>
+            <td><input type="number" step="any" class="edit-input-field" style="max-width: 90px;" id="srv_price_${s.id}" value="${s.price}" autocomplete="off" /></td>
+            <td><button class="btn-action-save" onclick="saveServiceSetting('${s.id}')">حفظ 💾</button></td>
           `;
           tbody.appendChild(row);
         });
@@ -3048,7 +3466,6 @@
       async function searchCustomerHistory() {
         const phone = document.getElementById("searchPhoneInput").value.trim();
         const tbody = document.getElementById("customerHistoryBody");
-
         const phoneRegex = /^07\d{8}$/;
         if (!phoneRegex.test(phone)) {
           customAlert(
@@ -3058,53 +3475,60 @@
           return;
         }
 
-        tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">جاري البحث في السجل الدائم للرقم (${phone})...</td></tr>`;
-
+        tbody.innerHTML = `<tr><td colspan="8" class="no-data-msg">جاري البحث في السجل الدائم للرقم (${phone})...</td></tr>`;
         try {
           const snapshot = await db
             .collection("customer_history")
             .where("customerPhone", "==", phone)
             .get();
-
           tbody.innerHTML = "";
-
           if (snapshot.empty) {
-            tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">لم يتم العثور على أي زيارات سابقة للرقم المفتاحي (${phone}).</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="no-data-msg">لم يتم العثور على أي زيارات سابقة للرقم المفتاحي (${phone}).</td></tr>`;
             return;
           }
 
+          let docsArray = [];
           snapshot.forEach((doc) => {
-            const data = doc.data();
+            docsArray.push({ id: doc.id, ...doc.data() });
+          });
+          docsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+          docsArray.forEach((data) => {
             let servicesListText = data.services
-              .map((s) => {
-                return s.serviceName
+              .map((s) =>
+                s.serviceName
                   ? s.serviceId === "custom"
                     ? `✍️ ${s.note}`
                     : s.serviceName
-                  : s.serviceId;
-              })
+                  : s.serviceId,
+              )
               .join(" + ");
-
-            let payText = "💵 كاش";
-            if (data.payMethod === "visa") payText = "💳 فيزا";
-            if (data.payMethod === "cliq") payText = "📱 كليك";
-            if (data.payMethod === "debt") payText = "📒 ذمم (لم يُدفع)";
+            let payText =
+              data.payMethod === "cash"
+                ? "💵 كاش"
+                : data.payMethod === "visa"
+                  ? "💳 فيزا"
+                  : data.payMethod === "cliq"
+                    ? "📱 كليك"
+                    : "📒 ذمم (لم يُدفع)";
+            const invNumDisplay = data.invoiceNumber ? data.invoiceNumber : "-";
 
             const row = document.createElement("tr");
             row.innerHTML = `
+              <td><span class="badge"># ${invNumDisplay}</span></td>
               <td class="en-date">${data.formattedDate}</td>
               <td><b>${data.customerName}</b></td>
               <td dir="ltr"><b>${data.customerPhone}</b></td>
               <td>${data.barberName}</td>
               <td style="${data.payMethod === "debt" ? "color: #ffaa00; font-weight: bold;" : ""}">${payText}</td>
-              <td style="color: #00ffcc;">${servicesListText}</td>
-              <td style="font-weight: bold; color: #00ffcc;">${Number(data.totalPrice).toFixed(2)} د.أ</td>
+              <td style="color: var(--primary-gold);">${servicesListText}</td>
+              <td style="font-weight: bold; color: var(--primary-gold);">${Number(data.totalPrice).toFixed(2)} د.أ</td>
             `;
             tbody.appendChild(row);
           });
         } catch (e) {
           console.error("خطأ بالبحث:", e);
-          tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">حدث خطأ أثناء جلب تاريخ الزبون!</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="8" class="no-data-msg">حدث خطأ أثناء جلب تاريخ الزبون!</td></tr>`;
         }
       }
 
@@ -3122,40 +3546,32 @@
           services.forEach((service) => {
             const isCustom = service.id === "custom";
             const count = currentCustCounts[service.id] || 0;
-
             const card = document.createElement("div");
             card.className = "card" + (isCustom ? " custom-service-card" : "");
 
             card.onclick = (e) => {
               if (e.target.closest(".btn-undo-small")) return;
-
               card.classList.add("card-tap-feedback");
               setTimeout(() => card.classList.remove("card-tap-feedback"), 150);
-
-              if (isCustom) {
-                openCustomModal();
-              } else {
-                addServiceToCurrentCustomer(service.id, service.price);
-              }
+              if (isCustom) openCustomModal();
+              else addServiceToCurrentCustomer(service.id, service.price);
             };
 
             card.innerHTML = `
               <div class="card-title">${service.name}</div>
               <div class="card-price">${isCustom ? "تحديد مبلغ مخصص" : service.price + " د.أ"}</div>
               <div class="card-footer-row">
-                <span class="badge">العدد للزبون: ${count}</span>
+                <span class="badge">العدد: ${count}</span>
                 ${count > 0 ? `<button class="btn-undo-small" onclick="removeServiceFromCurrentCustomer('${service.id}')" title="تراجع">✕</button>` : ""}
               </div>
             `;
             container.appendChild(card);
           });
 
-          // 1. حساب أرباح الحلاق اليومية بحسب القواعد المحددة لكل خدمة
-          let currentBarberDailyTotal = 0;
-          let currentBarberDailyCount = 0;
-          let currentBarberDailyShare = 0;
-          let currentSalonDailyShare = 0;
-
+          let currentBarberDailyTotal = 0,
+            currentBarberDailyCount = 0,
+            currentBarberDailyShare = 0,
+            currentSalonDailyShare = 0;
           const currentBarberObj = barbers.find((b) => b.id === activeUserId);
           const currentRate = currentBarberObj
             ? currentBarberObj.rate || 50
@@ -3165,7 +3581,6 @@
             if (tx.barberId === activeUserId) {
               currentBarberDailyTotal += tx.totalPrice;
               currentBarberDailyCount += 1;
-
               const calcRes = calculateTransactionShares(
                 tx.services || [],
                 currentRate,
@@ -3181,29 +3596,25 @@
           if (currentBarberObj) {
             document.getElementById("barberSummaryTitle").innerText =
               `📊 ملخص أرباح الحلاق اليومي (${currentBarberObj.name} - نسبتك العامة ${currentRate}%)`;
-
             const summaryRow = document.createElement("tr");
             summaryRow.innerHTML = `
               <td><b>${currentBarberObj.name}</b></td>
               <td>${currentBarberDailyCount} فاتورة</td>
               <td>${currentBarberDailyTotal.toFixed(2)} د.أ</td>
-              <td style="color: #00ffcc;"><b>${currentBarberDailyShare.toFixed(2)} د.أ</b></td>
+              <td style="color: var(--primary-gold);"><b>${currentBarberDailyShare.toFixed(2)} د.أ</b></td>
               <td style="color: #c0c0c0;">${currentSalonDailyShare.toFixed(2)} د.أ</td>
             `;
             summaryBody.appendChild(summaryRow);
           }
 
-          // 2. حساب أرباح الحلاق الشهرية التراكمية بحسب القواعد لكل خدمة
-          let currentBarberMonthlyTotal = 0;
-          let currentBarberMonthlyCount = 0;
-          let currentBarberMonthlyShare = 0;
-          let currentSalonMonthlyShare = 0;
-
+          let currentBarberMonthlyTotal = 0,
+            currentBarberMonthlyCount = 0,
+            currentBarberMonthlyShare = 0,
+            currentSalonMonthlyShare = 0;
           monthlyVaultRecords.forEach((tx) => {
             if (tx.barberId === activeUserId) {
               currentBarberMonthlyTotal += tx.totalPrice;
               currentBarberMonthlyCount += 1;
-
               const calcRes = calculateTransactionShares(
                 tx.services || [],
                 currentRate,
@@ -3221,19 +3632,17 @@
           if (currentBarberObj) {
             document.getElementById("barberMonthlySummaryTitle").innerText =
               `📅 ملخص أرباح الحلاق الشهري التراكمي (${currentBarberObj.name} - نسبتك العامة ${currentRate}%)`;
-
             const mRow = document.createElement("tr");
             mRow.innerHTML = `
               <td><b>${currentBarberObj.name}</b></td>
               <td>${currentBarberMonthlyCount} فاتورة</td>
               <td>${currentBarberMonthlyTotal.toFixed(2)} د.أ</td>
-              <td style="color: #00ffcc;"><b>${currentBarberMonthlyShare.toFixed(2)} د.أ</b></td>
+              <td style="color: var(--primary-gold);"><b>${currentBarberMonthlyShare.toFixed(2)} د.أ</b></td>
               <td style="color: #c0c0c0;">${currentSalonMonthlyShare.toFixed(2)} د.أ</td>
             `;
             monthlySummaryBody.appendChild(mRow);
           }
 
-          // 3. تفاصيل خدمات الزبون الحالي + صف الإجمالي السفلي للتوتال
           const detailsBody = document.getElementById("barbersDetailsBody");
           const detailsFoot = document.getElementById("barbersDetailsFoot");
           detailsBody.innerHTML = "";
@@ -3241,40 +3650,28 @@
 
           if (currentCustomer.services.length > 0) {
             document.getElementById("barberDetailsTitle").innerText =
-              `📝 تفاصيل خدمات الزبون الحالي (${currentCustomer.name} - ${currentCustomer.phone})`;
-
+              `📝 خدمات الفاتورة الحالية`;
             let customerTotalSum = 0;
-
             currentCustomer.services.forEach((sItem) => {
               customerTotalSum += sItem.price;
               const row = document.createElement("tr");
-              row.innerHTML = `
-                <td style="color: #00ffcc;"><b>${sItem.serviceName}</b></td>
-                <td>1 مرة</td>
-                <td style="color: #00ffcc;">${Number(sItem.price).toFixed(2)} د.أ</td>
-              `;
+              row.innerHTML = `<td style="color: var(--primary-gold);"><b>${sItem.serviceName}</b></td><td>1 مرة</td><td style="color: var(--primary-gold);">${Number(sItem.price).toFixed(2)} د.أ</td>`;
               detailsBody.appendChild(row);
             });
-
             const totalRow = document.createElement("tr");
             totalRow.className = "total-summary-row";
-            totalRow.innerHTML = `
-              <td colspan="2" style="font-size: 16px;"><b>الإجمالي الكلي للتوتال (Total):</b></td>
-              <td style="color: #00ffcc; font-size: 18px; font-weight: bold;"><b>${customerTotalSum.toFixed(2)} د.أ</b></td>
-            `;
+            totalRow.innerHTML = `<td colspan="2" style="font-size: 16px;"><b>الإجمالي الكلي للتوتال (Total):</b></td><td style="color: var(--primary-gold); font-size: 18px; font-weight: bold;"><b>${customerTotalSum.toFixed(2)} د.أ</b></td>`;
             detailsFoot.appendChild(totalRow);
           } else {
             document.getElementById("barberDetailsTitle").innerText =
-              `📝 تفاصيل خدمات الزبون الحالي`;
-            detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم تسجيل أي خدمة للزبون الحالي بعد.</td></tr>`;
+              `📝 خدمات الفاتورة الحالية`;
+            detailsBody.innerHTML = `<tr><td colspan="3" class="no-data-msg">لم يتم اختيار أي خدمة بعد.</td></tr>`;
           }
         }
 
-        // حسابات لوحة تحكم المدير
-        let cashTotalDay = 0;
-        let visaTotalDay = 0;
-        let cliqTotalDay = 0;
-
+        let cashTotalDay = 0,
+          visaTotalDay = 0,
+          cliqTotalDay = 0;
         let allBarbersDayStats = {};
         barbers.forEach((b) => {
           allBarbersDayStats[b.id] = {
@@ -3294,19 +3691,20 @@
           if (allBarbersDayStats[tx.barberId]) {
             allBarbersDayStats[tx.barberId].count += 1;
             allBarbersDayStats[tx.barberId].total += tx.totalPrice;
-
             const rate = allBarbersDayStats[tx.barberId].rate;
             const calcRes = calculateTransactionShares(tx.services || [], rate);
-
             allBarbersDayStats[tx.barberId].barberShare += calcRes.barberShare;
             allBarbersDayStats[tx.barberId].salonShare += calcRes.salonShare;
           }
         });
 
-        let totalActiveDebts = debtsList.reduce(
-          (acc, curr) => acc + curr.totalPrice,
-          0,
-        );
+        // تم إضافة خصم الذمم والمصاريف بشكل دقيق في لوحة الإدارة بناءً على يومنا الحالي
+        let todayDebtsSum = 0;
+        const todayStr = new Date().toISOString().split("T")[0];
+        debtsList.forEach((d) => {
+          if (d.dateKey === todayStr) todayDebtsSum += d.totalPrice;
+        });
+
         let dailyExpensesSum = expensesList.reduce(
           (acc, curr) => acc + curr.amount,
           0,
@@ -3318,34 +3716,32 @@
         vaultBody.innerHTML = "";
         vaultFoot.innerHTML = "";
 
-        let sumTxCountDay = 0;
-        let sumTotalMoneyDay = 0;
-        let sumBarbersShareDay = 0;
-        let sumSalonShareDay = 0;
+        let sumTxCountDay = 0,
+          sumTotalMoneyDay = 0,
+          sumBarbersShareDay = 0,
+          sumSalonShareDay = 0;
 
         barbers.forEach((b) => {
           const stats = allBarbersDayStats[b.id];
           const rate = b.rate || 50;
-
           sumTxCountDay += stats.count;
           sumTotalMoneyDay += stats.total;
           sumBarbersShareDay += stats.barberShare;
           sumSalonShareDay += stats.salonShare;
-
           const row = document.createElement("tr");
           row.innerHTML = `
             <td><b>${b.name}</b></td>
             <td><span class="badge">${rate}%</span></td>
             <td>${stats.count}</td>
             <td>${stats.total.toFixed(2)} د.أ</td>
-            <td style="color: #00ffcc;">${stats.barberShare.toFixed(2)} د.أ</td>
+            <td style="color: var(--primary-gold);">${stats.barberShare.toFixed(2)} د.أ</td>
             <td style="color: #c0c0c0;">${stats.salonShare.toFixed(2)} د.أ</td>
           `;
           vaultBody.appendChild(row);
         });
 
-        const netSalonShareDay = sumSalonShareDay - dailyExpensesSum;
-
+        const netSalonShareDay =
+          sumSalonShareDay - dailyExpensesSum - todayDebtsSum;
         document.getElementById("cashTotal").innerText =
           cashTotalDay.toFixed(2);
         document.getElementById("visaTotal").innerText =
@@ -3353,7 +3749,7 @@
         document.getElementById("cliqTotal").innerText =
           cliqTotalDay.toFixed(2);
         document.getElementById("debtTotal").innerText =
-          totalActiveDebts.toFixed(2);
+          todayDebtsSum.toFixed(2);
         document.getElementById("grandTotal").innerText =
           grandTotalSumDay.toFixed(2);
         document.getElementById("dailyExpenseTotal").innerText =
@@ -3367,26 +3763,24 @@
           <td colspan="2"><b>إجمالي اليوم الكلي</b></td>
           <td><b>${sumTxCountDay}</b></td>
           <td><b>${sumTotalMoneyDay.toFixed(2)} د.أ</b></td>
-          <td style="color: #00ffcc;"><b>${sumBarbersShareDay.toFixed(2)} د.أ</b></td>
-          <td style="color: #00ffcc; font-size: 16px;"><b>${sumSalonShareDay.toFixed(2)} د.أ</b></td>
+          <td style="color: var(--primary-gold);"><b>${sumBarbersShareDay.toFixed(2)} د.أ</b></td>
+          <td style="color: var(--primary-gold); font-size: 16px;"><b>${sumSalonShareDay.toFixed(2)} د.أ</b></td>
         `;
         vaultFoot.appendChild(footRow);
 
-        // حسابات العداد الشهري والمصاريف الشهرية بصفحة المدير
-        let mCash = 0;
-        let mVisa = 0;
-        let mCliq = 0;
-        let mSumSalonGross = 0;
-
+        let mCash = 0,
+          mVisa = 0,
+          mCliq = 0,
+          mSumSalonGross = 0;
         monthlyVaultRecords.forEach((data) => {
           if (data.payMethod === "cash") mCash += data.totalPrice;
           if (data.payMethod === "visa") mVisa += data.totalPrice;
           if (data.payMethod === "cliq") mCliq += data.totalPrice;
-
           const bObj = barbers.find((b) => b.id === data.barberId);
-          const rate = bObj ? bObj.rate || 50 : 50;
-
-          const calcRes = calculateTransactionShares(data.services || [], rate);
+          const calcRes = calculateTransactionShares(
+            data.services || [],
+            bObj ? bObj.rate || 50 : 50,
+          );
           mSumSalonGross += calcRes.salonShare;
         });
 
@@ -3394,9 +3788,13 @@
           (acc, curr) => acc + curr.amount,
           0,
         );
-
+        let totalActiveDebtsMonthly = debtsList.reduce(
+          (acc, curr) => acc + curr.totalPrice,
+          0,
+        );
         const mGrand = mCash + mVisa + mCliq;
-        const mNetSalon = mSumSalonGross - monthlyExpensesSum;
+        const mNetSalon =
+          mSumSalonGross - monthlyExpensesSum - totalActiveDebtsMonthly;
 
         document.getElementById("monthlyCashTotal").innerText =
           mCash.toFixed(2);
@@ -3405,7 +3803,7 @@
         document.getElementById("monthlyCliqTotal").innerText =
           mCliq.toFixed(2);
         document.getElementById("monthlyDebtTotal").innerText =
-          totalActiveDebts.toFixed(2);
+          totalActiveDebtsMonthly.toFixed(2);
         document.getElementById("monthlyGrandTotal").innerText =
           mGrand.toFixed(2);
         document.getElementById("monthlyExpenseTotal").innerText =
@@ -3413,77 +3811,6 @@
         document.getElementById("monthlySalonShareCard").innerText =
           mNetSalon.toFixed(2);
       }
-
-      const canvas = document.getElementById("bgCanvas");
-      const ctx = canvas.getContext("2d");
-      let particles = [];
-      let mouse = { x: null, y: null };
-
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-
-      window.addEventListener("resize", resizeCanvas);
-      window.addEventListener("mousemove", (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-      });
-
-      resizeCanvas();
-
-      class CrownParticle {
-        constructor() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height;
-          this.size = Math.random() * 12 + 10;
-          this.speedY = Math.random() * 0.4 + 0.1;
-          this.speedX = Math.random() * 0.2 - 0.1;
-          this.opacity = Math.random() * 0.25 + 0.05;
-        }
-
-        update() {
-          this.y += this.speedY;
-          this.x += this.speedX;
-
-          if (mouse.x && mouse.y) {
-            let dx = mouse.x - this.x;
-            let dy = mouse.y - this.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < 100) {
-              this.x -= dx * 0.03;
-              this.y -= dy * 0.03;
-            }
-          }
-
-          if (this.y > canvas.height) {
-            this.y = -20;
-            this.x = Math.random() * canvas.width;
-          }
-        }
-
-        draw() {
-          ctx.font = `${this.size}px "Segoe UI Emoji", Arial`;
-          ctx.globalAlpha = this.opacity;
-          ctx.fillText("👑", this.x, this.y);
-          ctx.globalAlpha = 1.0;
-        }
-      }
-
-      for (let i = 0; i < 35; i++) {
-        particles.push(new CrownParticle());
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p) => {
-          p.update();
-          p.draw();
-        });
-        requestAnimationFrame(animate);
-      }
-
-      animate();
     </script>
   </body>
 </html>
