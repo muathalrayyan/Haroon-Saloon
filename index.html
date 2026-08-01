@@ -2,7 +2,11 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- تم تعديل الـ viewport لمنع المساحات الفارغة ودعم حواف الشاشة -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
 
     <title>صالون هارون الرشيد - النظام السحابي</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg" />
@@ -40,20 +44,28 @@
         font-family: "Amiri", serif;
       }
 
+      /* تم ضبط الأساسيات هنا لمنع أي مساحات فارغة على اليسار أو الأسفل */
+      html,
+      body {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+      }
+
       body {
         background:
           linear-gradient(rgba(5, 5, 5, 0.93), rgba(5, 5, 5, 0.93)),
-          url("wallpaper.jpeg") no-repeat center center fixed;
+          url("wallpaper.jpeg") no-repeat center center;
         background-size: cover;
+        background-attachment: scroll;
         color: #d0d0d0;
-        margin: 0;
-        padding: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-height: 100vh;
         position: relative;
-        overflow-x: hidden;
       }
 
       /* ========================================= */
@@ -63,7 +75,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100vw;
+        width: 100%; /* تم تعديلها من vw إلى % لتجنب المشاكل بالموبايل */
         height: 100vh;
         background:
           linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
@@ -188,7 +200,6 @@
       .login-box select {
         color: #ccc;
         font-weight: bold;
-        /* إخفاء السهم الخاص بقائمة الاختيار */
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -228,6 +239,7 @@
       .admin-container {
         width: 100%;
         max-width: 1200px;
+        padding: 20px; /* نقلنا البادينج هنا ليصبح توازنه صحيحاً */
         display: none;
         flex-direction: column;
         align-items: center;
@@ -853,7 +865,6 @@
           <div class="total-item">
             ✂️ إجمالي حصة الحلاقين: <span id="drBarbersShare">0</span> د.أ
           </div>
-          <!-- تم تعديل المعادلة لخصم المصاريف والذمم -->
           <div class="total-item highlight-salon">
             👑 صافي ربح الصالون (بعد خصم المصاريف والذمم):
             <span id="drSalonShare">0</span> د.أ
@@ -1742,13 +1753,12 @@
 
     <script>
       const firebaseConfig = {
-        apiKey: "AIzaSyAFVoFBsZsf3SU0863UfK6GAMckyvu4hrk",
-        authDomain: "haroon-saloon.firebaseapp.com",
-        projectId: "haroon-saloon",
-        storageBucket: "haroon-saloon.firebasestorage.app",
-        messagingSenderId: "889013655333",
-        appId: "1:889013655333:web:2565734231e6ed168c2ccc",
-        measurementId: "G-0PTELSS2EL",
+        apiKey: "AIzaSyBpTag-aVLYH8aHayjr_dsSatCTydF_eqI",
+        authDomain: "haroonalrasheed-c9f77.firebaseapp.com",
+        projectId: "haroonalrasheed-c9f77",
+        storageBucket: "haroonalrasheed-c9f77.firebasestorage.app",
+        messagingSenderId: "515945136963",
+        appId: "1:515945136963:web:65fa84abe5165e14f665f6",
       };
 
       firebase.initializeApp(firebaseConfig);
@@ -1811,7 +1821,6 @@
         services: [],
       };
 
-      // التحكم بالقائمة المنسدلة للإعدادات
       function toggleSettingsMenu(e) {
         e.stopPropagation();
         document.getElementById("settingsMenu").classList.toggle("active");
@@ -1955,7 +1964,6 @@
           tbody.innerHTML = `<tr><td colspan="5" class="no-data-msg">لا يوجد عمليات مسجلة لهذا اليوم.</td></tr>`;
         }
 
-        // تم تطبيق المعادلة بالضبط: الخصم للمصاريف وللذمم من إجمالي حصة الصالون لليوم
         let netSalonProfit = sumSalonGross - todayExpensesSum - debt;
 
         document.getElementById("drBarbersShare").innerText =
@@ -2563,8 +2571,6 @@
           0,
         );
         let mGrand = mCash + mVisa + mCliq;
-
-        // الخصم المباشر للذمم أيضاً كما في اليومي
         let mNetSalon = mSumSalonGross - monthlyExpensesSum - totalActiveDebts;
 
         let barbersRowsHTML = "";
@@ -2983,7 +2989,6 @@
             if (data.payMethod === "cliq") cliq += data.totalPrice;
             if (data.payMethod === "debt") debt += data.totalPrice;
 
-            // عدم احتساب الذمم في رصيد الحلاق والصالون للتقارير
             if (data.payMethod !== "debt") {
               if (barbersDayStats[data.barberId]) {
                 barbersDayStats[data.barberId].count += 1;
@@ -3065,7 +3070,6 @@
             }
           });
 
-          // خصم الذمم والمصاريف من صافي البحث
           let netSalon = totalDaySalonShare - dateExpensesSum - debt;
           document.getElementById("calSalonShare").innerText =
             netSalon.toFixed(2);
@@ -3698,7 +3702,6 @@
           }
         });
 
-        // تم إضافة خصم الذمم والمصاريف بشكل دقيق في لوحة الإدارة بناءً على يومنا الحالي
         let todayDebtsSum = 0;
         const todayStr = new Date().toISOString().split("T")[0];
         debtsList.forEach((d) => {
@@ -3762,7 +3765,7 @@
         footRow.innerHTML = `
           <td colspan="2"><b>إجمالي اليوم الكلي</b></td>
           <td><b>${sumTxCountDay}</b></td>
-          <td><b>${sumTotalMoneyDay.toFixed(2)} د.أ</b></td>
+          <td><b>${sumTotalMoneyData(sumTotalMoneyDay)} د.أ</b></td>
           <td style="color: var(--primary-gold);"><b>${sumBarbersShareDay.toFixed(2)} د.أ</b></td>
           <td style="color: var(--primary-gold); font-size: 16px;"><b>${sumSalonShareDay.toFixed(2)} د.أ</b></td>
         `;
@@ -3810,6 +3813,10 @@
           monthlyExpensesSum.toFixed(2);
         document.getElementById("monthlySalonShareCard").innerText =
           mNetSalon.toFixed(2);
+      }
+
+      function sumTotalMoneyData(val) {
+        return val.toFixed(2);
       }
     </script>
   </body>
