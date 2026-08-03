@@ -2463,7 +2463,7 @@
       ) {
         const fixed50Services = ["s11", "s15", "s16", "s18", "s19", "s20"];
         if (fixed50Services.includes(serviceId)) return servicePrice * 0.5;
-        const salon100Services = ["s21", "custom"];
+        const salon100Services = ["s21"];
         if (salon100Services.includes(serviceId)) return 0;
         return servicePrice * (barberRate / 100);
       }
