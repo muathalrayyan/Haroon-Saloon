@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <!-- تم تعديل الـ viewport لمنع المساحات الفارغة ودعم حواف الشاشة -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
@@ -44,7 +43,6 @@
         font-family: "Amiri", serif;
       }
 
-      /* تم ضبط الأساسيات هنا لمنع أي مساحات فارغة على اليسار أو الأسفل */
       html,
       body {
         width: 100%;
@@ -68,14 +66,11 @@
         position: relative;
       }
 
-      /* ========================================= */
-      /* 1. شاشة تسجيل الدخول والقائمة المنسدلة */
-      /* ========================================= */
       #mainLoginScreen {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%; /* تم تعديلها من vw إلى % لتجنب المشاكل بالموبايل */
+        width: 100%;
         height: 100vh;
         background:
           linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
@@ -232,14 +227,11 @@
         background: #555;
       }
 
-      /* ========================================= */
-      /* 2. حاويات النظام الداخلية */
-      /* ========================================= */
       .app-container,
       .admin-container {
         width: 100%;
         max-width: 1200px;
-        padding: 20px; /* نقلنا البادينج هنا ليصبح توازنه صحيحاً */
+        padding: 20px;
         display: none;
         flex-direction: column;
         align-items: center;
@@ -335,8 +327,7 @@
         font-weight: bold;
       }
 
-      .active-barber-badge,
-      .active-customer-badge {
+      .active-barber-badge {
         background: #111;
         color: #c5a059;
         border: 1px solid #c5a059;
@@ -401,7 +392,7 @@
         flex-direction: column;
         justify-content: space-between;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        min-height: 125px;
+        min-height: 135px;
         flex: 0 1 calc(25% - 18px);
         min-width: 230px;
         max-width: 270px;
@@ -428,12 +419,18 @@
         font-size: 16px;
         font-weight: bold;
         color: #e0e0e0;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+      }
+      .card-desc {
+        font-size: 11px;
+        color: #888;
+        margin-bottom: 6px;
+        line-height: 1.2;
       }
       .card-price {
         color: #999;
         font-size: 14px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       .card-footer-row {
         display: flex;
@@ -465,6 +462,67 @@
         font-weight: bold;
         font-size: 13px;
         border: 1px solid rgba(197, 160, 89, 0.3);
+      }
+
+      .invoice-count-btn {
+        background: #1a1a1a;
+        color: var(--primary-gold);
+        border: 1px solid var(--primary-gold);
+        padding: 6px 14px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 0;
+        transition: all 0.2s ease;
+      }
+      .invoice-count-btn:hover {
+        background: var(--primary-gold);
+        color: #000;
+      }
+
+      .barber-share-clickable {
+        background: #1a1a1a;
+        color: var(--primary-gold);
+        border: 1px dashed var(--primary-gold);
+        padding: 6px 12px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 0;
+        direction: ltr;
+        display: inline-block;
+        transition: all 0.2s ease;
+      }
+      .barber-share-clickable:hover {
+        background: var(--primary-gold);
+        color: #000;
+      }
+
+      .cash-drawer-box {
+        background: #1a1a1a;
+        border: 2px solid var(--primary-gold);
+        padding: 10px 18px;
+        border-radius: 0;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px var(--primary-gold-glow);
+        transition: all 0.2s ease;
+      }
+      .cash-drawer-box:hover {
+        background: #252525;
+        transform: translateY(-2px);
+      }
+      .cash-drawer-title {
+        font-size: 12px;
+        color: #aaa;
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
+      .cash-drawer-val {
+        font-size: 18px;
+        color: var(--primary-gold);
+        font-weight: bold;
+        direction: ltr;
       }
 
       .totals-row {
@@ -626,6 +684,7 @@
         font-weight: bold;
         width: 100%;
         max-width: 150px;
+        direction: ltr;
       }
       .btn-action-save {
         background: #333;
@@ -659,9 +718,6 @@
         margin-bottom: 10px;
       }
 
-      /* ========================================= */
-      /* 3. النوافذ المنبثقة (Modals) */
-      /* ========================================= */
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -727,11 +783,13 @@
         border-radius: 0;
         outline: none;
         margin-bottom: 15px;
+        direction: ltr;
       }
       .modal-card input.pass-style {
         font-size: 22px;
         letter-spacing: 4px;
         -webkit-text-security: disc;
+        direction: rtl;
       }
 
       .modal-btns {
@@ -775,13 +833,34 @@
         display: inline-block;
         font-family: "Cairo", monospace;
       }
+
+      .loyalty-badge-box {
+        background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+        border: 2px solid var(--primary-gold);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        box-shadow: 0 0 15px var(--primary-gold-glow);
+        text-align: center;
+      }
+      .loyalty-title {
+        color: #aaa;
+        font-size: 13px;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .loyalty-points-val {
+        color: var(--primary-gold);
+        font-size: 26px;
+        font-weight: bold;
+        font-family: "Amiri", serif;
+      }
     </style>
   </head>
   <body>
     <!-- شاشة تسجيل الدخول الرئيسية -->
     <div id="mainLoginScreen">
       <div class="login-box">
-        <!-- أيقونة وقائمة الإعدادات -->
         <div class="settings-dropdown">
           <button class="settings-btn" onclick="toggleSettingsMenu(event)">
             ⋮
@@ -803,7 +882,7 @@
         <h2 class="login-title">صالون هارون الرشيد</h2>
 
         <select id="mainBarberSelect" onchange="onAccountSelected()">
-          <!-- التوليد التلقائي لخيارات 10 حلاقين -->
+          <!-- التوليد التلقائي لخيارات الحلاقين -->
         </select>
 
         <input
@@ -844,30 +923,51 @@
       </div>
 
       <div class="summary-box">
+        <!-- بوكس الجرد النقدي في زاوية اليسار للأعلى -->
+        <div
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+          "
+        >
+          <div class="cash-drawer-box" onclick="openCashDrawerModal()">
+            <div class="cash-drawer-title">💵 الجرد النقدي الفعلي</div>
+            <div class="cash-drawer-val" id="cashDrawerDisplay">0.00 د.أ</div>
+          </div>
+        </div>
+
         <div class="section-title">📊 ملخص الإيرادات والمصاريف اليومية</div>
         <div class="totals-row" style="margin-bottom: 20px">
-          <div class="total-item">💵 كاش: <span id="drCash">0</span> د.أ</div>
-          <div class="total-item">💳 فيزا: <span id="drVisa">0</span> د.أ</div>
-          <div class="total-item">📱 كليك: <span id="drCliq">0</span> د.أ</div>
+          <div class="total-item">
+            💵 كاش: <span id="drCash">0.00</span> د.أ
+          </div>
+          <div class="total-item">
+            💳 فيزا: <span id="drVisa">0.00</span> د.أ
+          </div>
+          <div class="total-item">
+            📱 كليك: <span id="drCliq">0.00</span> د.أ
+          </div>
           <div class="total-item highlight-debt">
-            📒 ذمم: <span id="drDebt">0</span> د.أ
+            📒 ذمم: <span id="drDebt">0.00</span> د.أ
           </div>
           <div class="total-item highlight-expense">
-            💸 مصاريف اليوم: <span id="drExpenses">0</span> د.أ
+            💸 مصاريف اليوم: <span id="drExpenses">0.00</span> د.أ
           </div>
         </div>
 
         <div class="totals-row">
           <div class="total-item" style="border-color: #c5a059">
             💰 الدخل الإجمالي (المحصل):
-            <span id="drGrand" style="color: #fff">0</span> د.أ
+            <span id="drGrand" style="color: #fff">0.00</span> د.أ
           </div>
           <div class="total-item">
-            ✂️ إجمالي حصة الحلاقين: <span id="drBarbersShare">0</span> د.أ
+            ✂️ إجمالي حصة الحلاقين: <span id="drBarbersShare">0.00</span> د.أ
           </div>
           <div class="total-item highlight-salon">
             👑 صافي ربح الصالون (بعد خصم المصاريف والذمم):
-            <span id="drSalonShare">0</span> د.أ
+            <span id="drSalonShare">0.00</span> د.أ
           </div>
         </div>
 
@@ -881,7 +981,7 @@
                 <th>الحلاق</th>
                 <th>عدد الفواتير</th>
                 <th>المبلغ الإجمالي</th>
-                <th>حصة الحلاق</th>
+                <th>حصة الحلاق (اضغط للتعديل)</th>
                 <th>حصة الصالون</th>
               </tr>
             </thead>
@@ -1106,26 +1206,26 @@
         </div>
         <div class="totals-row">
           <div class="total-item">
-            دخل الكاش اليومي: <span id="cashTotal">0</span> د.أ
+            دخل الكاش اليومي: <span id="cashTotal">0.00</span> د.أ
           </div>
           <div class="total-item">
-            دخل الفيزا اليومي: <span id="visaTotal">0</span> د.أ
+            دخل الفيزا اليومي: <span id="visaTotal">0.00</span> د.أ
           </div>
           <div class="total-item">
-            دخل كليك اليومي: <span id="cliqTotal">0</span> د.أ
+            دخل كليك اليومي: <span id="cliqTotal">0.00</span> د.أ
           </div>
           <div class="total-item highlight-debt">
-            إجمالي ذمم اليوم: <span id="debtTotal">0</span> د.أ
+            إجمالي ذمم اليوم: <span id="debtTotal">0.00</span> د.أ
           </div>
           <div class="total-item">
-            الإجمالي الكلي اليومي: <span id="grandTotal">0</span> د.أ
+            الإجمالي الكلي اليومي: <span id="grandTotal">0.00</span> د.أ
           </div>
           <div class="total-item highlight-expense">
-            💸 مصاريف اليوم: <span id="dailyExpenseTotal">0</span> د.أ
+            💸 مصاريف اليوم: <span id="dailyExpenseTotal">0.00</span> د.أ
           </div>
           <div class="total-item highlight-salon">
             👑 صافي ربح الصالون اليومي:
-            <span id="totalSalonShareCard">0</span> د.أ
+            <span id="totalSalonShareCard">0.00</span> د.أ
           </div>
         </div>
 
@@ -1185,26 +1285,26 @@
         </div>
         <div class="totals-row">
           <div class="total-item">
-            كاش الشهر: <span id="monthlyCashTotal">0</span> د.أ
+            كاش الشهر: <span id="monthlyCashTotal">0.00</span> د.أ
           </div>
           <div class="total-item">
-            فيزا الشهر: <span id="monthlyVisaTotal">0</span> د.أ
+            فيزا الشهر: <span id="monthlyVisaTotal">0.00</span> د.أ
           </div>
           <div class="total-item">
-            كليك الشهر: <span id="monthlyCliqTotal">0</span> د.أ
+            كليك الشهر: <span id="monthlyCliqTotal">0.00</span> د.أ
           </div>
           <div class="total-item highlight-debt">
-            ذمم الشهر المعلقة: <span id="monthlyDebtTotal">0</span> د.أ
+            ذمم الشهر المعلقة: <span id="monthlyDebtTotal">0.00</span> د.أ
           </div>
           <div class="total-item">
-            دخل الشهر الكلي: <span id="monthlyGrandTotal">0</span> د.أ
+            دخل الشهر الكلي: <span id="monthlyGrandTotal">0.00</span> د.أ
           </div>
           <div class="total-item highlight-expense">
-            💸 مصاريف الشهر: <span id="monthlyExpenseTotal">0</span> د.أ
+            💸 مصاريف الشهر: <span id="monthlyExpenseTotal">0.00</span> د.أ
           </div>
           <div class="total-item highlight-salon">
             👑 صافي ربح الصالون الشهري:
-            <span id="monthlySalonShareCard">0</span> د.أ
+            <span id="monthlySalonShareCard">0.00</span> د.أ
           </div>
         </div>
 
@@ -1255,22 +1355,22 @@
         >
           <div class="totals-row" style="margin-bottom: 15px">
             <div class="total-item">
-              كاش اليوم: <span id="calCash">0</span> د.أ
+              كاش اليوم: <span id="calCash">0.00</span> د.أ
             </div>
             <div class="total-item">
-              فيزا اليوم: <span id="calVisa">0</span> د.أ
+              فيزا اليوم: <span id="calVisa">0.00</span> د.أ
             </div>
             <div class="total-item">
-              كليك اليوم: <span id="calCliq">0</span> د.أ
+              كليك اليوم: <span id="calCliq">0.00</span> د.أ
             </div>
             <div class="total-item highlight-debt">
-              ذمم اليوم: <span id="calDebt">0</span> د.أ
+              ذمم اليوم: <span id="calDebt">0.00</span> د.أ
             </div>
             <div class="total-item">
-              الإجمالي الكلي: <span id="calGrand">0</span> د.أ
+              الإجمالي الكلي: <span id="calGrand">0.00</span> د.أ
             </div>
             <div class="total-item highlight-salon">
-              صافي ربح الصالون: <span id="calSalonShare">0</span> د.أ
+              صافي ربح الصالون: <span id="calSalonShare">0.00</span> د.أ
             </div>
           </div>
 
@@ -1339,13 +1439,13 @@
               فواتير الشهر للحلاق: <span id="admBCount">0</span> فاتورة
             </div>
             <div class="total-item">
-              مجموع الدخل الكلي: <span id="admBTotal">0</span> د.أ
+              مجموع الدخل الكلي: <span id="admBTotal">0.00</span> د.أ
             </div>
             <div class="total-item">
-              حصة الحلاق الفعليّة: <span id="admBShare">0</span> د.أ
+              حصة الحلاق الفعليّة: <span id="admBShare">0.00</span> د.أ
             </div>
             <div class="total-item highlight-salon">
-              حصة الصالون الفعليّة: <span id="admSalonShare">0</span> د.أ
+              حصة الصالون الفعليّة: <span id="admSalonShare">0.00</span> د.أ
             </div>
           </div>
         </div>
@@ -1458,10 +1558,111 @@
       </div>
     </div>
 
-    <!-- نافذة بوب أب إدخال اسم ورقم الزبون -->
+    <!-- نافذة تعديل حصة الحلاق يدوياً -->
+    <div class="modal-overlay" id="editBarberShareModal">
+      <div class="modal-card">
+        <h3 style="color: var(--primary-gold)">✏️ تعديل حصة الحلاق</h3>
+        <p id="editBarberModalInfo">أدخل القيمة الجديدة لحصة الحلاق:</p>
+        <input
+          type="number"
+          step="any"
+          inputmode="decimal"
+          id="barberShareInputModal"
+          placeholder="المبلغ (د.أ)"
+          autocomplete="off"
+        />
+        <div class="modal-btns">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="saveBarberManualShare()"
+          >
+            حفظ
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeBarberShareModal()"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة تعديل الجرد النقدي الفعلي -->
+    <div class="modal-overlay" id="cashDrawerModal">
+      <div class="modal-card">
+        <h3 style="color: var(--primary-gold)">💵 تعديل الجرد النقدي</h3>
+        <p>أدخل كمية الكاش الموجودة حالياً في الصالون:</p>
+        <input
+          type="number"
+          step="any"
+          inputmode="decimal"
+          id="cashDrawerInputModal"
+          placeholder="المبلغ (د.أ)"
+          autocomplete="off"
+        />
+        <div class="modal-btns">
+          <button
+            class="modal-btn modal-btn-confirm"
+            onclick="saveCashDrawer()"
+          >
+            حفظ
+          </button>
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeCashDrawerModal()"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة تفاصيل فواتير الحلاق المحددة -->
+    <div class="modal-overlay" id="barberInvoicesModal">
+      <div class="modal-card" style="max-width: 750px; width: 95%">
+        <h3 style="color: var(--primary-gold)" id="barberModalTitle">
+          📋 تفاصيل فواتير الحلاق
+        </h3>
+        <p id="barberModalSubtitle" style="color: #aaa; margin-bottom: 15px">
+          قائمة فواتير اليوم
+        </p>
+
+        <div
+          class="table-responsive"
+          style="max-height: 350px; overflow-y: auto"
+        >
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>رقم الفاتورة</th>
+                <th>اسم الزبون</th>
+                <th>رقم الهاتف</th>
+                <th>الخدمات المقدمة</th>
+                <th>التب (Tip)</th>
+                <th>طريقة الدفع</th>
+                <th>الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody id="barberInvoicesModalBody"></tbody>
+          </table>
+        </div>
+
+        <div class="modal-btns" style="margin-top: 20px">
+          <button
+            class="modal-btn modal-btn-cancel"
+            onclick="closeBarberInvoicesModal()"
+          >
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة بوب أب إدخال اسم ورقم الزبون والتب -->
     <div class="modal-overlay" id="customerModal">
       <div class="modal-card">
-        <h3 style="color: var(--primary-gold)">💳 السعر الإجمالي المطلوب</h3>
+        <h3 style="color: var(--primary-gold)">💳 تفاصيل الدفع والزبون</h3>
         <p style="color: #aaa; margin-bottom: 5px">المبلغ المطلوب من الزبون:</p>
         <div
           id="modalTotalPriceDisplay"
@@ -1469,7 +1670,7 @@
             color: var(--primary-gold);
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
           "
         >
           0.00 د.أ
@@ -1487,6 +1688,14 @@
           id="custPhoneInput"
           placeholder="رقم الهاتف (مثال: 0791234567)"
           maxlength="10"
+          autocomplete="off"
+        />
+        <input
+          type="number"
+          step="any"
+          inputmode="decimal"
+          id="custTipInput"
+          placeholder="إكرامية / تب للحلاق (اختياري)"
           autocomplete="off"
         />
 
@@ -1765,28 +1974,58 @@
       const db = firebase.firestore();
 
       let services = [
-        { id: "s1", name: "باقة الطالب", price: 8 },
-        { id: "s2", name: "باقة الخريج", price: 10 },
-        { id: "s3", name: "باقة هارون الرشيد", price: 15 },
-        { id: "s4", name: "باقة العريس", price: 50 },
-        { id: "s5", name: "سشوار", price: 4 },
-        { id: "s6", name: "حلاقة ذقن", price: 4 },
-        { id: "s7", name: "حناء أو صبغة ذقن", price: 5 },
-        { id: "s8", name: "حلاقة ذقن على البخار", price: 5 },
-        { id: "s9", name: "حلاقة شعر", price: 7 },
-        { id: "s10", name: "حناء أو صبغة شعر وذقن", price: 15 },
-        { id: "s11", name: "كرياتين بروتين", price: 20 },
-        { id: "s12", name: "شمع", price: 2 },
-        { id: "s13", name: "خيط", price: 2 },
-        { id: "s14", name: "ماسك نضارة", price: 2 },
-        { id: "s15", name: "تنظيف بشرة ناعم مع ماسك وبخار", price: 10 },
-        { id: "s16", name: "تنظيف بشرة عميق مع بخار وماسك", price: 25 },
-        { id: "s17", name: "مساج ناعم", price: 2 },
-        { id: "s18", name: "بدكير اليدين", price: 8 },
-        { id: "s19", name: "بدكير كامل", price: 15 },
-        { id: "s20", name: "مساج كامل للجسم", price: 35 },
-        { id: "s21", name: "عطور هارون الرشيد الفخمة", price: 10 },
-        { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", price: 0 },
+        {
+          id: "s1",
+          name: "باقة الطالب",
+          desc: "حلاقة شعر + ذقن + سشوار",
+          price: 8,
+        },
+        {
+          id: "s2",
+          name: "باقة الخريج",
+          desc: "حلاقة شعر + ذقن + سشوار + ماسك نضارة",
+          price: 10,
+        },
+        {
+          id: "s3",
+          name: "باقة هارون الرشيد",
+          desc: "حلاقة شعر + ذقن + سشوار + ماسك نضارة + تنظيف بشرة مع بخار",
+          price: 15,
+        },
+        {
+          id: "s4",
+          name: "باقة العريس",
+          desc: "حلاقة شعر + ذقن + ماسك نضارة + تنظيف بشرة مع بخار + مساج كامل",
+          price: 50,
+        },
+        { id: "s5", name: "سشوار", desc: "", price: 4 },
+        { id: "s6", name: "حلاقة ذقن", desc: "", price: 4 },
+        { id: "s7", name: "حناء أو صبغة ذقن", desc: "", price: 5 },
+        { id: "s8", name: "حلاقة ذقن على البخار", desc: "", price: 5 },
+        { id: "s9", name: "حلاقة شعر", desc: "", price: 7 },
+        { id: "s10", name: "حناء أو صبغة شعر وذقن", desc: "", price: 15 },
+        { id: "s11", name: "كرياتين بروتين", desc: "", price: 20 },
+        { id: "s12", name: "شمع", desc: "", price: 2 },
+        { id: "s13", name: "خيط", desc: "", price: 2 },
+        { id: "s14", name: "ماسك نضارة", desc: "", price: 2 },
+        {
+          id: "s15",
+          name: "تنظيف بشرة ناعم مع ماسك وبخار",
+          desc: "",
+          price: 10,
+        },
+        {
+          id: "s16",
+          name: "تنظيف بشرة عميق مع بخار وماسك",
+          desc: "",
+          price: 25,
+        },
+        { id: "s17", name: "مساج ناعم", desc: "", price: 2 },
+        { id: "s18", name: "بدكير اليدين", desc: "", price: 8 },
+        { id: "s19", name: "بدكير كامل", desc: "", price: 15 },
+        { id: "s20", name: "مساج كامل للجسم", desc: "", price: 35 },
+        { id: "s21", name: "عطور هارون الرشيد الفخمة", desc: "", price: 10 },
+        { id: "custom", name: "خدمة مخصصة / ملاحظة ✍️", desc: "", price: 0 },
       ];
 
       let barbers = [
@@ -1814,10 +2053,13 @@
       let modalCallback = null;
       let cloudPasswords = null;
       let alertCustomCallback = null;
+      let currentCashDrawerAmount = 0;
+      let activeEditingBarberId = null;
 
       let currentCustomer = {
         name: "",
         phone: "",
+        tip: 0,
         services: [],
       };
 
@@ -1833,12 +2075,17 @@
         }
       });
 
-      function handleSettingsAction(action) {
+      async function handleSettingsAction(action) {
         document.getElementById("settingsMenu").classList.remove("active");
+        const passes = await fetchCloudPasswords();
 
         if (action === "report") {
           openModal("جرد الصندوق", "يرجى إدخال كلمة المرور:", function (pass) {
-            if (pass === "1111") {
+            const reportKey = passes ? passes["REPORT_KEY"] : null;
+            if (
+              pass === reportKey ||
+              pass === (passes ? passes["MASTER_KEY"] : "")
+            ) {
               showDailyReportPage();
             } else {
               customAlert("⚠️ خطأ", "كلمة المرور غير صحيحة!");
@@ -1851,7 +2098,11 @@
             "لوحة تحكم الإدارة",
             "يرجى إدخال كلمة المرور:",
             function (pass) {
-              if (pass === "4729") {
+              const adminKey = passes ? passes["ADMIN_KEY"] : null;
+              if (
+                pass === adminKey ||
+                pass === (passes ? passes["MASTER_KEY"] : "")
+              ) {
                 activeUserId = "admin";
                 document.getElementById("mainLoginScreen").style.display =
                   "none";
@@ -1872,11 +2123,65 @@
         document.getElementById("mainLoginScreen").style.display = "none";
         document.getElementById("dailyReportContainer").style.display = "flex";
         renderDailyReportOnly();
+        listenCashDrawer();
       }
 
       function showReservationsPage() {
         document.getElementById("mainLoginScreen").style.display = "none";
         document.getElementById("reservationsContainer").style.display = "flex";
+      }
+
+      function listenCashDrawer() {
+        db.collection("settings")
+          .doc("cash_drawer")
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              currentCashDrawerAmount = doc.data().amount || 0;
+              document.getElementById("cashDrawerDisplay").innerText =
+                `${currentCashDrawerAmount.toFixed(2)} د.أ`;
+            } else {
+              document.getElementById("cashDrawerDisplay").innerText =
+                `0.00 د.أ`;
+            }
+          });
+      }
+
+      function openCashDrawerModal() {
+        document.getElementById("cashDrawerInputModal").value =
+          currentCashDrawerAmount;
+        document.getElementById("cashDrawerModal").classList.add("active");
+        setTimeout(
+          () => document.getElementById("cashDrawerInputModal").focus(),
+          100,
+        );
+      }
+
+      function closeCashDrawerModal() {
+        document.getElementById("cashDrawerModal").classList.remove("active");
+      }
+
+      async function saveCashDrawer() {
+        const val = parseFloat(
+          document.getElementById("cashDrawerInputModal").value,
+        );
+        if (isNaN(val) || val < 0) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال مبلغ نقدي صحيح!");
+          return;
+        }
+        try {
+          await db.collection("settings").doc("cash_drawer").set(
+            {
+              amount: val,
+              lastUpdated: new Date().getTime(),
+            },
+            { merge: true },
+          );
+          closeCashDrawerModal();
+          customAlert("✅ تم الحفظ", "تم تحديث الجرد النقدي الفعلي بنجاح.");
+        } catch (e) {
+          console.error("خطأ بحفظ الجرد النقدي:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ الجرد النقدي بالسحابة!");
+        }
       }
 
       function renderDailyReportOnly() {
@@ -1910,8 +2215,15 @@
               tx.services || [],
               barbersStats[tx.barberId].rate,
             );
-            barbersStats[tx.barberId].bShare += calc.barberShare;
-            barbersStats[tx.barberId].sShare += calc.salonShare;
+            let tipAmount = tx.tip || 0;
+            let defaultBShare = calc.barberShare + tipAmount;
+            let finalBShare =
+              tx.manualBarberShare !== undefined
+                ? tx.manualBarberShare
+                : defaultBShare;
+
+            barbersStats[tx.barberId].bShare += finalBShare;
+            barbersStats[tx.barberId].sShare += tx.totalPrice - finalBShare;
           }
         });
 
@@ -1951,9 +2263,9 @@
             const row = document.createElement("tr");
             row.innerHTML = `
               <td><b>${st.name}</b></td>
-              <td>${st.count}</td>
+              <td><button class="invoice-count-btn" onclick="openBarberInvoices('${b.id}', '${st.name}')">${st.count} 🧾</button></td>
               <td style="color: var(--primary-gold);">${st.total.toFixed(2)} د.أ</td>
-              <td style="color: var(--primary-gold); font-weight:bold;">${st.bShare.toFixed(2)} د.أ</td>
+              <td><span class="barber-share-clickable" onclick="openEditBarberShareModal('${b.id}', '${st.name}', ${st.bShare})">${st.bShare.toFixed(2)} د.أ ✏️</span></td>
               <td style="color: #ccc;">${st.sShare.toFixed(2)} د.أ</td>
             `;
             tbody.appendChild(row);
@@ -1986,6 +2298,155 @@
             expBody.appendChild(row);
           });
         }
+      }
+
+      function openEditBarberShareModal(barberId, barberName, currentShare) {
+        activeEditingBarberId = barberId;
+        document.getElementById("editBarberModalInfo").innerText =
+          `تعديل حصة الحلاق (${barberName}):`;
+        document.getElementById("barberShareInputModal").value =
+          currentShare.toFixed(2);
+        document.getElementById("editBarberShareModal").classList.add("active");
+        setTimeout(
+          () => document.getElementById("barberShareInputModal").focus(),
+          100,
+        );
+      }
+
+      function closeBarberShareModal() {
+        document
+          .getElementById("editBarberShareModal")
+          .classList.remove("active");
+        activeEditingBarberId = null;
+      }
+
+      async function saveBarberManualShare() {
+        if (!activeEditingBarberId) return;
+        let newBShare = parseFloat(
+          document.getElementById("barberShareInputModal").value,
+        );
+        if (isNaN(newBShare) || newBShare < 0) {
+          customAlert("⚠️ تنبيه", "يرجى إدخال مبلغ صحيح لحصة الحلاق!");
+          return;
+        }
+
+        let barberTxs = dailyTransactions.filter(
+          (tx) => tx.barberId === activeEditingBarberId,
+        );
+        if (barberTxs.length === 0) {
+          closeBarberShareModal();
+          return;
+        }
+
+        let targetTx = barberTxs[0];
+        let totalTxPrice = targetTx.totalPrice || 0;
+
+        if (newBShare > totalTxPrice) {
+          customAlert(
+            "⚠️ تنبيه",
+            "لا يمكن أن تكون حصة الحلاق أكبر من المبلغ الإجمالي للفاتورة!",
+          );
+          return;
+        }
+
+        let manualShareForThisTx = newBShare;
+
+        try {
+          await db
+            .collection("customer_history")
+            .doc(targetTx.invoiceId || targetTx.docId)
+            .set(
+              {
+                manualBarberShare: manualShareForThisTx,
+              },
+              { merge: true },
+            );
+          await db
+            .collection("daily_transactions")
+            .doc(targetTx.invoiceId || targetTx.docId)
+            .set(
+              {
+                manualBarberShare: manualShareForThisTx,
+              },
+              { merge: true },
+            );
+          await db
+            .collection("monthly_vault")
+            .doc(targetTx.invoiceId || targetTx.docId)
+            .set(
+              {
+                manualBarberShare: manualShareForThisTx,
+              },
+              { merge: true },
+            );
+
+          closeBarberShareModal();
+          renderDailyReportOnly();
+          customAlert("✅ تم الحفظ", "تم تحديث حصة الحلاق وحصة الصالون بنجاح.");
+        } catch (e) {
+          console.error("خطأ بتحديث حصة الحلاق:", e);
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء حفظ التعديل بالسحابة!");
+        }
+      }
+
+      function openBarberInvoices(barberId, barberName) {
+        const modal = document.getElementById("barberInvoicesModal");
+        const tbody = document.getElementById("barberInvoicesModalBody");
+        document.getElementById("barberModalTitle").innerText =
+          `📋 فواتير الحلاق: ${barberName}`;
+        document.getElementById("barberModalSubtitle").innerText =
+          `تفاصيل العمليات والخدمات اليومية`;
+
+        tbody.innerHTML = "";
+        let barberTxs = dailyTransactions.filter(
+          (tx) => tx.barberId === barberId,
+        );
+
+        if (barberTxs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="no-data-msg">لا توجد فواتير مسجلة لهذا الحلاق اليوم.</td></tr>`;
+        } else {
+          barberTxs.forEach((tx) => {
+            let servicesText = tx.services
+              .map((s) =>
+                s.serviceName
+                  ? s.serviceId === "custom"
+                    ? `✍️ ${s.note}`
+                    : s.serviceName
+                  : s.serviceId,
+              )
+              .join(" + ");
+
+            let payText =
+              tx.payMethod === "cash"
+                ? "💵 كاش"
+                : tx.payMethod === "visa"
+                  ? "💳 فيزا"
+                  : tx.payMethod === "cliq"
+                    ? "📱 كليك"
+                    : "📒 ذمم";
+            let tipText =
+              tx.tip && tx.tip > 0 ? `${tx.tip.toFixed(2)} د.أ` : "-";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td><span class="badge"># ${tx.invoiceNumber || "-"}</span></td>
+              <td><b>${tx.customerName}</b></td>
+              <td dir="ltr">${tx.customerPhone}</td>
+              <td style="color: var(--primary-gold); font-size: 13px;">${servicesText}</td>
+              <td style="color: #ffaa00; font-weight: bold;">${tipText}</td>
+              <td>${payText}</td>
+              <td style="color: var(--primary-gold); font-weight: bold;">${tx.totalPrice.toFixed(2)} د.أ</td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+        modal.classList.add("active");
+      }
+
+      function closeBarberInvoicesModal() {
+        document
+          .getElementById("barberInvoicesModal")
+          .classList.remove("active");
       }
 
       function customRounding(value) {
@@ -2211,7 +2672,7 @@
           activeUserId = userId;
           document.getElementById("mainLoginScreen").style.display = "none";
           document.getElementById("appContainer").style.display = "flex";
-          currentCustomer = { name: "", phone: "", services: [] };
+          currentCustomer = { name: "", phone: "", tip: 0, services: [] };
           updateActiveBarberDisplay();
           renderUI();
         } else {
@@ -2301,6 +2762,7 @@
           currentCustomer.name || "";
         document.getElementById("custPhoneInput").value =
           currentCustomer.phone || "";
+        document.getElementById("custTipInput").value = "";
         document.getElementById("customerModal").classList.add("active");
         setTimeout(() => document.getElementById("custNameInput").focus(), 100);
       }
@@ -2312,6 +2774,9 @@
       function submitCustomerData() {
         const name = document.getElementById("custNameInput").value.trim();
         const phone = document.getElementById("custPhoneInput").value.trim();
+        const tipVal =
+          parseFloat(document.getElementById("custTipInput").value) || 0;
+
         if (!name) {
           customAlert("⚠️ تنبيه", "يرجى كتابة اسم الزبون!");
           return;
@@ -2327,6 +2792,7 @@
 
         currentCustomer.name = name;
         currentCustomer.phone = phone;
+        currentCustomer.tip = tipVal;
         document.getElementById("customerModal").classList.remove("active");
         executeSaveVisit();
       }
@@ -2380,6 +2846,8 @@
         const day = String(now.getDate()).padStart(2, "0");
         const dateKey = `${year}-${month}-${day}`;
 
+        let earnedPoints = 1;
+
         try {
           const invNum = await getNextInvoiceNumber();
           const sharedDocRef = db.collection("daily_transactions").doc();
@@ -2390,6 +2858,7 @@
             invoiceNumber: invNum,
             customerName: currentCustomer.name,
             customerPhone: currentCustomer.phone,
+            tip: currentCustomer.tip,
             barberId: activeUserId,
             barberName: currentBarberObj ? currentBarberObj.name : activeUserId,
             barberRate: currentRate,
@@ -2399,7 +2868,26 @@
             formattedDate: englishDateTime,
             dateKey: dateKey,
             timestamp: now.getTime(),
+            earnedPoints: earnedPoints,
           };
+
+          const pointRef = db
+            .collection("customer_points")
+            .doc(currentCustomer.phone);
+          const pointDoc = await pointRef.get();
+          let totalCustomerPoints = earnedPoints;
+          if (pointDoc.exists) {
+            totalCustomerPoints = (pointDoc.data().points || 0) + earnedPoints;
+          }
+          await pointRef.set(
+            {
+              customerName: currentCustomer.name,
+              customerPhone: currentCustomer.phone,
+              points: totalCustomerPoints,
+              lastUpdated: now.getTime(),
+            },
+            { merge: true },
+          );
 
           if (selectedPayMethod === "debt") {
             await db.collection("debts").doc(sharedId).set(visitRecord);
@@ -2419,12 +2907,24 @@
             await db.collection("monthly_vault").doc(sharedId).set(visitRecord);
           }
 
-          const successMsg =
+          let msgContent =
             selectedPayMethod === "debt"
               ? `تم حفظ الفاتورة رقم (${invNum}) للزبون ( ${currentCustomer.name} ) بنجاح بمبلغ :\n${totalVal.toFixed(2)} د.أ\n(تم إضافتها إلى الذمم المعلقة)`
               : `تم حفظ الفاتورة رقم (${invNum}) للزبون ( ${currentCustomer.name} ) بنجاح بمبلغ :\n${totalVal.toFixed(2)} د.أ`;
 
-          customAlert("✅ تم الحفظ بنجاح", successMsg, "تم", function () {
+          if (currentCustomer.tip > 0) {
+            msgContent += `\n🎁 تم إضافة إكرامية (تب) للحلاق بقيمة: ${currentCustomer.tip.toFixed(2)} د.أ`;
+          }
+
+          msgContent += `
+            <div class="loyalty-badge-box">
+              <div class="loyalty-title">🌟 برنامج ولاء الزبائن (النقاط)</div>
+              <div>مجموع نقاط الزبون الإجمالي أصبحت:</div>
+              <div class="loyalty-points-val">${totalCustomerPoints} نقطة</div>
+            </div>
+          `;
+
+          customAlert("✅ تم الحفظ بنجاح", msgContent, "تم", function () {
             logoutUser();
           });
         } catch (e) {
@@ -2559,7 +3059,11 @@
           const bObj = barbers.find((b) => b.id === data.barberId);
           const rate = bObj ? bObj.rate || 50 : 50;
           const calcRes = calculateTransactionShares(data.services || [], rate);
-          mSumSalonGross += calcRes.salonShare;
+          let bShare =
+            data.manualBarberShare !== undefined
+              ? data.manualBarberShare
+              : calcRes.barberShare + (data.tip || 0);
+          mSumSalonGross += data.totalPrice - bShare;
         });
 
         let totalActiveDebts = debtsList.reduce(
@@ -2587,8 +3091,12 @@
                 tx.services || [],
                 b.rate || 50,
               );
-              bShareSum += calcRes.barberShare;
-              sShareSum += calcRes.salonShare;
+              let bShare =
+                tx.manualBarberShare !== undefined
+                  ? tx.manualBarberShare
+                  : calcRes.barberShare + (tx.tip || 0);
+              bShareSum += bShare;
+              sShareSum += tx.totalPrice - bShare;
             }
           });
           if (bCount > 0) {
@@ -2631,6 +3139,9 @@
                   : s.serviceId,
               )
               .join(" + ");
+            if (tx.tip && tx.tip > 0) {
+              servicesText += ` + تب: ${tx.tip} د.أ`;
+            }
             let payMethodAr =
               tx.payMethod === "cash"
                 ? "كاش"
@@ -2998,8 +3509,13 @@
                   data.services || [],
                   bObj ? bObj.rate || 50 : 50,
                 );
-                barbersDayStats[data.barberId].bShareSum += calcRes.barberShare;
-                barbersDayStats[data.barberId].sShareSum += calcRes.salonShare;
+                let bShare =
+                  data.manualBarberShare !== undefined
+                    ? data.manualBarberShare
+                    : calcRes.barberShare + (data.tip || 0);
+                barbersDayStats[data.barberId].bShareSum += bShare;
+                barbersDayStats[data.barberId].sShareSum +=
+                  data.totalPrice - bShare;
               }
             }
 
@@ -3012,6 +3528,9 @@
                   : s.serviceId,
               )
               .join(" + ");
+            if (data.tip && data.tip > 0) {
+              servicesListText += ` + تب: ${data.tip} د.أ`;
+            }
             let payText =
               data.payMethod === "cash"
                 ? "💵 كاش"
@@ -3263,7 +3782,7 @@
 
       function logoutUser() {
         activeUserId = null;
-        currentCustomer = { name: "", phone: "", services: [] };
+        currentCustomer = { name: "", phone: "", tip: 0, services: [] };
         document.getElementById("appContainer").style.display = "none";
         document.getElementById("adminContainer").style.display = "none";
         document.getElementById("dailyReportContainer").style.display = "none";
@@ -3402,8 +3921,12 @@
               tx.services || [],
               currentRate,
             );
-            barberShareSum += calcRes.barberShare;
-            salonShareSum += calcRes.salonShare;
+            let bShare =
+              tx.manualBarberShare !== undefined
+                ? tx.manualBarberShare
+                : calcRes.barberShare + (tx.tip || 0);
+            barberShareSum += bShare;
+            salonShareSum += tx.totalPrice - bShare;
           }
         });
 
@@ -3507,6 +4030,9 @@
                   : s.serviceId,
               )
               .join(" + ");
+            if (data.tip && data.tip > 0) {
+              servicesListText += ` + تب: ${data.tip} د.أ`;
+            }
             let payText =
               data.payMethod === "cash"
                 ? "💵 كاش"
@@ -3563,6 +4089,7 @@
 
             card.innerHTML = `
               <div class="card-title">${service.name}</div>
+              ${service.desc ? `<div class="card-desc">${service.desc}</div>` : ""}
               <div class="card-price">${isCustom ? "تحديد مبلغ مخصص" : service.price + " د.أ"}</div>
               <div class="card-footer-row">
                 <span class="badge">العدد: ${count}</span>
@@ -3589,8 +4116,12 @@
                 tx.services || [],
                 currentRate,
               );
-              currentBarberDailyShare += calcRes.barberShare;
-              currentSalonDailyShare += calcRes.salonShare;
+              let bShare =
+                tx.manualBarberShare !== undefined
+                  ? tx.manualBarberShare
+                  : calcRes.barberShare + (tx.tip || 0);
+              currentBarberDailyShare += bShare;
+              currentSalonDailyShare += tx.totalPrice - bShare;
             }
           });
 
@@ -3623,8 +4154,12 @@
                 tx.services || [],
                 currentRate,
               );
-              currentBarberMonthlyShare += calcRes.barberShare;
-              currentSalonMonthlyShare += calcRes.salonShare;
+              let bShare =
+                tx.manualBarberShare !== undefined
+                  ? tx.manualBarberShare
+                  : calcRes.barberShare + (tx.tip || 0);
+              currentBarberMonthlyShare += bShare;
+              currentSalonMonthlyShare += tx.totalPrice - bShare;
             }
           });
 
@@ -3697,8 +4232,13 @@
             allBarbersDayStats[tx.barberId].total += tx.totalPrice;
             const rate = allBarbersDayStats[tx.barberId].rate;
             const calcRes = calculateTransactionShares(tx.services || [], rate);
-            allBarbersDayStats[tx.barberId].barberShare += calcRes.barberShare;
-            allBarbersDayStats[tx.barberId].salonShare += calcRes.salonShare;
+            let bShare =
+              tx.manualBarberShare !== undefined
+                ? tx.manualBarberShare
+                : calcRes.barberShare + (tx.tip || 0);
+            allBarbersDayStats[tx.barberId].barberShare += bShare;
+            allBarbersDayStats[tx.barberId].salonShare +=
+              tx.totalPrice - bShare;
           }
         });
 
@@ -3784,7 +4324,11 @@
             data.services || [],
             bObj ? bObj.rate || 50 : 50,
           );
-          mSumSalonGross += calcRes.salonShare;
+          let bShare =
+            data.manualBarberShare !== undefined
+              ? data.manualBarberShare
+              : calcRes.barberShare + (data.tip || 0);
+          mSumSalonGross += data.totalPrice - bShare;
         });
 
         let monthlyExpensesSum = expensesList.reduce(
