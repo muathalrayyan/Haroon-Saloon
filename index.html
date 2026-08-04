@@ -2064,17 +2064,6 @@
         services: [],
       };
 
-      function getBusinessDateKey() {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - 165);
-
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-      }
-
       function toggleSettingsMenu(e) {
         e.stopPropagation();
         document.getElementById("settingsMenu").classList.toggle("active");
@@ -2202,7 +2191,12 @@
           cliq = 0,
           debt = 0;
         let barbersStats = {};
-        const todayStr = getBusinessDateKey();
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const todayStr = `${year}-${month}-${day}`;
 
         barbers.forEach((b) => {
           barbersStats[b.id] = {
@@ -2216,6 +2210,7 @@
         });
 
         dailyTransactions.forEach((tx) => {
+          // فلترة المعاملات عشان نحسب بسسسسس تبعون تاريخ اليوم في جدول الجرد اليومي
           if (tx.dateKey !== todayStr) return;
 
           if (tx.payMethod === "cash") cash += tx.totalPrice;
@@ -2226,6 +2221,7 @@
             barbersStats[tx.barberId].count++;
             barbersStats[tx.barberId].total += tx.totalPrice;
 
+            // إزالة التقريب من كل فاتورة وجمع الكسور لحساب الحصة النهائية الدقيقة
             let txRate =
               tx.barberRate !== undefined
                 ? tx.barberRate
@@ -2235,6 +2231,7 @@
             let tipAmount = tx.tip || 0;
             let defaultBShare = calc.barberShare + tipAmount;
 
+            // الاعتماد الكلي على التعديل اليدوي في حال وجوده
             let finalBShare =
               tx.manualBarberShare !== undefined
                 ? tx.manualBarberShare
@@ -2275,6 +2272,7 @@
         barbers.forEach((b) => {
           const st = barbersStats[b.id];
           if (st.count > 0) {
+            // التقريب بيتم مرة وحدة بس على المجموع النهائي لحصة الحلاق
             st.bShare = customNaturalRounding(st.bShare);
             st.sShare = st.total - st.bShare;
 
@@ -2352,7 +2350,11 @@
           return;
         }
 
-        const todayStr = getBusinessDateKey();
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const todayStr = `${year}-${month}-${day}`;
 
         let barberTxs = dailyTransactions.filter(
           (tx) =>
@@ -2382,8 +2384,10 @@
             let assignedShare = 0;
 
             if (i === barberTxs.length - 1) {
+              // آخر فاتورة بتاخد الباقي بالضبط عشان نتأكد إن المجموع = الرقم المطلوب بدون كسور زايدة
               assignedShare = newDailyShare - runningShareSum;
             } else {
+              // بنوزع الرقم المطلوب بشكل نسبي على الفواتير
               if (totalTxPrice > 0) {
                 assignedShare = (tx.totalPrice / totalTxPrice) * newDailyShare;
               } else {
@@ -2446,7 +2450,11 @@
 
         tbody.innerHTML = "";
 
-        const todayStr = getBusinessDateKey();
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const todayStr = `${year}-${month}-${day}`;
 
         let barberTxs = dailyTransactions.filter(
           (tx) => tx.barberId === barberId && tx.dateKey === todayStr,
@@ -2499,6 +2507,7 @@
           .classList.remove("active");
       }
 
+      // التقريب الطبيعي اللي طلبته: من 0.5 وطالع بقرب لفوق ومن 0.49 ونازل بقرب لتحت
       function customNaturalRounding(value) {
         return Math.round(value);
       }
@@ -2527,6 +2536,7 @@
           );
         });
 
+        // إرجاع الأرقام الدقيقة بدون تقريب لتجميعها لاحقاً
         let sShare = total - bShareRaw;
         return { total: total, barberShare: bShareRaw, salonShare: sShare };
       }
@@ -2678,7 +2688,11 @@
         listenBarberNames();
         listenServicesSettings();
 
-        const todayStr = getBusinessDateKey();
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const todayStr = `${year}-${month}-${day}`;
 
         const calInput = document.getElementById("calendarDateInput");
         if (calInput) calInput.value = todayStr;
@@ -2889,7 +2903,10 @@
           second: "2-digit",
           hour12: true,
         });
-        const dateKey = getBusinessDateKey();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const dateKey = `${year}-${month}-${day}`;
 
         let earnedPoints = 1;
 
@@ -3014,7 +3031,10 @@
           second: "2-digit",
           hour12: true,
         });
-        const dateKey = getBusinessDateKey();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const dateKey = `${year}-${month}-${day}`;
 
         let settledRecord = {
           ...debtObj,
@@ -3044,7 +3064,7 @@
           );
         } catch (e) {
           console.error("خطأ بسداد الذمة:", e);
-          customAlert("⚠️ خطأ", "حدث تحديث بيانات السداد!");
+          customAlert("⚠️ خطأ", "حدث خطأ أثناء تحديث بيانات السداد!");
         }
       }
 
@@ -3713,7 +3733,10 @@
           second: "2-digit",
           hour12: true,
         });
-        const dateKey = getBusinessDateKey();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const dateKey = `${year}-${month}-${day}`;
 
         try {
           const expNum = await getNextExpenseInvoiceNumber();
@@ -4186,10 +4209,8 @@
             ? currentBarberObj.rate || 50
             : 50;
 
-          const todayStr = getBusinessDateKey();
-
           dailyTransactions.forEach((tx) => {
-            if (tx.barberId === activeUserId && tx.dateKey === todayStr) {
+            if (tx.barberId === activeUserId) {
               currentBarberDailyTotal += tx.totalPrice;
               currentBarberDailyCount += 1;
               let txRate =
@@ -4316,11 +4337,7 @@
           };
         });
 
-        const todayStr = getBusinessDateKey();
-
         dailyTransactions.forEach((tx) => {
-          if (tx.dateKey !== todayStr) return;
-
           if (tx.payMethod === "cash") cashTotalDay += tx.totalPrice;
           if (tx.payMethod === "visa") visaTotalDay += tx.totalPrice;
           if (tx.payMethod === "cliq") cliqTotalDay += tx.totalPrice;
@@ -4343,14 +4360,20 @@
         });
 
         let todayDebtsSum = 0;
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const todayStr = `${year}-${month}-${day}`;
+
         debtsList.forEach((d) => {
           if (d.dateKey === todayStr) todayDebtsSum += d.totalPrice;
         });
 
-        let dailyExpensesSum = expensesList.reduce((acc, curr) => {
-          if (curr.dateKey === todayStr) return acc + curr.amount;
-          return acc;
-        }, 0);
+        let dailyExpensesSum = expensesList.reduce(
+          (acc, curr) => acc + curr.amount,
+          0,
+        );
         const grandTotalSumDay = cashTotalDay + visaTotalDay + cliqTotalDay;
 
         const vaultBody = document.getElementById("allBarbersVaultBody");
@@ -4379,18 +4402,16 @@
           sumBarbersShareDay += stats.barberShare;
           sumSalonShareDay += stats.salonShare;
 
-          if (stats.count > 0) {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td><b>${b.name}</b></td>
-              <td><span class="badge">${rate}%</span></td>
-              <td>${stats.count}</td>
-              <td>${stats.total.toFixed(2)} د.أ</td>
-              <td style="color: var(--primary-gold);">${stats.barberShare.toFixed(2)} د.أ</td>
-              <td style="color: #c0c0c0;">${stats.salonShare.toFixed(2)} د.أ</td>
-            `;
-            vaultBody.appendChild(row);
-          }
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><b>${b.name}</b></td>
+            <td><span class="badge">${rate}%</span></td>
+            <td>${stats.count}</td>
+            <td>${stats.total.toFixed(2)} د.أ</td>
+            <td style="color: var(--primary-gold);">${stats.barberShare.toFixed(2)} د.أ</td>
+            <td style="color: #c0c0c0;">${stats.salonShare.toFixed(2)} د.أ</td>
+          `;
+          vaultBody.appendChild(row);
         });
 
         const netSalonShareDay =
