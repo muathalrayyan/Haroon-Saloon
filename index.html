@@ -640,6 +640,7 @@
       .btn-reset {
         background: #660000;
         border-color: #ff4444;
+        padding: 12px 24px;
       }
       .btn-reset:hover {
         background: #880000;
@@ -2217,13 +2218,15 @@
             );
             let tipAmount = tx.tip || 0;
             let defaultBShare = calc.barberShare + tipAmount;
+
             let finalBShare =
               tx.manualBarberShare !== undefined
                 ? tx.manualBarberShare
                 : defaultBShare;
+            let finalSShare = tx.totalPrice - finalBShare;
 
             barbersStats[tx.barberId].bShare += finalBShare;
-            barbersStats[tx.barberId].sShare += tx.totalPrice - finalBShare;
+            barbersStats[tx.barberId].sShare += finalSShare;
           }
         });
 
@@ -2338,47 +2341,61 @@
           return;
         }
 
-        let targetTx = barberTxs[0];
-        let totalTxPrice = targetTx.totalPrice || 0;
-
-        if (newBShare > totalTxPrice) {
-          customAlert(
-            "⚠️ تنبيه",
-            "لا يمكن أن تكون حصة الحلاق أكبر من المبلغ الإجمالي للفاتورة!",
-          );
-          return;
-        }
-
-        let manualShareForThisTx = newBShare;
+        let totalTxPrice = barberTxs.reduce(
+          (sum, tx) => sum + (tx.totalPrice || 0),
+          0,
+        );
 
         try {
-          await db
-            .collection("customer_history")
-            .doc(targetTx.invoiceId || targetTx.docId)
-            .set(
-              {
-                manualBarberShare: manualShareForThisTx,
-              },
+          let batch = db.batch();
+          let runningShareSum = 0;
+
+          for (let i = 0; i < barberTxs.length; i++) {
+            let tx = barberTxs[i];
+            let assignedShare = 0;
+
+            if (i === barberTxs.length - 1) {
+              assignedShare = newBShare - runningShareSum;
+            } else {
+              if (totalTxPrice > 0) {
+                assignedShare = (tx.totalPrice / totalTxPrice) * newBShare;
+              } else {
+                assignedShare = newBShare / barberTxs.length;
+              }
+              assignedShare = parseFloat(assignedShare.toFixed(2));
+              runningShareSum += assignedShare;
+            }
+
+            assignedShare = Math.round(assignedShare * 100) / 100;
+
+            let ref1 = db
+              .collection("customer_history")
+              .doc(tx.invoiceId || tx.docId);
+            let ref2 = db
+              .collection("daily_transactions")
+              .doc(tx.invoiceId || tx.docId);
+            let ref3 = db
+              .collection("monthly_vault")
+              .doc(tx.invoiceId || tx.docId);
+
+            batch.set(
+              ref1,
+              { manualBarberShare: assignedShare },
               { merge: true },
             );
-          await db
-            .collection("daily_transactions")
-            .doc(targetTx.invoiceId || targetTx.docId)
-            .set(
-              {
-                manualBarberShare: manualShareForThisTx,
-              },
+            batch.set(
+              ref2,
+              { manualBarberShare: assignedShare },
               { merge: true },
             );
-          await db
-            .collection("monthly_vault")
-            .doc(targetTx.invoiceId || targetTx.docId)
-            .set(
-              {
-                manualBarberShare: manualShareForThisTx,
-              },
+            batch.set(
+              ref3,
+              { manualBarberShare: assignedShare },
               { merge: true },
             );
+          }
+
+          await batch.commit();
 
           closeBarberShareModal();
           renderDailyReportOnly();
@@ -2450,10 +2467,7 @@
       }
 
       function customRounding(value) {
-        let integerPart = Math.floor(value);
-        let decimalPart = value - integerPart;
-        if (decimalPart <= 0.500001) return integerPart;
-        else return integerPart + 1;
+        return Math.round(value);
       }
 
       function calculateServiceBarberShare(
@@ -3917,9 +3931,11 @@
           if (tx.barberId === barberId) {
             totalAmount += tx.totalPrice;
             invoiceCount += 1;
+            const txRate =
+              tx.barberRate !== undefined ? tx.barberRate : currentRate;
             const calcRes = calculateTransactionShares(
               tx.services || [],
-              currentRate,
+              txRate,
             );
             let bShare =
               tx.manualBarberShare !== undefined
@@ -4112,9 +4128,11 @@
             if (tx.barberId === activeUserId) {
               currentBarberDailyTotal += tx.totalPrice;
               currentBarberDailyCount += 1;
+              let txRate =
+                tx.barberRate !== undefined ? tx.barberRate : currentRate;
               const calcRes = calculateTransactionShares(
                 tx.services || [],
-                currentRate,
+                txRate,
               );
               let bShare =
                 tx.manualBarberShare !== undefined
@@ -4150,9 +4168,11 @@
             if (tx.barberId === activeUserId) {
               currentBarberMonthlyTotal += tx.totalPrice;
               currentBarberMonthlyCount += 1;
+              let txRate =
+                tx.barberRate !== undefined ? tx.barberRate : currentRate;
               const calcRes = calculateTransactionShares(
                 tx.services || [],
-                currentRate,
+                txRate,
               );
               let bShare =
                 tx.manualBarberShare !== undefined
@@ -4230,20 +4250,28 @@
           if (allBarbersDayStats[tx.barberId]) {
             allBarbersDayStats[tx.barberId].count += 1;
             allBarbersDayStats[tx.barberId].total += tx.totalPrice;
-            const rate = allBarbersDayStats[tx.barberId].rate;
+            const rate =
+              tx.barberRate !== undefined
+                ? tx.barberRate
+                : allBarbersDayStats[tx.barberId].rate;
             const calcRes = calculateTransactionShares(tx.services || [], rate);
             let bShare =
               tx.manualBarberShare !== undefined
                 ? tx.manualBarberShare
                 : calcRes.barberShare + (tx.tip || 0);
+            let sShare = tx.totalPrice - bShare;
             allBarbersDayStats[tx.barberId].barberShare += bShare;
-            allBarbersDayStats[tx.barberId].salonShare +=
-              tx.totalPrice - bShare;
+            allBarbersDayStats[tx.barberId].salonShare += sShare;
           }
         });
 
         let todayDebtsSum = 0;
-        const todayStr = new Date().toISOString().split("T")[0];
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const todayStr = `${year}-${month}-${day}`;
+
         debtsList.forEach((d) => {
           if (d.dateKey === todayStr) todayDebtsSum += d.totalPrice;
         });
@@ -4320,10 +4348,13 @@
           if (data.payMethod === "visa") mVisa += data.totalPrice;
           if (data.payMethod === "cliq") mCliq += data.totalPrice;
           const bObj = barbers.find((b) => b.id === data.barberId);
-          const calcRes = calculateTransactionShares(
-            data.services || [],
-            bObj ? bObj.rate || 50 : 50,
-          );
+          const rate =
+            data.barberRate !== undefined
+              ? data.barberRate
+              : bObj
+                ? bObj.rate || 50
+                : 50;
+          const calcRes = calculateTransactionShares(data.services || [], rate);
           let bShare =
             data.manualBarberShare !== undefined
               ? data.manualBarberShare
